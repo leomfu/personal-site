@@ -52,3 +52,7 @@ docs/design/__pycache__/
 
 # 由 scripts/build-news-data.mjs 从 content/news/ 推导而来，构建时自动生成
 public/data/news.json
+
+# 画图技能（archify）的草稿目录：一张架构图的 HTML + 渲染出来的校验截图。
+# 是生成物不是源码，站上也没用到，别再提交进来（2026-09-11 清掉过一次，1.4 MB）
+scratch-archify/
