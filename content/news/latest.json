@@ -1,6 +1,6 @@
 {
   "note": "由 scripts/fetch-news.mjs 生成，别手改。源清单在 sources.json。",
-  "generatedAt": "2026-09-11T23:50:08.272Z",
+  "generatedAt": "2026-09-12T23:40:07.477Z",
   "boards": [
     {
       "key": "world",
@@ -53,148 +53,236 @@
       ],
       "items": [
         {
-          "title": "UN extends partial Sudan arms embargo for a month",
-          "url": "https://www.aljazeera.com/news/2026/9/11/un-extends-partial-sudan-arms-embargo-for-a-month?traffic_source=rss",
+          "title": "Alexander Zverev vs Ben Shelton: US Open men’s singles final – all to know",
+          "url": "https://www.aljazeera.com/sports/2026/9/12/ben-shelton-alexander-zverev-us-open-2026-men-final-singles?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-11T23:08:05.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T23:25:22.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Flavio Bolsonaro faces corruption probe weeks before Brazil election",
-          "url": "https://www.aljazeera.com/news/2026/9/11/flavio-bolsonaro-faces-corruption-probe-weeks-before-brazil-election?traffic_source=rss",
+          "title": "Elena Rybakina defeats Aryna Sabalenka in US Open women’s singles final",
+          "url": "https://www.aljazeera.com/sports/2026/9/12/elena-rybakina-defeats-aryna-sabalenka-in-us-open-womens-singles-final?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-11T22:57:51.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T23:14:28.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Arrest made over the death of black woman found hanged from tree",
-          "url": "https://www.bbc.co.uk/news/articles/cqjkejq5750o?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-11T22:57:42.000Z",
-          "date": "2026-09-12"
+          "title": "Arteta seethes at Sunderland penalty decision despite Arsenal win",
+          "url": "https://www.aljazeera.com/sports/2026/9/12/arteta-seethes-at-sunderland-penalty-decision-despite-arsenal-win?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-12T22:51:28.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Houthis Seize a Key Red Sea Island, Threatening Another Global Oil Route",
-          "url": "https://www.nytimes.com/2026/09/11/world/middleeast/yemen-houthis-bab-al-mandab.html",
+          "title": "Trump Says Irish Unification Would Be ‘Fantastic,’ Breaking With Precedent",
+          "url": "https://www.nytimes.com/2026/09/12/world/europe/trump-ireland-unification-remarks.html",
           "source": "纽约时报",
           "sourceEn": "NYT World",
-          "at": "2026-09-11T22:22:16.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T22:46:12.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Houthis claim major advance in Yemen and tighten grip on Red Sea shipping lane",
-          "url": "https://www.bbc.co.uk/news/articles/c23x72yx2rvo?at_medium=RSS&at_campaign=rss",
+          "title": "Tens of thousands march across Germany to protest far-right party AfD",
+          "url": "https://www.aljazeera.com/news/2026/9/12/tens-of-thousands-march-across-germany-to-protest-far-right-party-afd?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-12T22:37:03.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "USA edge Spain to book Women’s Basketball World Cup final against France",
+          "url": "https://www.aljazeera.com/sports/2026/9/12/usa-edge-spain-to-book-womens-basketball-world-cup-final-against-france?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-12T22:10:18.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "Trump's comments on a united Ireland may have targeted audience across the Atlantic",
+          "url": "https://www.bbc.co.uk/news/articles/cwyzppd1d5lo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-11T22:17:45.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T21:25:28.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Israeli demolitions threaten schools and homes in Masafer Yatta",
-          "url": "https://www.aljazeera.com/features/2026/9/11/israeli-demolitions-threaten-schools-and-homes-in-masafer-yatta?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-11T21:53:34.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "The other side of 9/11: Afghans reckon with America's long shadow",
-          "url": "https://www.npr.org/2026/09/11/nx-s1-5949270/the-other-side-of-9-11-afghans-reckon-with-americas-long-shadow",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-11T21:36:20.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Saudi Arabia says East-West pipeline hit by drones launched from Iraq",
-          "url": "https://www.aljazeera.com/news/2026/9/11/saudi-arabia-says-east-west-pipeline-hit-by-drones-launched-from-iraq?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-11T21:30:47.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Sabalenka vs Rybakina: US Open women’s singles final – start, prize, form",
-          "url": "https://www.aljazeera.com/sports/2026/9/11/sabalenka-rybakina-us-open-2026-womens-singles-final-time-form-head-to-head?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-11T21:28:34.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Passenger train derails in France leaving at least 44 injured",
-          "url": "https://www.bbc.co.uk/news/articles/c8d37dm8d8mo?at_medium=RSS&at_campaign=rss",
+          "title": "Anthropic boss Dario Amodei calls for AI development to slow down",
+          "url": "https://www.bbc.co.uk/news/articles/c14dpgm0rg4o?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-11T21:25:32.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T21:16:47.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Why Emerging Powers Keep Joining BRICS, Even When They Disagree",
-          "url": "https://www.nytimes.com/2026/09/11/world/asia/brics-meeting-summit-delhi.html",
+          "title": "Fire at nursing home in Chile kills 16 residents",
+          "url": "https://www.bbc.co.uk/news/articles/cy4zpp20w77o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-12T19:36:50.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "Death Toll From Ferry Fire in the Philippines Rises to 76",
+          "url": "https://www.nytimes.com/2026/09/12/world/asia/philippines-ferry-fire-death-toll.html",
           "source": "纽约时报",
           "sourceEn": "NYT World",
-          "at": "2026-09-11T20:45:24.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T18:52:24.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Tragic death of woman who testified against father in notorious mafia murder of mother",
-          "url": "https://www.bbc.co.uk/news/articles/c39mr81j2j1o?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-11T20:34:29.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Amid war and sanctions, many Iranians are losing their jobs and struggling to get by",
-          "url": "https://www.npr.org/2026/09/11/g-s1-142935/iran-us-war-jobs-economy",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-11T19:39:35.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "As Russia Again Draws Near, a Frontline City Fears Obliteration This Time",
-          "url": "https://www.nytimes.com/2026/09/11/world/europe/ukraine-russia-izium-donetsk.html",
+          "title": "Iran Finds Escalation Is Fruitful Path to Leverage in War With U.S.",
+          "url": "https://www.nytimes.com/2026/09/12/world/middleeast/iran-escalation-leverage-houthis-strait.html",
           "source": "纽约时报",
           "sourceEn": "NYT World",
-          "at": "2026-09-11T18:08:17.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-12T18:07:10.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Norway's Princess Astrid dies two days after attending brother King Harald's funeral",
-          "url": "https://www.bbc.co.uk/news/articles/cgjq1qy98vjo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-11T16:00:59.000Z",
-          "date": "2026-09-12"
+          "title": "Saudi Arabia’s Oil ‘Lifeline’ Was Attacked. Here’s What to Know.",
+          "url": "https://www.nytimes.com/2026/09/12/world/middleeast/saudi-arabia-oil-pipeline-attack.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-12T18:02:40.000Z",
+          "date": "2026-09-13"
         },
         {
-          "title": "Buddhist monk arrested in Thailand on suspicion of embezzling $2.8m",
-          "url": "https://www.theguardian.com/world/2026/sep/11/thai-police-arrest-buddhist-abbot-suspicion-embezzling",
+          "title": "Burial of King Oyo takes place in Uganda as news anchor prepares for throne",
+          "url": "https://www.theguardian.com/world/2026/sep/12/burial-king-oyo-uganda",
           "source": "卫报",
           "sourceEn": "The Guardian",
-          "at": "2026-09-11T15:01:36.000Z",
-          "date": "2026-09-11"
+          "at": "2026-09-12T15:09:05.000Z",
+          "date": "2026-09-12"
         },
         {
-          "title": "Iran pursues cautious escalation ahead of US midterms",
-          "url": "https://www.dw.com/en/iran-pursues-cautious-escalation-ahead-of-us-midterms/a-79237061?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-11T14:54:00.000Z",
-          "date": "2026-09-11"
+          "title": "French officials investigate if malicious act caused train derailment",
+          "url": "https://www.bbc.co.uk/news/articles/c33kp533nn6o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-12T15:05:53.000Z",
+          "date": "2026-09-12"
         },
         {
-          "title": "India's BRICS strategy tested with Xi, Putin set to visit",
-          "url": "https://www.dw.com/en/india-s-brics-strategy-tested-with-xi-putin-set-to-visit/a-79231879?maca=en-rss-en-world-4025-rdf",
+          "title": "In Doonbeg, Trump’s Irish Open Visit Prompts Protests and Praise",
+          "url": "https://www.nytimes.com/2026/09/12/world/europe/trump-irish-open-ireland-doonbeg.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-12T14:33:39.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Six Nigerians extradited to US over $6m online romance scam",
+          "url": "https://www.theguardian.com/us-news/2026/sep/12/nigerians-extradited-online-romance-scams",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-12T14:05:45.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "'People are still afraid of those three letters': Fighting the stigma of HIV",
+          "url": "https://www.npr.org/2026/09/12/g-s1-142404/hiv-aids-brazil-stigma",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-12T13:03:20.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Xi Jinping gets red carpet at Brics summit amid thaw in India-China relations",
+          "url": "https://www.theguardian.com/world/2026/sep/12/xi-jinping-brics-summit-delhi-india-china-relations",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-12T12:39:12.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "'BRICS' forum brings together emerging economies, aimed at countering western dominance",
+          "url": "https://www.npr.org/2026/09/12/nx-s1-5965777/brics-forum-brings-together-emerging-economies-aimed-at-countering-western-dominance",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-12T12:30:55.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Saudi Arabia forced to shut down crucial Red Sea pipeline after attacks",
+          "url": "https://www.npr.org/2026/09/12/nx-s1-5964940/saudi-arabia-forced-to-shut-down-crucial-red-sea-pipeline-after-attacks",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-12T12:19:22.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Saudi Arabia shuts key oil pipeline after drone attack launched from Iraq",
+          "url": "https://www.bbc.co.uk/news/articles/c62m933465eo?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-12T12:15:50.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Trump visits Ireland, says unification would be 'fantastic'",
+          "url": "https://www.dw.com/en/trump-visits-ireland-says-unification-would-be-fantastic/a-79244685?maca=en-rss-en-world-4025-rdf",
           "source": "德国之声",
           "sourceEn": "DW",
-          "at": "2026-09-11T13:31:00.000Z",
-          "date": "2026-09-11"
+          "at": "2026-09-12T11:55:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "The secret quest to preserve Palestinian writer Raja Shehadeh's diaries",
+          "url": "https://www.npr.org/2026/09/12/g-s1-142760/palestinian-writer-archive-scotland-israel-shehadeh",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-12T10:00:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Corals as climate archive: Are El Ninos intensifying?",
+          "url": "https://www.dw.com/en/corals-as-climate-archive-are-el-ninos-intensifying/a-79243425?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-12T08:53:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Uber leaves two key African markets — and their drivers in despair",
+          "url": "https://www.dw.com/en/uber-leaves-two-key-african-markets-and-their-drivers-in-despair/a-79232189?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-12T07:56:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "BRICS leaders meet in India as wars and US tensions test the bloc",
+          "url": "https://www.npr.org/2026/09/12/g-s1-143054/brics-leaders-meet-in-india",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-12T07:18:55.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Russia's drone war comes to Moldova and Romania",
+          "url": "https://www.dw.com/en/russia-s-drone-war-comes-to-moldova-and-romania/a-79239591?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-12T06:27:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "DW exclusive: Zelenskyy offers to meet Putin at G20 in Miami",
+          "url": "https://www.dw.com/en/dw-exclusive-zelenskyy-offers-to-meet-putin-at-g20-in-miami/a-79241703?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-12T05:46:00.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Death toll from Philippines ferry fire rises to 35, as officials warn toll will grow",
+          "url": "https://www.theguardian.com/world/2026/sep/12/death-toll-from-philippines-ferry-fire-rises-to-35-as-officials-warn-toll-will-grow",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-12T04:53:10.000Z",
+          "date": "2026-09-12"
         },
         {
           "title": "香港支聯會「煽動顛覆」案：被告們的伴侶與戰友",
@@ -202,94 +290,6 @@
           "source": "BBC 中文",
           "sourceEn": "BBC Chinese",
           "at": "2026-09-11T13:23:08.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "香港支聯會「煽動顛覆」案：李卓人、鄒幸彤、何俊仁判囚5至7年",
-          "url": "https://www.bbc.com/zhongwen/articles/cvgyj1x17vko/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-11T13:22:16.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Uber leaves two key African markets — and their drivers in despair",
-          "url": "https://www.dw.com/en/uber-leaves-two-key-african-markets-and-their-drivers-in-despair/a-79232189?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-11T12:57:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Iran war: Saudi-Houthi escalation intensifies Yemen conflict",
-          "url": "https://www.dw.com/en/iran-war-saudi-houthi-escalation-intensifies-yemen-conflict/a-79226627?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-11T11:52:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "At BRICS Summit, China and India Vie for Influence",
-          "url": "https://www.nytimes.com/2026/09/11/world/asia/china-india-brics-summit.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-11T11:48:03.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Inside an Ancient Lebanese City Engulfed by War",
-          "url": "https://www.nytimes.com/2026/09/11/world/middleeast/tyre-engulfed-war-lebanon.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-11T11:25:47.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Why North Korea's Kim Jong Un doesn't need a US deal",
-          "url": "https://www.dw.com/en/why-north-korea-s-kim-jong-un-doesn-t-need-a-us-deal/a-79227854?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-11T10:40:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "習近平七年來首次訪印前瞻：中印回暖背後的美國陰影與西藏問題",
-          "url": "https://www.bbc.com/zhongwen/articles/cqxvzdx4d10o/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-11T10:06:48.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "The U.S.-Canada trade war is creating a headache for auto-parts makers",
-          "url": "https://www.npr.org/2026/09/11/nx-s1-5961530/canada-trade-war-auto-parts-supply-chain",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-11T09:00:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "911事件25年後 美國機場安檢醞釀「鬆綁」",
-          "url": "https://www.bbc.com/zhongwen/articles/ced75zwgd1lo/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-11T07:40:27.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Why gains by Iran-backed Houthis in Yemen could push gas prices even higher",
-          "url": "https://www.npr.org/2026/09/11/nx-s1-5966379/houthi-gains-gas-prices",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-11T07:32:27.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Hong Kong court sentences 3 Tiananmen vigil organizers to prison",
-          "url": "https://www.npr.org/2026/09/11/g-s1-142832/hong-kong-court-sentences-vigil-organizers",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-11T06:42:04.000Z",
           "date": "2026-09-11"
         }
       ]
@@ -335,11 +335,35 @@
       ],
       "items": [
         {
+          "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+          "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-14T00:00:00.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "v2.1.270",
+          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.270",
+          "source": "Claude Code 发版",
+          "sourceEn": "Claude Code releases",
+          "at": "2026-09-12T19:45:44.000Z",
+          "date": "2026-09-13"
+        },
+        {
           "title": "v2.1.269",
           "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.269",
           "source": "Claude Code 发版",
           "sourceEn": "Claude Code releases",
           "at": "2026-09-11T19:17:55.000Z",
+          "date": "2026-09-12"
+        },
+        {
+          "title": "Cognition helps Devin test its own work with GPT‑6 Astra",
+          "url": "https://openai.com/index/cognition-devin-testing-with-astra",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-11T16:00:00.000Z",
           "date": "2026-09-12"
         },
         {
@@ -423,14 +447,6 @@
           "date": "2026-09-10"
         },
         {
-          "title": "Introducing the Agents API",
-          "url": "https://openai.com/index/introducing-the-agents-api",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
-          "at": "2026-09-10T00:00:00.000Z",
-          "date": "2026-09-10"
-        },
-        {
           "title": "Build more natural voice experiences with GPT‑Live‑1 in the API",
           "url": "https://openai.com/index/introducing-gpt-live-1-in-the-api",
           "source": "OpenAI",
@@ -479,14 +495,6 @@
           "date": "2026-09-09"
         },
         {
-          "title": "The AI policy window is open. We need to act.",
-          "url": "https://openai.com/index/ai-policy-window",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
-          "at": "2026-09-09T13:00:00.000Z",
-          "date": "2026-09-09"
-        },
-        {
           "title": "v2.1.266",
           "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.266",
           "source": "Claude Code 发版",
@@ -517,14 +525,6 @@
           "sourceEn": "DeepMind",
           "at": "2026-09-08T14:00:15.000Z",
           "date": "2026-09-08"
-        },
-        {
-          "title": "v2.1.263",
-          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.263",
-          "source": "Claude Code 发版",
-          "sourceEn": "Claude Code releases",
-          "at": "2026-09-06T02:54:20.000Z",
-          "date": "2026-09-06"
         }
       ]
     }
