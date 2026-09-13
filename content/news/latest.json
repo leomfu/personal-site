@@ -1,6 +1,6 @@
 {
   "note": "由 scripts/fetch-news.mjs 生成，别手改。源清单在 sources.json。",
-  "generatedAt": "2026-09-12T23:40:07.477Z",
+  "generatedAt": "2026-09-13T23:51:18.158Z",
   "boards": [
     {
       "key": "world",
@@ -53,99 +53,211 @@
       ],
       "items": [
         {
-          "title": "Alexander Zverev vs Ben Shelton: US Open men’s singles final – all to know",
-          "url": "https://www.aljazeera.com/sports/2026/9/12/ben-shelton-alexander-zverev-us-open-2026-men-final-singles?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-12T23:25:22.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Elena Rybakina defeats Aryna Sabalenka in US Open women’s singles final",
-          "url": "https://www.aljazeera.com/sports/2026/9/12/elena-rybakina-defeats-aryna-sabalenka-in-us-open-womens-singles-final?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-12T23:14:28.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Arteta seethes at Sunderland penalty decision despite Arsenal win",
-          "url": "https://www.aljazeera.com/sports/2026/9/12/arteta-seethes-at-sunderland-penalty-decision-despite-arsenal-win?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-12T22:51:28.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Trump Says Irish Unification Would Be ‘Fantastic,’ Breaking With Precedent",
-          "url": "https://www.nytimes.com/2026/09/12/world/europe/trump-ireland-unification-remarks.html",
+          "title": "Russian Strikes on Ukraine Hits Near David Petraeus, ex-C.I.A. Chief",
+          "url": "https://www.nytimes.com/2026/09/13/world/europe/ukraine-petraeus-russian-strike.html",
           "source": "纽约时报",
           "sourceEn": "NYT World",
-          "at": "2026-09-12T22:46:12.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-13T23:15:48.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "Tens of thousands march across Germany to protest far-right party AfD",
-          "url": "https://www.aljazeera.com/news/2026/9/12/tens-of-thousands-march-across-germany-to-protest-far-right-party-afd?traffic_source=rss",
+          "title": "Zverev defeats Shelton in four sets to win his first US Open title",
+          "url": "https://www.aljazeera.com/sports/2026/9/13/zverev-beats-shelton-in-four-sets-to-win-us-open-title?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-12T22:37:03.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-13T22:33:34.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "USA edge Spain to book Women’s Basketball World Cup final against France",
-          "url": "https://www.aljazeera.com/sports/2026/9/12/usa-edge-spain-to-book-womens-basketball-world-cup-final-against-france?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-12T22:10:18.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Trump's comments on a united Ireland may have targeted audience across the Atlantic",
-          "url": "https://www.bbc.co.uk/news/articles/cwyzppd1d5lo?at_medium=RSS&at_campaign=rss",
+          "title": "Swedish party blocs tied after Sunday vote, projections say",
+          "url": "https://www.bbc.co.uk/news/articles/c0qx5d79kdeo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-12T21:25:28.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-13T22:27:54.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "Anthropic boss Dario Amodei calls for AI development to slow down",
-          "url": "https://www.bbc.co.uk/news/articles/c14dpgm0rg4o?at_medium=RSS&at_campaign=rss",
+          "title": "Could AI really kill us within a decade?",
+          "url": "https://www.aljazeera.com/video/newsfeed/2026/9/13/ai-apocalypse-warnings-benefit-ai-companies?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-13T22:17:15.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Barcelona beat Levante as Yamal scores twice to maintain perfect start",
+          "url": "https://www.aljazeera.com/sports/2026/9/13/barcelona-beat-levante-as-yamal-scores-twice-to-maintain-perfect-start?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-13T22:10:04.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Jefferson-Wooden, Bednarek complete Ultimate Championship sprint doubles",
+          "url": "https://www.aljazeera.com/sports/2026/9/13/jefferson-wooden-bednarek-complete-ultimate-championship-sprint-doubles?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-13T22:02:10.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Manchester City wrongly awarded Haaland goal by VAR at United: Refs’ body",
+          "url": "https://www.aljazeera.com/sports/2026/9/13/manchester-city-wrongly-awarded-haaland-goal-by-var-at-united-refs-body?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-13T21:58:17.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "World leaders gathered for the annual BRICS summit. Here are the takeaways",
+          "url": "https://www.npr.org/2026/09/13/nx-s1-5967045/world-leaders-gathered-for-the-annual-brics-summit-here-are-the-takeaways",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-13T21:03:15.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Can Gulf states and Iran negotiate the Strait of Hormuz without the U.S.?",
+          "url": "https://www.npr.org/2026/09/13/nx-s1-5966920/what-to-expect-from-talks-between-iran-and-gulf-states-in-oman",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-13T21:03:12.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Meeting Between Iran, Arab States Postponed as Mideast Diplomacy Stalls",
+          "url": "https://www.nytimes.com/2026/09/13/world/middleeast/iran-meeting-gulf-arab-states.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-13T20:58:17.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "King Charles Will Convene A.I. Leaders Amid Calls to Slow Development",
+          "url": "https://www.nytimes.com/2026/09/13/world/europe/king-charles-ai-meeting.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-13T20:23:47.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Russia hits Ukrainian train shortly after Boris Johnson and top European officials leave station",
+          "url": "https://www.bbc.co.uk/news/articles/cy5zg41dkqwo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-12T21:16:47.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-13T19:14:21.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "Fire at nursing home in Chile kills 16 residents",
-          "url": "https://www.bbc.co.uk/news/articles/cy4zpp20w77o?at_medium=RSS&at_campaign=rss",
+          "title": "Trump downplays warnings of AI risks, citing rivalry with China",
+          "url": "https://www.bbc.co.uk/news/articles/c7v48vp31mdo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-12T19:36:50.000Z",
+          "at": "2026-09-13T18:49:37.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Questions mount over what an AI 'slowdown' would look like",
+          "url": "https://www.bbc.co.uk/news/articles/cwyzp47py48o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-13T18:20:22.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "How Iran’s Hard-liners Blew Up the Peace Deal with Trump",
+          "url": "https://www.nytimes.com/2026/09/13/world/middleeast/iran-hard-liners-sabotaged-peace-deal.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-13T14:38:44.000Z",
           "date": "2026-09-13"
         },
         {
-          "title": "Death Toll From Ferry Fire in the Philippines Rises to 76",
-          "url": "https://www.nytimes.com/2026/09/12/world/asia/philippines-ferry-fire-death-toll.html",
+          "title": "Okinawa Set to Elect Conservative Amid Fears About China and Economy",
+          "url": "https://www.nytimes.com/2026/09/13/world/asia/japapn-okinawa-election-governor-conservative-china-economy.html",
           "source": "纽约时报",
           "sourceEn": "NYT World",
-          "at": "2026-09-12T18:52:24.000Z",
+          "at": "2026-09-13T13:42:25.000Z",
           "date": "2026-09-13"
         },
         {
-          "title": "Iran Finds Escalation Is Fruitful Path to Leverage in War With U.S.",
-          "url": "https://www.nytimes.com/2026/09/12/world/middleeast/iran-escalation-leverage-houthis-strait.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-12T18:07:10.000Z",
+          "title": "Six dead, 130 missing after Indonesian ferry capsizes in Java Sea",
+          "url": "https://www.bbc.co.uk/news/articles/cvgykzgljlyo?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-13T13:30:38.000Z",
           "date": "2026-09-13"
         },
         {
-          "title": "Saudi Arabia’s Oil ‘Lifeline’ Was Attacked. Here’s What to Know.",
-          "url": "https://www.nytimes.com/2026/09/12/world/middleeast/saudi-arabia-oil-pipeline-attack.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-12T18:02:40.000Z",
+          "title": "AI巨頭前僱員：同業「真誠恐懼」人類遭滅絕，西方必須與中國協調",
+          "url": "https://www.bbc.com/zhongwen/articles/c0qxpyw20q7o/trad?at_medium=RSS&at_campaign=rss",
+          "source": "BBC 中文",
+          "sourceEn": "BBC Chinese",
+          "at": "2026-09-13T12:25:11.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "At least six dead and 130 missing after Indonesian ferry capsizes, officials say",
+          "url": "https://www.theguardian.com/world/2026/sep/13/indonesian-rescue-crews-searching-for-140-people-after-ferry-hit-bad-weather",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-13T12:18:49.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "Russians on the Goethe-Institut: 'Hostage to politics'",
+          "url": "https://www.dw.com/en/russians-on-the-goethe-institut-hostage-to-politics/a-79218936?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-13T11:50:00.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "習近平七年再訪印度：金磚峰會握手背後，中印關係破冰？",
+          "url": "https://www.bbc.com/zhongwen/articles/cg7knkpjr39o/trad?at_medium=RSS&at_campaign=rss",
+          "source": "BBC 中文",
+          "sourceEn": "BBC Chinese",
+          "at": "2026-09-13T10:56:43.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "Indonesian passenger ship overturns, sparking search for at least 129 missing",
+          "url": "https://www.npr.org/2026/09/13/g-s1-143114/about-130-missing-after-indonesian-passenger-ship-overturns",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-13T10:31:10.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "多熱才算太熱？牛津大學研究警告滾燙飲品可增加患癌風險",
+          "url": "https://www.bbc.com/zhongwen/articles/cjw595dw233o/trad?at_medium=RSS&at_campaign=rss",
+          "source": "BBC 中文",
+          "sourceEn": "BBC Chinese",
+          "at": "2026-09-13T08:19:51.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "A Romani artist in Hungary reclaims his identity",
+          "url": "https://www.dw.com/en/a-romani-artist-in-hungary-reclaims-his-identity/a-79247266?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-13T08:16:00.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "女性比男性更擅長耐力跑嗎？",
+          "url": "https://www.bbc.com/zhongwen/articles/c0m34g3v7zjo/trad?at_medium=RSS&at_campaign=rss",
+          "source": "BBC 中文",
+          "sourceEn": "BBC Chinese",
+          "at": "2026-09-13T02:47:42.000Z",
+          "date": "2026-09-13"
+        },
+        {
+          "title": "One dead and more than 30 missing after ferry sinks off Vanuatu coast in rough seas",
+          "url": "https://www.theguardian.com/world/2026/sep/13/one-dead-and-more-than-30-missing-after-ferry-sinks-off-vanuatu-coast-in-rough-seas",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-13T02:39:50.000Z",
           "date": "2026-09-13"
         },
         {
@@ -154,22 +266,6 @@
           "source": "卫报",
           "sourceEn": "The Guardian",
           "at": "2026-09-12T15:09:05.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "French officials investigate if malicious act caused train derailment",
-          "url": "https://www.bbc.co.uk/news/articles/c33kp533nn6o?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-12T15:05:53.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "In Doonbeg, Trump’s Irish Open Visit Prompts Protests and Praise",
-          "url": "https://www.nytimes.com/2026/09/12/world/europe/trump-irish-open-ireland-doonbeg.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-12T14:33:39.000Z",
           "date": "2026-09-12"
         },
         {
@@ -195,102 +291,6 @@
           "sourceEn": "The Guardian",
           "at": "2026-09-12T12:39:12.000Z",
           "date": "2026-09-12"
-        },
-        {
-          "title": "'BRICS' forum brings together emerging economies, aimed at countering western dominance",
-          "url": "https://www.npr.org/2026/09/12/nx-s1-5965777/brics-forum-brings-together-emerging-economies-aimed-at-countering-western-dominance",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-12T12:30:55.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Saudi Arabia forced to shut down crucial Red Sea pipeline after attacks",
-          "url": "https://www.npr.org/2026/09/12/nx-s1-5964940/saudi-arabia-forced-to-shut-down-crucial-red-sea-pipeline-after-attacks",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-12T12:19:22.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Saudi Arabia shuts key oil pipeline after drone attack launched from Iraq",
-          "url": "https://www.bbc.co.uk/news/articles/c62m933465eo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-12T12:15:50.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Trump visits Ireland, says unification would be 'fantastic'",
-          "url": "https://www.dw.com/en/trump-visits-ireland-says-unification-would-be-fantastic/a-79244685?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-12T11:55:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "The secret quest to preserve Palestinian writer Raja Shehadeh's diaries",
-          "url": "https://www.npr.org/2026/09/12/g-s1-142760/palestinian-writer-archive-scotland-israel-shehadeh",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-12T10:00:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Corals as climate archive: Are El Ninos intensifying?",
-          "url": "https://www.dw.com/en/corals-as-climate-archive-are-el-ninos-intensifying/a-79243425?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-12T08:53:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Uber leaves two key African markets — and their drivers in despair",
-          "url": "https://www.dw.com/en/uber-leaves-two-key-african-markets-and-their-drivers-in-despair/a-79232189?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-12T07:56:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "BRICS leaders meet in India as wars and US tensions test the bloc",
-          "url": "https://www.npr.org/2026/09/12/g-s1-143054/brics-leaders-meet-in-india",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-12T07:18:55.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Russia's drone war comes to Moldova and Romania",
-          "url": "https://www.dw.com/en/russia-s-drone-war-comes-to-moldova-and-romania/a-79239591?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-12T06:27:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "DW exclusive: Zelenskyy offers to meet Putin at G20 in Miami",
-          "url": "https://www.dw.com/en/dw-exclusive-zelenskyy-offers-to-meet-putin-at-g20-in-miami/a-79241703?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-12T05:46:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Death toll from Philippines ferry fire rises to 35, as officials warn toll will grow",
-          "url": "https://www.theguardian.com/world/2026/sep/12/death-toll-from-philippines-ferry-fire-rises-to-35-as-officials-warn-toll-will-grow",
-          "source": "卫报",
-          "sourceEn": "The Guardian",
-          "at": "2026-09-12T04:53:10.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "香港支聯會「煽動顛覆」案：被告們的伴侶與戰友",
-          "url": "https://www.bbc.com/zhongwen/articles/cq63868gq5qo/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-11T13:23:08.000Z",
-          "date": "2026-09-11"
         }
       ]
     },
