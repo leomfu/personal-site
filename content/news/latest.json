@@ -1,6 +1,6 @@
 {
   "note": "由 scripts/fetch-news.mjs 生成，别手改。源清单在 sources.json。",
-  "generatedAt": "2026-09-13T23:51:18.158Z",
+  "generatedAt": "2026-09-15T00:11:43.287Z",
   "boards": [
     {
       "key": "world",
@@ -53,91 +53,171 @@
       ],
       "items": [
         {
-          "title": "Russian Strikes on Ukraine Hits Near David Petraeus, ex-C.I.A. Chief",
-          "url": "https://www.nytimes.com/2026/09/13/world/europe/ukraine-petraeus-russian-strike.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-13T23:15:48.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "Zverev defeats Shelton in four sets to win his first US Open title",
-          "url": "https://www.aljazeera.com/sports/2026/9/13/zverev-beats-shelton-in-four-sets-to-win-us-open-title?traffic_source=rss",
+          "title": "Iran war live: CENTCOM refutes Iran claim supertanker hit Hormuz mines",
+          "url": "https://www.aljazeera.com/news/liveblog/2026/9/15/iran-war-live-centcom-refutes-iran-claim-supertanker-hit-hormuz-mines?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-13T22:33:34.000Z",
+          "at": "2026-09-15T00:00:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "AI-linked stocks slide after tech bosses call for slowdown in ‘reckless’ development",
+          "url": "https://www.theguardian.com/business/2026/sep/14/ai-linked-stocks-fall-tech-bosses-call-slowdown-anthropic-openai",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-14T22:10:52.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Landowners in Texas ask court to stop Trump border wall",
+          "url": "https://www.aljazeera.com/news/2026/9/14/landowners-in-texas-ask-court-to-stop-trump-border-wall?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-14T21:44:03.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Israeli attack targets Gaza displacement camp",
+          "url": "https://www.aljazeera.com/video/newsfeed/2026/9/14/israeli-attack-targets-gaza-displacement-camp?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-14T21:37:04.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "US repeals rules limiting greenhouse gas emissions by power plants",
+          "url": "https://www.aljazeera.com/news/2026/9/14/us-repeals-rules-limiting-greenhouse-gas-emissions-by-power-plants?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-14T21:36:09.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Macklemore cut from Ed Sheeran tour for pro-Palestine stance",
+          "url": "https://www.aljazeera.com/video/newsfeed/2026/9/14/macklemore-cut-from-ed-sheeran-tour-for-pro-palestine-stance?traffic_source=rss",
+          "source": "半岛电视台",
+          "sourceEn": "Al Jazeera",
+          "at": "2026-09-14T21:29:50.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Israel is 'dismantling Palestinian life' says Israeli human rights group",
+          "url": "https://www.npr.org/2026/09/14/nx-s1-5964897/israel-is-systematically-dismantling-palestinian-life-says-human-rights-group",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-14T20:34:20.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Arctic power plays: EU searches for a new strategy",
+          "url": "https://www.dw.com/en/arctic-power-plays-eu-searches-for-a-new-strategy/a-79266739?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-14T19:28:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Saudi Leader Meets U.S. Commander as Houthi Attacks Threaten Oil Markets",
+          "url": "https://www.nytimes.com/2026/09/14/world/middleeast/saudi-leader-meets-centcom.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-14T19:24:07.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Ukraine, Russia set for new round of US-mediated talks",
+          "url": "https://www.dw.com/en/ukraine-russia-set-for-new-round-of-us-mediated-talks/a-79261147?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-14T18:46:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "‘NAZA,’ Israeli Film About Killings in Gaza, Faces Backlash",
+          "url": "https://www.nytimes.com/2026/09/14/world/middleeast/israel-naza-documentary-backlash.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-14T18:07:07.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Trump seeks halt to energy attacks by both Russia, Ukraine",
+          "url": "https://www.dw.com/en/trump-seeks-halt-to-energy-attacks-by-both-russia-ukraine/a-79265774?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-14T17:59:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "China’s Top Spy Chief Warns A.I. Is a Threat to Party Rule",
+          "url": "https://www.nytimes.com/2026/09/14/world/asia/china-ai-security-risks-anthropic.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-14T17:38:15.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "‘A coin flip’: on the campaign trail as Brazil’s far right edges back to power",
+          "url": "https://www.theguardian.com/world/2026/sep/14/brazil-bolsonaro-far-right-minas-gerais",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-14T17:04:05.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Russian Strike on Train Station Near Ukraine-Poland Border Seen as Warning to Kyiv’s Allies",
+          "url": "https://www.nytimes.com/2026/09/14/world/europe/ukraine-railway-strike-europe.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-14T16:34:19.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "The New Moscow: A Digital Utopia Doubling as a Surveillance Trap",
+          "url": "https://www.nytimes.com/2026/09/14/world/europe/moscow-russia-putin-digital-surveillance.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-14T15:19:44.000Z",
           "date": "2026-09-14"
         },
         {
-          "title": "Swedish party blocs tied after Sunday vote, projections say",
-          "url": "https://www.bbc.co.uk/news/articles/c0qx5d79kdeo?at_medium=RSS&at_campaign=rss",
+          "title": "IPO 'for the people' is out of reach for many in Nigeria",
+          "url": "https://www.dw.com/en/ipo-for-the-people-is-out-of-reach-for-many-in-nigeria/a-79263398?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-14T14:12:00.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Wild dogs record 2,500-mile trek across Zambia in search of a mate",
+          "url": "https://www.bbc.co.uk/news/articles/cy459y5y9yxo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-13T22:27:54.000Z",
+          "at": "2026-09-14T14:08:12.000Z",
           "date": "2026-09-14"
         },
         {
-          "title": "Could AI really kill us within a decade?",
-          "url": "https://www.aljazeera.com/video/newsfeed/2026/9/13/ai-apocalypse-warnings-benefit-ai-companies?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-13T22:17:15.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "Barcelona beat Levante as Yamal scores twice to maintain perfect start",
-          "url": "https://www.aljazeera.com/sports/2026/9/13/barcelona-beat-levante-as-yamal-scores-twice-to-maintain-perfect-start?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-13T22:10:04.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "Jefferson-Wooden, Bednarek complete Ultimate Championship sprint doubles",
-          "url": "https://www.aljazeera.com/sports/2026/9/13/jefferson-wooden-bednarek-complete-ultimate-championship-sprint-doubles?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-13T22:02:10.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "Manchester City wrongly awarded Haaland goal by VAR at United: Refs’ body",
-          "url": "https://www.aljazeera.com/sports/2026/9/13/manchester-city-wrongly-awarded-haaland-goal-by-var-at-united-refs-body?traffic_source=rss",
-          "source": "半岛电视台",
-          "sourceEn": "Al Jazeera",
-          "at": "2026-09-13T21:58:17.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "World leaders gathered for the annual BRICS summit. Here are the takeaways",
-          "url": "https://www.npr.org/2026/09/13/nx-s1-5967045/world-leaders-gathered-for-the-annual-brics-summit-here-are-the-takeaways",
+          "title": "The producer of Fleabag and Baby Reindeer's tip for finding a hit? Don't look for one",
+          "url": "https://www.npr.org/2026/09/14/nx-s1-5968566/francesca-moody-fleabag-producer-hits-edinburgh",
           "source": "NPR",
           "sourceEn": "NPR",
-          "at": "2026-09-13T21:03:15.000Z",
+          "at": "2026-09-14T14:03:14.000Z",
           "date": "2026-09-14"
         },
         {
-          "title": "Can Gulf states and Iran negotiate the Strait of Hormuz without the U.S.?",
-          "url": "https://www.npr.org/2026/09/13/nx-s1-5966920/what-to-expect-from-talks-between-iran-and-gulf-states-in-oman",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-13T21:03:12.000Z",
+          "title": "The London hospital funded by donors who invested in the slave trade",
+          "url": "https://www.theguardian.com/uk-news/ng-interactive/2026/sep/14/london-hospital-st-barts-funded-donors-invested-slave-trade",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-14T13:00:58.000Z",
           "date": "2026-09-14"
         },
         {
-          "title": "Meeting Between Iran, Arab States Postponed as Mideast Diplomacy Stalls",
-          "url": "https://www.nytimes.com/2026/09/13/world/middleeast/iran-meeting-gulf-arab-states.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-13T20:58:17.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "King Charles Will Convene A.I. Leaders Amid Calls to Slow Development",
-          "url": "https://www.nytimes.com/2026/09/13/world/europe/king-charles-ai-meeting.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-13T20:23:47.000Z",
+          "title": "Africa’s richest man aiming to make $23bn from continent’s biggest-ever IPO",
+          "url": "https://www.theguardian.com/world/2026/sep/14/aliko-dangote-nigeria-africa-richest-man-ipo",
+          "source": "卫报",
+          "sourceEn": "The Guardian",
+          "at": "2026-09-14T12:38:51.000Z",
           "date": "2026-09-14"
         },
         {
@@ -145,152 +225,72 @@
           "url": "https://www.bbc.co.uk/news/articles/cy5zg41dkqwo?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-13T19:14:21.000Z",
+          "at": "2026-09-14T12:18:13.000Z",
           "date": "2026-09-14"
         },
         {
-          "title": "Trump downplays warnings of AI risks, citing rivalry with China",
-          "url": "https://www.bbc.co.uk/news/articles/c7v48vp31mdo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-13T18:49:37.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "Questions mount over what an AI 'slowdown' would look like",
-          "url": "https://www.bbc.co.uk/news/articles/cwyzp47py48o?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-13T18:20:22.000Z",
-          "date": "2026-09-14"
-        },
-        {
-          "title": "How Iran’s Hard-liners Blew Up the Peace Deal with Trump",
-          "url": "https://www.nytimes.com/2026/09/13/world/middleeast/iran-hard-liners-sabotaged-peace-deal.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-13T14:38:44.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Okinawa Set to Elect Conservative Amid Fears About China and Economy",
-          "url": "https://www.nytimes.com/2026/09/13/world/asia/japapn-okinawa-election-governor-conservative-china-economy.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-13T13:42:25.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Six dead, 130 missing after Indonesian ferry capsizes in Java Sea",
-          "url": "https://www.bbc.co.uk/news/articles/cvgykzgljlyo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-13T13:30:38.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "AI巨頭前僱員：同業「真誠恐懼」人類遭滅絕，西方必須與中國協調",
-          "url": "https://www.bbc.com/zhongwen/articles/c0qxpyw20q7o/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-13T12:25:11.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "At least six dead and 130 missing after Indonesian ferry capsizes, officials say",
-          "url": "https://www.theguardian.com/world/2026/sep/13/indonesian-rescue-crews-searching-for-140-people-after-ferry-hit-bad-weather",
-          "source": "卫报",
-          "sourceEn": "The Guardian",
-          "at": "2026-09-13T12:18:49.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Russians on the Goethe-Institut: 'Hostage to politics'",
-          "url": "https://www.dw.com/en/russians-on-the-goethe-institut-hostage-to-politics/a-79218936?maca=en-rss-en-world-4025-rdf",
+          "title": "Nepal: thousands still missing as flood recovery begins",
+          "url": "https://www.dw.com/en/nepal-thousands-still-missing-as-flood-recovery-begins/a-79259980?maca=en-rss-en-world-4025-rdf",
           "source": "德国之声",
           "sourceEn": "DW",
-          "at": "2026-09-13T11:50:00.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-14T12:18:00.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "習近平七年再訪印度：金磚峰會握手背後，中印關係破冰？",
-          "url": "https://www.bbc.com/zhongwen/articles/cg7knkpjr39o/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-13T10:56:43.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Indonesian passenger ship overturns, sparking search for at least 129 missing",
-          "url": "https://www.npr.org/2026/09/13/g-s1-143114/about-130-missing-after-indonesian-passenger-ship-overturns",
+          "title": "Key leaders sound the alarm on AI. And, Iran-Gulf diplomacy hits a setback",
+          "url": "https://www.npr.org/2026/09/14/g-s1-143148/up-first-newsletter-ai-anthropic-openai-midterms-trump-oman-iran-talks",
           "source": "NPR",
           "sourceEn": "NPR",
-          "at": "2026-09-13T10:31:10.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-14T11:39:06.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "多熱才算太熱？牛津大學研究警告滾燙飲品可增加患癌風險",
-          "url": "https://www.bbc.com/zhongwen/articles/cjw595dw233o/trad?at_medium=RSS&at_campaign=rss",
+          "title": "China criticises idea it is in 'malicious competition' over AI",
+          "url": "https://www.bbc.co.uk/news/articles/cn8me133119o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-14T11:31:39.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Thousands demand end to violence in Mexican cartel hotspot",
+          "url": "https://www.bbc.co.uk/news/articles/cde06rxw5g6o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-14T11:28:36.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "俄烏戰場為何或會迎來新一批朝鮮軍人",
+          "url": "https://www.bbc.com/zhongwen/articles/cr7dl0n178do/trad?at_medium=RSS&at_campaign=rss",
           "source": "BBC 中文",
           "sourceEn": "BBC Chinese",
-          "at": "2026-09-13T08:19:51.000Z",
-          "date": "2026-09-13"
+          "at": "2026-09-14T11:25:51.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "A Romani artist in Hungary reclaims his identity",
-          "url": "https://www.dw.com/en/a-romani-artist-in-hungary-reclaims-his-identity/a-79247266?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-13T08:16:00.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "女性比男性更擅長耐力跑嗎？",
-          "url": "https://www.bbc.com/zhongwen/articles/c0m34g3v7zjo/trad?at_medium=RSS&at_campaign=rss",
-          "source": "BBC 中文",
-          "sourceEn": "BBC Chinese",
-          "at": "2026-09-13T02:47:42.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "One dead and more than 30 missing after ferry sinks off Vanuatu coast in rough seas",
-          "url": "https://www.theguardian.com/world/2026/sep/13/one-dead-and-more-than-30-missing-after-ferry-sinks-off-vanuatu-coast-in-rough-seas",
-          "source": "卫报",
-          "sourceEn": "The Guardian",
-          "at": "2026-09-13T02:39:50.000Z",
-          "date": "2026-09-13"
-        },
-        {
-          "title": "Burial of King Oyo takes place in Uganda as news anchor prepares for throne",
-          "url": "https://www.theguardian.com/world/2026/sep/12/burial-king-oyo-uganda",
-          "source": "卫报",
-          "sourceEn": "The Guardian",
-          "at": "2026-09-12T15:09:05.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "Six Nigerians extradited to US over $6m online romance scam",
-          "url": "https://www.theguardian.com/us-news/2026/sep/12/nigerians-extradited-online-romance-scams",
-          "source": "卫报",
-          "sourceEn": "The Guardian",
-          "at": "2026-09-12T14:05:45.000Z",
-          "date": "2026-09-12"
-        },
-        {
-          "title": "'People are still afraid of those three letters': Fighting the stigma of HIV",
-          "url": "https://www.npr.org/2026/09/12/g-s1-142404/hiv-aids-brazil-stigma",
+          "title": "Beijing hits back at Anthropic CEO's call to curb China's AI development",
+          "url": "https://www.npr.org/2026/09/14/nx-s1-5968456/china-hits-back-ai-development",
           "source": "NPR",
           "sourceEn": "NPR",
-          "at": "2026-09-12T13:03:20.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-14T10:09:08.000Z",
+          "date": "2026-09-14"
         },
         {
-          "title": "Xi Jinping gets red carpet at Brics summit amid thaw in India-China relations",
-          "url": "https://www.theguardian.com/world/2026/sep/12/xi-jinping-brics-summit-delhi-india-china-relations",
+          "title": "「贏了就是贏了」？Hyrox北京賽選手失禁奪冠為何引發爭議",
+          "url": "https://www.bbc.com/zhongwen/articles/c74e1wv1xkzo/trad?at_medium=RSS&at_campaign=rss",
+          "source": "BBC 中文",
+          "sourceEn": "BBC Chinese",
+          "at": "2026-09-14T09:03:04.000Z",
+          "date": "2026-09-14"
+        },
+        {
+          "title": "Indonesian police investigate deaths of Australian man and two children in Bali as suspected murder-suicide",
+          "url": "https://www.theguardian.com/world/2026/sep/14/indonesian-police-deaths-of-australian-man-and-two-children-ntwnfb",
           "source": "卫报",
           "sourceEn": "The Guardian",
-          "at": "2026-09-12T12:39:12.000Z",
-          "date": "2026-09-12"
+          "at": "2026-09-14T08:44:44.000Z",
+          "date": "2026-09-14"
         }
       ]
     },
@@ -335,6 +335,46 @@
       ],
       "items": [
         {
+          "title": "v2.1.271",
+          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.271",
+          "source": "Claude Code 发版",
+          "sourceEn": "Claude Code releases",
+          "at": "2026-09-14T22:12:54.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Degraded functionality for Claude Cowork on Windows",
+          "url": "https://status.claude.com/incidents/r1pqn1kb4hvk",
+          "source": "Claude 状态",
+          "sourceEn": "Claude status",
+          "at": "2026-09-14T19:14:45.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "Watch astronaut Christina Koch and Google’s James Manyika discuss space, technology, and discovery.",
+          "url": "https://blog.google/innovation-and-ai/technology/ai/dialogues-christina-koch/",
+          "source": "Google AI",
+          "sourceEn": "Google AI",
+          "at": "2026-09-14T19:00:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "DevFest is back",
+          "url": "https://blog.google/innovation-and-ai/technology/developers-tools/devfest2026/",
+          "source": "Google AI",
+          "sourceEn": "Google AI",
+          "at": "2026-09-14T16:00:00.000Z",
+          "date": "2026-09-15"
+        },
+        {
+          "title": "How Fyxer built an AI executive assistant people trust",
+          "url": "https://openai.com/index/fyxer",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-14T12:00:00.000Z",
+          "date": "2026-09-14"
+        },
+        {
           "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
           "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
           "source": "OpenAI",
@@ -372,14 +412,6 @@
           "source": "Claude 状态",
           "sourceEn": "Claude status",
           "at": "2026-09-11T14:37:11.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Degraded functionality for Claude Cowork on Windows",
-          "url": "https://status.claude.com/incidents/r1pqn1kb4hvk",
-          "source": "Claude 状态",
-          "sourceEn": "Claude status",
-          "at": "2026-09-11T14:19:51.000Z",
           "date": "2026-09-11"
         },
         {
@@ -447,10 +479,10 @@
           "date": "2026-09-10"
         },
         {
-          "title": "Build more natural voice experiences with GPT‑Live‑1 in the API",
-          "url": "https://openai.com/index/introducing-gpt-live-1-in-the-api",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
+          "title": "Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL",
+          "url": "https://huggingface.co/blog/asyncgrpo-lora-hfjobs",
+          "source": "Hugging Face",
+          "sourceEn": "Hugging Face",
           "at": "2026-09-10T00:00:00.000Z",
           "date": "2026-09-10"
         },
@@ -493,38 +525,6 @@
           "sourceEn": "Hugging Face",
           "at": "2026-09-09T15:36:24.000Z",
           "date": "2026-09-09"
-        },
-        {
-          "title": "v2.1.266",
-          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.266",
-          "source": "Claude Code 发版",
-          "sourceEn": "Claude Code releases",
-          "at": "2026-09-08T23:55:14.000Z",
-          "date": "2026-09-09"
-        },
-        {
-          "title": "v2.1.265",
-          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.265",
-          "source": "Claude Code 发版",
-          "sourceEn": "Claude Code releases",
-          "at": "2026-09-08T20:37:31.000Z",
-          "date": "2026-09-09"
-        },
-        {
-          "title": "Safety for Whom? Refusing the Right Subset of a Topic, Not the Whole Topic",
-          "url": "https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom",
-          "source": "Hugging Face",
-          "sourceEn": "Hugging Face",
-          "at": "2026-09-08T14:23:07.000Z",
-          "date": "2026-09-08"
-        },
-        {
-          "title": "AlphaGenome Atlas: A predictive map of every possible DNA letter change in the human genome",
-          "url": "https://deepmind.google/blog/alphagenome-atlas-a-predictive-map-of-every-possible-dna-letter-change-in-the-human-genome/",
-          "source": "DeepMind",
-          "sourceEn": "DeepMind",
-          "at": "2026-09-08T14:00:15.000Z",
-          "date": "2026-09-08"
         }
       ]
     }
