@@ -54,7 +54,7 @@
 - `npm run build` — 生产构建（每次完工必须跑）
 - 图片不再有构建脚本（2026-09-17 改版下线了 `npm run photos` / `npm run hero`）：
   摄影照片手动放进 `public/images/photos/` 再改 `content/photos/*.json`（见 `docs/如何添加照片.md`）；
-  首页拍立得头像是 `public/images/hero/poster.png`。洗白（washed）效果在 CSS 层做，不要重新导出图片。
+  首页拍立得头像是 `public/images/hero/poster.webp`（800×1067）。洗白（washed）效果在 CSS 层做，不要重新导出图片。
 
 <!-- BEGIN:nextjs-agent-rules -->
 

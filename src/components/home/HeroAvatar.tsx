@@ -66,7 +66,7 @@ export function HeroAvatar({ alt, caption }: { alt: string; caption: string }) {
             style={{ transition: "transform .4s cubic-bezier(.2,.8,.3,1)" }}
           >
             <Image
-              src="/images/hero/poster.png"
+              src="/images/hero/poster.webp"
               alt={alt}
               fill
               sizes="310px"
