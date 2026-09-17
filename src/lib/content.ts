@@ -7,7 +7,6 @@ import type {
   Post,
   PostType,
   Project,
-  RecordItem,
   Tool,
   Track,
   Video,
@@ -135,8 +134,6 @@ export function getPosts(): Post[] {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export const getPost = (slug: string) => getPosts().find((p) => p.slug === slug);
-
 /**
  * 站内曲库，两块：
  * ① 常驻 —— 自托管的公共领域录音，版权干净，完整播放。
@@ -219,13 +216,4 @@ export function getMusic(): MusicLibrary {
     residentCredit: resident.credit,
     residentCreditEn: resident.creditEn,
   };
-}
-
-/**
- * 唱片页「我听的」那面墙。
- * ⚠️ 2026-08-30 起页面不再渲染这块（新的场景榜单覆盖了它），
- * 数据和脚本保留不删，这个函数也留着方便回退。
- */
-export function getRecords(): RecordItem[] {
-  return readJson<{ items: RecordItem[] }>("music/records.json", { items: [] }).items;
 }

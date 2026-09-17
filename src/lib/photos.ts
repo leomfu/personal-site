@@ -33,5 +33,3 @@ export function getAlbums(): Album[] {
         b.year.localeCompare(a.year),
     );
 }
-
-export const getAlbum = (slug: string) => getAlbums().find((a) => a.slug === slug);

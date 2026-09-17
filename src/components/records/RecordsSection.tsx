@@ -11,9 +11,6 @@ import { getMusic } from "@/lib/content";
  * ② 「按心情听」榜单：content/music/chart.json 的 4 个心情场景，整行可点 = 装到
  *    唱机上播放（见 components/records/Chart）。
  *
- * 2026-08-31 撤掉的那面「我听的」专辑墙（RecordShelf + getRecords()）仍然没删，
- * 只是不渲染；想恢复随时能接回来。
- *
  * 曲库和播放状态都在 app/[locale]/layout.tsx 的 PlayerProvider 上，
  * 这一栏只决定「有没有曲库，要不要摆这台唱机和这份榜单」。
  */

@@ -24,16 +24,6 @@ export function longDate(date: string, locale: string) {
     : `${y} 年 ${Number(m)} 月 ${Number(d)} 日`;
 }
 
-/** 「现在是」旁边那行月份：2026 年 8 月 / August 2026 */
-export function monthLabel(date: string, locale: string) {
-  const [y, m] = date.split("-");
-  if (!y || !m) return date;
-  return locale === "en" ? `${MONTHS_LONG[Number(m) - 1]} ${y}` : `${y} 年 ${Number(m)} 月`;
-}
-
-/** 列表里的年份分隔行用 */
-export const yearOf = (date: string) => date.slice(0, 4);
-
 /** 阅读时长：中文按 350 字/分钟，英文按 200 词/分钟，两者相加后向上取整 */
 export function readingMinutes(source: string) {
   const cjk = (source.match(/[一-鿿㐀-䶿]/g) ?? []).length;

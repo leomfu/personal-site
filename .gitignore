@@ -44,7 +44,7 @@ next-env.d.ts
 docs/design/__pycache__/
 
 # 2026-09-17 改版参考稿：26 MB 的单文件（字体和图片全内嵌），进 git 就再也拿不出来。
-# 原件在设计交付包 design_handoff_weiliang_redesign/reference/ 里，本机放一份就够。
+# 本机只有这一份（设计交付包已于 2026-09-17 落地后从本机删除，丢了找交付包原件）。
 # 看它就用浏览器直接打开 docs/design/weiliang-redesign-reference.html。
 docs/design/weiliang-redesign-reference.html
 
@@ -52,5 +52,6 @@ docs/design/weiliang-redesign-reference.html
 # 是生成物不是源码，站上也没用到，别再提交进来（2026-09-11 清掉过一次，1.4 MB）
 scratch-archify/
 
-# 设计交付包原件（含 26 MB 参考稿和 assets 原图）。规格/token/文案已拷进 docs/design/，图片拷进 public/ 后才进仓库
+# 设计交付包原件（含 26 MB 参考稿和 assets 原图）。规格/token/文案已拷进 docs/design/、图片已拷进 public/，
+# 包本身已从本机删除；规则留着，防止以后再把包解压到仓库根目录时误提交
 /design_handoff_weiliang_redesign/
