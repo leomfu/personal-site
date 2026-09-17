@@ -50,7 +50,6 @@
     "about": "About",
     "tools": "Tools",
     "contact": "Contact",
-    "connect": "连接 / CONNECT",
     "menu": "Open menu",
     "close": "Close menu",
     "toHome": "Back to the home page",
@@ -196,7 +195,7 @@
     "chart": {
       "title": "Listen by Mood",
       "note": "Click a row to load it onto the turntable",
-      "playRow": "Play",
+      "playRow": "Play: {title} · {artist}",
       "openPlatform": "Open in Apple Music ↗"
     }
   },

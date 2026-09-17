@@ -84,7 +84,7 @@ function SceneGroup({
                 onClick={() => player.playAt(scene.key, i)}
                 disabled={dead}
                 aria-pressed={isCurrent}
-                aria-label={`${t("chart.playRow")}：${title} · ${artist}`}
+                aria-label={t("chart.playRow", { title, artist })}
                 className={[
                   "flex min-w-0 flex-1 items-center gap-3 text-left",
                   dead ? "cursor-not-allowed" : "",

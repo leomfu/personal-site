@@ -50,7 +50,6 @@
     "about": "关于",
     "tools": "工具",
     "contact": "联系",
-    "connect": "连接 / CONNECT",
     "menu": "打开菜单",
     "close": "关闭菜单",
     "toHome": "回到首页",
@@ -196,7 +195,7 @@
     "chart": {
       "title": "按心情听",
       "note": "点一行，装到唱机上试听",
-      "playRow": "播放",
+      "playRow": "播放：{title} · {artist}",
       "openPlatform": "在 Apple Music 打开 ↗"
     }
   },
