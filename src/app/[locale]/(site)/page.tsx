@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -35,7 +36,9 @@ export async function generateMetadata({
  *
  *   Hero      左文右图。左：橙标签 → 眉题 → 手写大标题三行（第三行主色）→ 62×3 主色短横
  *             → 引导语（content/home/intro.zh.md）→ 两个按钮；右：拍立得头像卡（带鼠标视差）
- *   在做的     三张玻璃卡（projects.json 里 featured 的），右上角 92px 手写序号
+ *   在做的     三张玻璃卡（projects.json 里 featured 的），右上角 92px 手写序号；
+ *             有线上地址（link）的整张卡直接去那个站（新标签页），卡底放主色小按钮「访问网站 ↗」，
+ *             没有 link 的整张卡去 /projects。卡本身就是 <a>，里面的「按钮」只是 span，不要再套 a。
  *   最近写的 / 最近拍的   左边四行日期+标题，右边一张 16:9 的视频卡
  *   爱好       两条胶囊行（摄影 / 唱片 —— 唱片是音乐页唯一的入口）
  *
@@ -50,6 +53,7 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
+  const tProjects = await getTranslations("projects");
 
   const intro = getHomeIntro(locale).body;
   const featured = getProjects().filter((p) => p.featured).slice(0, 3);
@@ -113,8 +117,9 @@ export default async function HomePage({
             const stack = project.featuredStack ?? project.stack ?? [];
             return (
               <Reveal key={project.slug} index={i} className="h-full">
-                <Link
-                  href={localePath(locale, "/projects")}
+                <CardLink
+                  href={project.link || localePath(locale, "/projects")}
+                  external={Boolean(project.link)}
                   className="glass relative flex h-full flex-col gap-3 overflow-hidden p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-[6px] hover:shadow-lg"
                 >
                   {/* 手写序号：淡到 .5 的一层，蓝橙交替 */}
@@ -130,7 +135,7 @@ export default async function HomePage({
                   {project.status && (
                     <span
                       className={`relative w-fit rounded-full px-[14px] py-[5px] text-[12px] ${
-                        warm ? "glass-tag-2" : "glass-tag"
+                        warm && !project.link ? "glass-tag-2" : "glass-tag"
                       }`}
                     >
                       {localized(locale, project.status, project.status_en)}
@@ -149,19 +154,28 @@ export default async function HomePage({
                     )}
                   </p>
 
-                  {stack.length > 0 && (
-                    <span className="relative mt-auto flex flex-wrap gap-1.5">
-                      {stack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="glass-tag-neutral rounded-full px-[14px] py-[5px] text-[12px]"
-                        >
-                          {tech}
+                  {(stack.length > 0 || project.link) && (
+                    <span className="relative mt-auto flex flex-col items-start gap-3">
+                      {stack.length > 0 && (
+                        <span className="flex flex-wrap gap-1.5">
+                          {stack.map((tech) => (
+                            <span
+                              key={tech}
+                              className="glass-tag-neutral rounded-full px-[14px] py-[5px] text-[12px]"
+                            >
+                              {tech}
+                            </span>
+                          ))}
                         </span>
-                      ))}
+                      )}
+                      {project.link && (
+                        <span className="btn-primary-glow inline-flex items-center rounded-full bg-accent-600 px-5 py-2 text-[13px] text-bg">
+                          {tProjects("visit")}
+                        </span>
+                      )}
                     </span>
                   )}
-                </Link>
+                </CardLink>
               </Reveal>
             );
           })}
@@ -243,5 +257,31 @@ export default async function HomePage({
         </Reveal>
       </section>
     </>
+  );
+}
+
+/** 首页「在做的」卡片外壳：站内走 next/link，外部站点走新标签页的普通 <a>。 */
+function CardLink({
+  href,
+  external,
+  className,
+  children,
+}: {
+  href: string;
+  external: boolean;
+  className: string;
+  children: ReactNode;
+}) {
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer noopener" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
   );
 }

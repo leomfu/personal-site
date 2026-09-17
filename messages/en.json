@@ -98,7 +98,8 @@
     "title": "Projects",
     "lead": "Things I've made, listed one by one. Where there's a live address, click the title to go there.",
     "repo": "Source ↗",
-    "noLink": "No public link yet"
+    "noLink": "No public link yet",
+    "visit": "Visit site ↗"
   },
   "blog": {
     "tag": "WRITING",

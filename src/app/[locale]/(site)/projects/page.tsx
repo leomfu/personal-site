@@ -47,6 +47,7 @@ export default async function ProjectsPage({
               locale={locale}
               repoLabel={t("repo")}
               noLinkLabel={t("noLink")}
+              visitLabel={t("visit")}
             />
           </Reveal>
         ))}

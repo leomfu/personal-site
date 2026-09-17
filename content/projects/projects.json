@@ -1,5 +1,22 @@
 [
   {
+    "slug": "learn-wuwu",
+    "name": "learn·wuwu 英语学习站",
+    "name_en": "learn·wuwu English Learning Site",
+    "status": "在线",
+    "status_en": "Live",
+    "year": "2026",
+    "desc": "我做的英语学习站：分阶段学单词、音标、课程与影视跟读，AI 陪你逐句练。单词卡配间隔复习，影视短片按 CEFR 分级挑，还能在 3D 地球上「环游世界说英语」。",
+    "desc_en": "An English learning site I built: learn words, phonetics, courses and shadowing with film clips in stages, with AI helping you practise sentence by sentence. Word cards come with spaced repetition, video clips are picked by CEFR level, and you can even \"travel the world speaking English\" on a 3D globe.",
+    "stack": ["Next.js", "Tailwind CSS", "AI"],
+    "link": "https://learn-wuwu.vercel.app/",
+    "repo": "",
+    "featured": true,
+    "summary": "分阶段学单词、音标、课程与影视跟读，AI 陪你逐句练。已经上线，点开就能用。",
+    "summary_en": "Learn words, phonetics, courses and shadowing with film clips in stages, with AI helping you practise sentence by sentence. It's live — open it and start.",
+    "featuredStack": ["Next.js", "AI"]
+  },
+  {
     "slug": "ai-knowledge-base",
     "name": "AI 知识库",
     "name_en": "AI Knowledge Base",
