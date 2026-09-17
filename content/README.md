@@ -10,39 +10,52 @@
 ```yaml
 ---
 title: 中文标题
-title_en: English title
 date: 2026-08-24
 type: blog          # blog | essay | thought  →  随笔 | 长文 | 想法
 tags: [设计, 前端]
 lang: zh            # 这篇原文的语言
 summary: 一句话摘要
-summary_en: One-line summary
+minutes: 6          # 可选：列表上的阅读时长，不写就按字数估
 ---
 ```
 
 正文插图放 `public/images/posts/`，引用 `/images/posts/xxx.png`。
-图片默认去色（hover 回一点色）；`![alt](/path "原色")` 的那张保持原色，
+图片默认 washed（去饱和、抬亮，hover 恢复原色）；`![alt](/path "原色")` 的那张保持原色，
 用于截图、摄影作品这类图本身就是内容的图。
 
 ## projects/ —— 项目
 
-`projects.json`，或一个项目一个 `.md`。字段：
-`name, desc, desc_en, link, repo, cover, stack[]`
+`projects.json`，数组顺序就是页面顺序。字段：
+`slug, name, status, year, desc, stack[], link, repo, featured, summary, featuredStack[]`
+（`featured: true` 的会出现在首页「在做的」，`summary` / `featuredStack` 是首页卡片上的短版）
 
-## about/ —— 关于页
+## about/ —— 关于页正文
 
-`about.zh.md` / `about.en.md`，纯正文，无 front-matter 要求。
+`about.zh.md`，纯正文，小标题用 `###`。
 
-## now/ —— 首页「现在是」板块
+## home/ —— 首页 Hero 引导语
 
-`now.zh.md` / `now.en.md`，front-matter 里带 `updated: 2026-08-24`。
+`intro.zh.md`，一段纯文本。
+
+## photos/ —— 摄影
+
+一辑一个 json，文件名即 slug：`{ title, year, order, photos: [{ file, width, height, caption }] }`，
+图片放 `public/images/photos/`。步骤见 `docs/如何添加照片.md`。
 
 ## videos.json —— 视频作品
 
-`[{ platform: "bilibili"|"youtube", id, title, title_en, date, desc, desc_en }]`
+`[{ platform: "bilibili"|"youtube", id, title, date, desc, summary, cover }]`
 
 ## tools.json —— 工具页
 
 `[{ name, desc, desc_en, url, icon, brandColor }]`
-`icon` 对应 `src/components/icons/` 里的图标名；`brandColor` 是 hover 时亮起的品牌色
-（全站唯一允许出现彩色的地方）。
+`icon` 对应 `src/components/icons/` 里的图标名；`brandColor` 是 hover 时亮起的品牌色。
+
+## music/ —— 唱片页
+
+见 `docs/如何加歌.md`。
+
+## 双语
+
+目前 `content/` 只有中文。英文路由直接读中文：markdown 找不到 `.en.md` 就读 `.zh.md`，
+json 里没有 `*_en` / `*En` 字段就显示中文字段。以后补英文，加文件或字段即可，不用改代码。

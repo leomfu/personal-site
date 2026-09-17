@@ -4,102 +4,81 @@ import { useRef, type PointerEvent } from "react";
 import Image from "next/image";
 
 /**
- * 首页右列那张「拱门头像卡」（handoff §6.2.1）。
+ * 首页右列那张「拍立得」头像卡（改版规格 §6.2.1）。
  *
- * 形状：3/4 竖幅，圆角 `120px 120px 28px 28px` —— 上面两角圆成半圆，下面两角只收一点，
- * 所以它读起来是一道拱门而不是一张圆角图。右下偏移 18px 再画一圈同形的橙色描边，
- * 像没对准的第二次套印（和顶栏那枚双色错版 logo 是同一个手势）。
+ * 白色卡纸体（--color-surface，**不是玻璃**：拍立得就是一张实纸），padding `14px 14px 52px`，
+ * 底部那条宽边上居中一行手写图注 `better stronger me`（15px，accent-2-700）。
+ * 卡面圆角 --radius-md、--shadow-lg，整张卡基准倾斜 `rotate(-2.5deg)`。
+ * 内嵌图片 3/4、圆角 radius-md / 2、object-position 50% 28%。
+ * 没有描边圈、没有「come on」胶囊。
  *
- * 鼠标视差四层各走各的量，越靠前的动得越多：
- *   容器   rotateY(dx*11deg) rotateX(-dy*11deg) scale(1.025)
- *   图片   scale(1.09) 再朝**反方向**位移 14px（反向才有「窗外的景在动」的深度）
- *   描边圈 顺着鼠标位移 16px
- *   胶囊   translateY(-7px) rotate(-4deg) scale(1.07)
+ * ⚠️ 这张海报**不走 washed**：它是首页的主角，原色出现。
  *
- * ⚠️ 全程**直接写 DOM style，不进 React state**：pointermove 每帧都在发，
- * 进 state 等于每帧重渲染一次这棵树。
- *
- * 「减少动态效果」下整个视差不挂 —— 卡还在，只是不动。
+ * 鼠标视差（叠在 -2.5deg 基准倾斜上）：
+ *   卡片  perspective(1000px) rotateY(dx*11deg) rotateX(-dy*11deg) rotate(-2.5deg) scale(1.025)
+ *   图片  scale(1.09) 再朝**反方向**位移 14px
+ * 离开时复位到基准倾斜。全程**直接写 DOM style，不进 React state**。
+ * 「减少动态效果」下整个视差不挂 —— 卡还斜着，只是不动。
  */
 
-const EASE = "transform .4s cubic-bezier(.2,.8,.3,1)";
+const BASE = "rotate(-2.5deg)";
 
-export function HeroAvatar({ badge, alt }: { badge: string; alt: string }) {
-  const frameRef = useRef<HTMLDivElement>(null);
+export function HeroAvatar({ alt, caption }: { alt: string; caption: string }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLSpanElement>(null);
-  const badgeRef = useRef<HTMLSpanElement>(null);
-
-  const reduced = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const onMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (reduced()) return;
-    const frame = frameRef.current;
-    if (!frame) return;
-    const rect = frame.getBoundingClientRect();
+    if (event.pointerType !== "mouse") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
     /** −0.5 … +0.5，鼠标离卡中心有多远 */
     const dx = (event.clientX - rect.left) / rect.width - 0.5;
     const dy = (event.clientY - rect.top) / rect.height - 0.5;
 
-    if (cardRef.current)
-      cardRef.current.style.transform = `perspective(900px) rotateY(${dx * 11}deg) rotateX(${-dy * 11}deg) scale(1.025)`;
+    card.style.transform = `perspective(1000px) rotateY(${dx * 11}deg) rotateX(${-dy * 11}deg) ${BASE} scale(1.025)`;
     if (imgRef.current)
       imgRef.current.style.transform = `scale(1.09) translate(${-dx * 14}px, ${-dy * 14}px)`;
-    if (ringRef.current)
-      ringRef.current.style.transform = `translate(${dx * 16}px, ${dy * 16}px)`;
-    if (badgeRef.current)
-      badgeRef.current.style.transform = "translateY(-7px) rotate(-4deg) scale(1.07)";
   };
 
   const onLeave = () => {
-    for (const ref of [cardRef, imgRef, ringRef, badgeRef]) {
-      if (ref.current) ref.current.style.transform = "";
-    }
+    if (cardRef.current) cardRef.current.style.transform = BASE;
+    if (imgRef.current) imgRef.current.style.transform = "none";
   };
 
   return (
-    <div
-      ref={frameRef}
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
-      className="relative mx-auto w-full max-w-[310px] lg:mx-0 lg:ml-auto"
-    >
-      {/* 右下偏移的那圈橙色描边。放在卡下面一层，所以卡抬起来时它露在右下角 */}
-      <span
-        ref={ringRef}
-        aria-hidden
-        className="pointer-events-none absolute inset-0 translate-x-[18px] translate-y-[18px] rounded-[120px_120px_28px_28px] border-2 border-accent-2-400"
-        style={{ transition: EASE }}
-      />
-
+    <div className="flex items-center justify-center">
       <div
         ref={cardRef}
-        className="glass relative overflow-hidden rounded-[120px_120px_28px_28px]"
-        style={{ aspectRatio: "3 / 4", transition: EASE }}
+        onPointerMove={onMove}
+        onPointerLeave={onLeave}
+        className="relative w-full max-w-[310px] rounded-[var(--radius-md)] bg-surface px-[14px] pt-[14px] pb-[52px] shadow-lg will-change-transform"
+        style={{ transform: BASE, transition: "transform .35s cubic-bezier(.2,.8,.3,1)" }}
       >
-        <div ref={imgRef} className="absolute inset-0" style={{ transition: EASE }}>
-          <Image
-            src="/images/hero/road.webp"
-            alt={alt}
-            fill
-            sizes="310px"
-            priority
-            className="object-cover"
-          />
+        <div
+          className="relative w-full overflow-hidden rounded-[calc(var(--radius-md)/2)] bg-neutral-200"
+          style={{ aspectRatio: "3 / 4" }}
+        >
+          <div
+            ref={imgRef}
+            className="absolute inset-0"
+            style={{ transition: "transform .4s cubic-bezier(.2,.8,.3,1)" }}
+          >
+            <Image
+              src="/images/hero/poster.png"
+              alt={alt}
+              fill
+              sizes="310px"
+              priority
+              className="object-cover object-[50%_28%]"
+            />
+          </div>
         </div>
+        <span className="absolute inset-x-0 bottom-4 text-center font-hand text-[15px] text-accent-2-700">
+          {caption}
+        </span>
       </div>
-
-      <span
-        ref={badgeRef}
-        aria-hidden
-        className="absolute -right-2 bottom-5 rounded-full bg-accent-2 px-[15px] py-[7px] font-hand text-[19px] leading-none text-neutral-100 shadow-md"
-        style={{ transition: EASE }}
-      >
-        {badge}
-      </span>
     </div>
   );
 }

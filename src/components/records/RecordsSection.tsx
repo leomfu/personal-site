@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Chart } from "@/components/records/Chart";
 import { Turntable } from "@/components/records/Turntable";
-import { FootNote, PageHeader } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import { getMusic } from "@/lib/content";
 
@@ -26,10 +26,10 @@ export async function RecordsSection({ locale }: { locale: string }) {
 
   return (
     <>
-      <PageHeader tag="RECORDS" title={t("title")} lead={t("lead")} />
+      <PageHeader tag={t("tag")} title={t("title")} lead={t("lead")} />
 
       {hasMusic && (
-        <Reveal index={0} className="mt-10">
+        <Reveal index={0}>
           <Turntable />
         </Reveal>
       )}
@@ -41,7 +41,9 @@ export async function RecordsSection({ locale }: { locale: string }) {
       )}
 
       <Reveal>
-        <FootNote>{t("footnote")}</FootNote>
+        <p className="mt-14 flex items-center gap-2.5 border-t border-line pt-6 text-[12.5px] leading-[1.8] text-ink opacity-60">
+          {t("footnote")}
+        </p>
       </Reveal>
     </>
   );

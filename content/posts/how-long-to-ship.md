@@ -1,12 +1,11 @@
 ---
-title: "[示例] 一个人做完一个产品需要多久"
-title_en: "[Sample] How long it takes to ship something alone"
+title: "一个人做完一个产品需要多久"
 date: 2026-08-11
 type: essay
-tags: [产品, 记录]
+tags: [做东西]
 lang: zh
-summary: 从想法到上线的一份流水账，包括所有半途而废的部分。
-summary_en: A ledger from idea to launch, including everything abandoned halfway.
+summary: "从想法到上线的一份流水账，包括所有半途而废的部分。"
+minutes: 9
 ---
 
 > 这是一篇占位长文，用来验证长文的目录和阅读时长。真文章写好后删掉它。

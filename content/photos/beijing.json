@@ -1,0 +1,9 @@
+{
+  "title": "北京",
+  "year": "2023",
+  "order": 2,
+  "photos": [
+    { "file": "beijing-01.webp", "width": 1438, "height": 1080, "caption": "天安门夜色" },
+    { "file": "beijing-03.webp", "width": 1080, "height": 1438, "caption": "保和殿" }
+  ]
+}

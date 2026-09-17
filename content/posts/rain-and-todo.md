@@ -1,12 +1,11 @@
 ---
-title: "[示例] 深夜的下雨声，和写不完的 TODO"
-title_en: "[Sample] Rain at night, and a TODO list that never ends"
+title: "深夜的下雨声，和写不完的 TODO"
 date: 2026-07-29
 type: thought
-tags: [随笔]
+tags: []
 lang: zh
-summary: 一段没什么结论的记录。
-summary_en: A short note with no conclusion.
+summary: "一段没什么结论的记录。"
+minutes: 2
 ---
 
 凌晨一点，窗外在下雨。TODO 里还剩十一条，其中三条从上个月抄过来的。

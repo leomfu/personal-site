@@ -28,14 +28,14 @@ export function Chart({ scenes }: { scenes: MusicScene[] }) {
 
   return (
     <div>
-      <div className="flex items-baseline gap-3.5">
-        <h2 className="text-lg font-medium tracking-[0.01em] text-ink">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="font-hand text-[clamp(34px,4.4vw,54px)] leading-[1.1] font-normal text-ink">
           {t("chart.title")}
         </h2>
-        <span className="text-[13px] text-faint">{t("chart.note")}</span>
+        <span className="text-[13px] text-ink opacity-50">{t("chart.note")}</span>
       </div>
 
-      <div className="mt-7 flex flex-col gap-8">
+      <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr))]">
         {scenes.map((scene) => (
           <SceneGroup key={scene.key} scene={scene} en={en} t={t} player={player} />
         ))}
@@ -56,15 +56,15 @@ function SceneGroup({
   player: ReturnType<typeof usePlayer>;
 }) {
   return (
-    <div>
-      <h3 className="text-[13px] font-medium tracking-[0.01em] text-ink">
+    <div className="glass overflow-hidden px-3 pt-5 pb-3">
+      <h3 className="px-3 font-hand text-[24px] leading-[1.2] font-normal text-ink">
         {en ? scene.labelEn : scene.label}
-        <span className="ml-2 text-[11px] text-faint tabular-nums">
+        <span className="ml-2 font-sans text-[12px] text-faint tabular-nums">
           {scene.tracks.length}
         </span>
       </h3>
 
-      <ul className="mt-3 divide-y divide-line">
+      <ul className="mt-2 flex flex-col">
         {scene.tracks.map((track, i) => {
           const isCurrent = player.group === scene.key && player.index === i;
           const dead = Boolean(player.broken[track.id]);
@@ -75,8 +75,8 @@ function SceneGroup({
             <li
               key={track.id}
               className={[
-                "flex items-center gap-3 py-2.5 transition-colors",
-                isCurrent ? "bg-paper" : "hover:bg-paper",
+                "flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2 transition-colors",
+                isCurrent ? "bg-accent-100" : "hover:bg-accent-100",
               ].join(" ")}
             >
               <button
@@ -119,7 +119,7 @@ function SceneGroup({
                   href={track.platformUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="shrink-0 text-[11px] whitespace-nowrap text-faint underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink"
+                  className="flex min-h-11 shrink-0 items-center text-[11.5px] whitespace-nowrap text-accent-700 transition-colors hover:text-accent-600"
                 >
                   <span className="hidden sm:inline">
                     {t("chart.openPlatform")}
@@ -150,8 +150,8 @@ function Cover({
   return (
     <span
       className={[
-        "relative size-11 shrink-0 overflow-hidden border bg-paper",
-        current ? "border-ink" : "border-line",
+        "relative size-11 shrink-0 overflow-hidden rounded-[var(--radius-sm)] border bg-paper",
+        current ? "border-accent" : "border-line",
       ].join(" ")}
     >
       {src ? (

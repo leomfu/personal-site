@@ -1,54 +1,45 @@
 {
   "meta": {
     "title": "Weiliang",
-    "description": "Weiliang's personal site. In Shanghai, learning to get AI into the actual work — everything I learn has to end up as something that runs. Projects I've built, things I've written, and what I keep coming back to."
+    "description": "This site is a place I set up for myself: to say who I am, lay out the things I've built, and note down what I'm learning, what I've figured out, and what I've photographed."
   },
   "pageMeta": {
     "home": {
       "title": "Home",
-      "description": "Weiliang's personal site: what I'm doing now, what I've built, what I've written."
+      "description": "This site is a place I set up for myself: to say who I am, lay out the things I've built, and note down what I'm learning, what I've figured out, and what I've photographed."
     },
     "projects": {
       "title": "Projects",
-      "description": "Things I've made, and the open source this site runs on."
+      "description": "Things I've made, listed one by one. Where there's a live address, click the title to go there."
     },
     "videos": {
       "title": "Videos",
-      "description": "Videos I've posted on Bilibili and YouTube."
+      "description": "Things I shot, edited and put out myself. Hit the play button to watch right on this page."
     },
     "photos": {
       "title": "Photos",
-      "description": "Photographs by series and by year — places I passed through, light I kept."
+      "description": "Three albums, all shot casually on the road. Shanghai, Beijing, Qingdao."
     },
     "blog": {
       "title": "Blog",
-      "description": "Essays, posts and thoughts of mine."
+      "description": "Long pieces, essays and thoughts I've written myself — 4 in total."
     },
     "about": {
       "title": "About",
-      "description": "About me: background, what I'm building, and the three things I keep coming back to."
+      "description": "Learning to use AI to get the work in my hands done faster and better, and turning it into things that run along the way."
     },
     "tools": {
       "title": "Tools",
-      "description": "The software, services and hardware I use every day."
+      "description": "Things I use every day. One click takes you straight to their official sites."
     },
     "contact": {
-      "title": "Say something",
-      "description": "Email and social accounts — every way to reach me."
+      "title": "Contact",
+      "description": "Want to say something? Just write an email — I usually reply within two or three days."
     },
     "records": {
       "title": "Records",
       "description": "A turntable that really spins and really plays, and what I listen to by mood."
     }
-  },
-  "intro": {
-    "eyebrow": "个人网站 · PERSONAL SITE",
-    "tagline": "The life I want — I'm going after it.",
-    "taglineTail": "",
-    "enter": "Enter site",
-    "footer": "WRITING, MAKING, DOING NOTHING · 写字、做东西、发呆",
-    "switchLocale": "Switch to Chinese",
-    "taglineSub": "活出自己想要的人生，加油"
   },
   "nav": {
     "home": "Home",
@@ -68,68 +59,81 @@
   "common": {
     "language": "Language",
     "zh": "中",
-    "en": "EN",
-    "copy": "Copy address",
-    "copied": "Copied ✓",
-    "empty": "Nothing here yet.",
-    "placeholder": "Placeholder — to be replaced",
-    "backToHome": "Back home"
+    "en": "EN"
   },
   "home": {
-    "eyebrow": "HOME",
-    "aboutLabel": "ABOUT",
-    "nowTitle": "Right now",
-    "buildingTitle": "Building",
-    "writingTitle": "Recently written",
-    "moreProjects": "Older things live on the <link>projects page</link>.",
-    "morePosts": "More of it lives in the <link>blog</link>.",
-    "noPosts": "No posts yet — the first one is coming.",
-    "footerNote": "If you want to say something, just <link>send an email</link>. I usually reply within a few days.",
-    "copyright": "© {year} {name}",
-    "quote": "Everything I learn has to end up as something that runs.",
-    "noProjects": "Nothing flagged as in progress right now — everything is on the projects page.",
-    "heroTag": "Making · Writing · Shooting",
-    "heroEyebrow": "WELCOME · GLAD YOU'RE HERE",
-    "heroTitle1": "Everything I learn",
-    "heroTitle2": "has to end up running",
+    "heroTag": "Making things · Taking notes · Taking photos",
+    "heroEyebrow": "WELCOME · Welcome to my homepage",
+    "heroTitle1": "I'm Weiliang,",
+    "heroTitle2": "turning ideas into",
+    "heroTitle3": "things that actually run",
     "ctaPrimary": "See what I've made →",
-    "ctaSecondary": "Get in touch",
-    "avatarBadge": "come on",
+    "ctaSecondary": "Contact me",
+    "avatarAlt": "Weiliang",
+    "avatarCaption": "better stronger me",
+    "buildingTitle": "What I'm working on",
+    "buildingNote": "August 2026",
+    "writingTitle": "Recently written",
     "photosTitle": "Recently shot",
-    "hobbiesTitle": "Into"
+    "hobbiesTitle": "Hobbies",
+    "hobbies": {
+      "photos": "Photography",
+      "photosNote": "3 albums · Shanghai Beijing Qingdao",
+      "records": "Records",
+      "recordsNote": "20 tracks · the ones on repeat"
+    }
+  },
+  "about": {
+    "tag": "ABOUT",
+    "title": "About me",
+    "lead": "Learning to use AI to get the work in my hands done faster and better, and turning it into things that run along the way.",
+    "nowLabel": "Now",
+    "cardTitle": "Recording as I go",
+    "cardBody": "The process of learning AI and building AI tools is updated at “伟良-Evren”, synced on Xiaohongshu and Bilibili. I'm looking for opportunities in AI operations — if you'd like to talk or work together, feel free to message me.",
+    "cardTag1": "伟良-Evren",
+    "cardTag2": "Xiaohongshu",
+    "cardTag3": "Bilibili",
+    "cardCta": "Message me →"
   },
   "projects": {
+    "tag": "PROJECTS",
     "title": "Projects",
-    "repo": "Source",
-    "noLink": "No public link yet",
-    "footerNote": "Curious about any of them? <link>Send an email</link>.",
-    "usesNote": "This site stands on {n} open-source projects. The ones marked “found it myself” I went looking for; the rest are build dependencies.",
-    "tabMine": "Mine",
-    "tabUses": "Built on",
-    "mineNote": "Things I've made. Where there's a live address, the title takes you there.",
-    "foundByMe": "found it myself"
+    "lead": "Things I've made, listed one by one. Where there's a live address, click the title to go there.",
+    "repo": "Source ↗",
+    "noLink": "No public link yet"
+  },
+  "blog": {
+    "tag": "WRITING",
+    "title": "Blog",
+    "lead": "Long pieces, essays and thoughts I've written myself — {count} in total.",
+    "filterAll": "All",
+    "types": {
+      "blog": "Essays",
+      "essay": "Long reads",
+      "thought": "Thoughts"
+    },
+    "minutes": "{minutes} min",
+    "toc": "Contents",
+    "prev": "Previous",
+    "next": "Next",
+    "backToList": "Back to the list",
+    "originalLang": "Written in {lang}; no {target} version yet",
+    "langZh": "Chinese",
+    "langEn": "English"
   },
   "videos": {
+    "tag": "VIDEO",
     "title": "Videos",
-    "lead": "Shot, cut and published by me. Hit play and watch right here.",
-    "onBilibili": "Open on Bilibili",
-    "onYoutube": "Open on YouTube",
+    "lead": "Things I shot, edited and put out myself. Hit the play button to watch right on this page.",
     "load": "Click to load the player",
-    "empty": "No videos yet — the list lives in content/videos.json."
+    "onBilibili": "Open on Bilibili ↗",
+    "onYoutube": "Open on YouTube ↗"
   },
   "photos": {
-    "title": "Photos",
-    "lead": "What I was looking at when the shutter went. Series up top, a year-by-year archive below.",
-    "feature": "SERIES",
-    "featureNote": "Grouped work",
-    "archive": "ARCHIVE",
-    "archiveNote": "By year",
-    "kindFeature": "Series",
-    "kindArchive": "Archive",
-    "frames": "{count, plural, =1 {# frame} other {# frames}}",
-    "albumCount": "{count, plural, =1 {# album} other {# albums}}",
-    "empty": "No photos here yet.",
-    "albumEmpty": "This album has no photos yet.",
+    "tag": "PHOTOS",
+    "title": "Photography",
+    "lead": "Three albums, all shot casually on the road. Shanghai, Beijing, Qingdao.",
+    "albumMeta": "{year} · {count, plural, =1 {# photo} other {# photos}}",
     "photoAlt": "{title} — photo {index}",
     "newer": "Next",
     "older": "Previous",
@@ -142,56 +146,24 @@
     }
   },
   "tools": {
+    "tag": "TOOLS",
     "title": "Tools",
-    "lead": "What I use every day. One click takes you to each site.",
-    "note": "The icons are monochrome until you hover them — then each one lights up in its own brand colour."
-  },
-  "about": {
-    "title": "About",
-    "orbit": {
-      "photos": "Photos",
-      "records": "Records",
-      "photosNote": "Places I passed through, light I kept. Filed by series and by year — open one to see the whole set.",
-      "recordsNote": "A turntable that really spins and really plays, plus a chart sorted by mood."
-    },
-    "nowLabel": "Now",
-    "cardTitle": "Making, and noting it down",
-    "cardBody": "The things I built, the light I caught, the songs I played — written down while I still remember them. This site is that notebook.",
-    "cardTag1": "Self-taught",
-    "cardTag2": "Photography",
-    "cardTag3": "Writing",
-    "cardCta": "Message me →"
+    "lead": "Things I use every day. One click takes you straight to their official sites."
   },
   "contact": {
-    "title": "Say something",
-    "lead": "Work, questions, or just a hello — email is the way. I usually reply within a few days.",
-    "emailLabel": "邮箱 / EMAIL",
-    "write": "Write an email",
-    "elsewhere": "在别处 / ELSEWHERE",
-    "footerNote": "Not an email person? Have a browse through the <link>blog</link>."
-  },
-  "blog": {
-    "title": "Blog",
-    "lead": "Essays, posts and loose thoughts — <em>{count}</em> of mine so far.",
-    "filterAll": "All",
-    "order": "Newest first",
-    "minutes": "{minutes} min",
-    "empty": "No posts yet. Drop a markdown file into content/posts/ and it shows up here.",
-    "toc": "Contents",
-    "prev": "Previous",
-    "next": "Next",
-    "backToList": "Back to the list",
-    "originalLang": "Written in {lang}; no {target} version yet",
-    "langZh": "Chinese",
-    "langEn": "English",
-    "types": {
-      "blog": "Post",
-      "essay": "Essay",
-      "thought": "Thought"
-    },
-    "footerNote": "Want to keep talking? <link>Send an email</link>."
+    "tag": "CONTACT",
+    "title": "Contact me",
+    "lead": "Want to say something? Just write an email — I usually reply within two or three days.",
+    "emailLabel": "EMAIL",
+    "write": "Write an email →",
+    "socials": {
+      "github": "Code, and the source of this site",
+      "x": "Everyday thoughts, updated most often",
+      "bilibili": "Things I've made, recorded as videos"
+    }
   },
   "records": {
+    "tag": "RECORDS",
     "title": "Records",
     "lead": "A quiet moment for music — slow down, and listen your way back to yourself.",
     "footnote": "The music keeps playing when you leave this page — a small card appears bottom-right to keep hold of it. The mood playlist plays 30 seconds per track; the resident set is public-domain and plays in full.",
@@ -239,8 +211,10 @@
     "fullVersion": "Hear it in full ↗"
   },
   "footer": {
-    "line1": "Got something in mind?",
-    "line2": "Come say it.",
-    "cta": "Write me →"
+    "line1": "What I've made, what I've learned,",
+    "line2": "how I've been — it's all here.",
+    "eyebrow": "ELSEWHERE",
+    "cta": "Write an email →",
+    "copyright": "© 2026 Weiliang · weiliang.dev"
   }
 }

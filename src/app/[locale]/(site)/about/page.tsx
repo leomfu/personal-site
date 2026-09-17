@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PageHeader, ContentFooter } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import { getAbout } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { renderMarkdown } from "@/lib/markdown";
 import { localePath } from "@/lib/nav";
 import { routing } from "@/i18n/routing";
-import { siteConfig } from "~/site.config";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -23,15 +22,13 @@ export async function generateMetadata({
 }
 
 /**
- * 关于页 —— 2026-09-17 改版重做（handoff §6.3）。
+ * 关于页 —— 改版定稿（docs/design/改版规格.md §6.3）。
  *
  *   页头（统一模板）
- *   左：markdown 正文 16px/1.95，收在 62ch
- *   右：一张 48px 大圆角的玻璃卡（「现在」状态点 + 手写标题 + 说明 + 三枚标签 + 主按钮），
- *       sticky 跟着正文走
- *
- * 原来右栏卡片下面的履历和页底「我的爱好」同心轨道图
- * 2026-09-17 全站改版第一阶段下线；新关于页（正文 + 一张大卡）是第二阶段的事。
+ *   两列 minmax(300px, 1fr)：
+ *     左  markdown 正文（content/about/about.zh.md）16px/1.95，收在 62ch，h3 24px
+ *     右  一张 48px 大圆角的玻璃卡：右上/右下两个纯色装饰圆（溢出裁掉）、
+ *         带脉冲光环的「现在」状态点、手写 40px 标题、说明、三枚标签、主按钮「私信我 →」
  */
 export default async function AboutPage({
   params,
@@ -41,89 +38,73 @@ export default async function AboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("about");
-  const tHome = await getTranslations("home");
 
   const html = await renderMarkdown(getAbout(locale).body, locale);
-  const tagline = locale === "en" ? siteConfig.taglineEn : siteConfig.tagline;
+
+  const tags = [
+    { label: t("cardTag1"), cls: "glass-tag" },
+    { label: t("cardTag2"), cls: "glass-tag-2" },
+    { label: t("cardTag3"), cls: "glass-tag-neutral" },
+  ];
 
   return (
-    <div className="mx-auto w-full max-w-page-narrow">
-      <PageHeader tag="ABOUT" title={t("title")} lead={tagline} />
+    <>
+      <PageHeader tag={t("tag")} title={t("title")} lead={t("lead")} />
 
-      <div className="grid gap-10 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))] lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]">
+      <div className="grid items-start gap-8 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
         <Reveal index={0}>
           <div
-            className="prose-bw max-w-[62ch] text-[16px] leading-[1.95]"
+            className="prose-bw prose-about"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         </Reveal>
 
-        <aside className="flex flex-col gap-10 lg:sticky lg:top-6 lg:self-start">
-          <Reveal index={1}>
-            {/* 两个纯色装饰圆藏在卡的右上/右下，被 overflow-hidden 裁掉一半 */}
-            <div className="glass relative overflow-hidden rounded-[48px] p-8 sm:p-10">
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -top-14 -right-12 size-40 rounded-full bg-accent-100"
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -right-16 -bottom-16 size-44 rounded-full bg-accent-2-100"
-              />
+        <Reveal index={1}>
+          <div className="glass relative flex flex-col items-start gap-4 overflow-hidden rounded-[calc(var(--radius-lg)*1.7)] px-6 py-8 sm:px-8 sm:py-[37px]">
+            {/* 两个纯色装饰圆，被 overflow-hidden 裁掉一半 */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -top-[96px] -right-[96px] size-[250px] rounded-full bg-accent-100"
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute right-[34px] -bottom-[72px] size-[156px] rounded-full bg-accent-2-100"
+            />
 
-              <div className="relative flex flex-col items-start">
-                <span className="flex items-center gap-3 text-[12px] tracking-(--tracking-label) text-muted">
-                  {/* 脉冲光环：wlPulse 在 globals.css 里，reduced-motion 下由全局那条掐停 */}
-                  <span
-                    aria-hidden
-                    className="size-2 rounded-full bg-accent motion-safe:animate-[wlPulse_2.4s_ease-in-out_infinite]"
-                  />
-                  {t("nowLabel")}
+            <span className="relative flex items-center gap-2.5 text-[12px] tracking-[0.18em] text-accent-700">
+              {/* 脉冲光环：wlPulse 在 globals.css 里，reduced-motion 下停掉 */}
+              <span
+                aria-hidden
+                className="size-[9px] rounded-full bg-accent shadow-[0_0_0_5px_var(--color-accent-200)] motion-safe:animate-[wlPulse_2.4s_ease-in-out_infinite]"
+              />
+              {t("nowLabel")}
+            </span>
+
+            <h2 className="relative font-hand text-[clamp(30px,3.6vw,40px)] leading-[1.14] font-normal text-ink">
+              {t("cardTitle")}
+            </h2>
+
+            <p className="relative max-w-[34ch] text-[16.5px] leading-[1.95] text-ink opacity-[0.82]">
+              {t("cardBody")}
+            </p>
+
+            <div className="relative mt-1 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span key={tag.label} className={`${tag.cls} rounded-full px-[14px] py-[5px] text-[12px]`}>
+                  {tag.label}
                 </span>
-
-                <h2 className="mt-5 font-hand text-[40px] leading-[1.15] font-normal text-ink">
-                  {t("cardTitle")}
-                </h2>
-
-                <p className="mt-4 text-[16.5px] leading-[1.95] text-body">{t("cardBody")}</p>
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {[t("cardTag1"), t("cardTag2"), t("cardTag3")].map((tag) => (
-                    <span
-                      key={tag}
-                      className="glass-tag rounded-full px-[14px] py-[5px] text-[12px] text-accent-800"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <Link
-                  href={localePath(locale, "/contact")}
-                  className="btn-primary-glow mt-8 rounded-full bg-accent px-[26px] py-3 text-[14px] font-medium text-neutral-100 transition-colors hover:bg-accent-600"
-                >
-                  {t("cardCta")}
-                </Link>
-              </div>
+              ))}
             </div>
-          </Reveal>
-        </aside>
-      </div>
 
-      <Reveal index={1}>
-        <ContentFooter
-          note={tHome.rich("footerNote", {
-            link: (chunks) => (
-              <Link
-                href={localePath(locale, "/contact")}
-                className="text-accent-700 underline decoration-accent-300 underline-offset-4 transition-colors hover:decoration-accent-700"
-              >
-                {chunks}
-              </Link>
-            ),
-          })}
-        />
-      </Reveal>
-    </div>
+            <Link
+              href={localePath(locale, "/contact")}
+              className="btn-primary-glow relative mt-2 inline-flex min-h-11 items-center rounded-full bg-accent px-[26px] py-3 text-[15px] text-bg transition-colors hover:bg-accent-600"
+            >
+              {t("cardCta")}
+            </Link>
+          </div>
+        </Reveal>
+      </div>
+    </>
   );
 }

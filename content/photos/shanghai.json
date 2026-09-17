@@ -1,0 +1,9 @@
+{
+  "title": "上海",
+  "year": "2025",
+  "order": 1,
+  "photos": [
+    { "file": "shanghai-01.webp", "width": 1706, "height": 1280, "caption": "陆家嘴天际线" },
+    { "file": "shanghai-02.webp", "width": 1280, "height": 1706, "caption": "武康大楼" }
+  ]
+}

@@ -48,13 +48,6 @@ docs/design/__pycache__/
 # 看它就用浏览器直接打开 docs/design/weiliang-redesign-reference.html。
 docs/design/weiliang-redesign-reference.html
 
-# 摄影原图：只在本机放着，`npm run photos` 压出来的 webp 才进仓库
-# （原图动辄几 MB 一张，进了 git 就再也拿不出来了）
-/photos-src/
-
-# 首页 hero 的原图：同上，只在本机放着，`npm run hero` 压出来的 webp 才进仓库
-/hero-src/
-
 # 画图技能（archify）的草稿目录：一张架构图的 HTML + 渲染出来的校验截图。
 # 是生成物不是源码，站上也没用到，别再提交进来（2026-09-11 清掉过一次，1.4 MB）
 scratch-archify/

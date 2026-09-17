@@ -1,12 +1,11 @@
 ---
-title: "[示例] 为什么我把网站做成黑白的"
-title_en: "[Sample] Why this site is black and white"
+title: "为什么我把网站做成黑白的"
 date: 2026-08-20
 type: blog
-tags: [设计, 前端]
+tags: [设计]
 lang: zh
-summary: 去掉颜色之后，剩下的东西反而更清楚了。关于克制、留白，和一次推倒重做。
-summary_en: With the colour gone, what's left reads more clearly. On restraint, whitespace, and starting over.
+summary: "去掉颜色之后，剩下的东西反而更清楚了。关于克制、留白，和一次推倒重做。"
+minutes: 6
 ---
 
 > 这是一篇占位文章，用来验证文章系统的排版、代码高亮和目录。你写好真文章之后把它删掉就行。

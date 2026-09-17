@@ -2,43 +2,40 @@
   {
     "slug": "ai-knowledge-base",
     "name": "AI 知识库",
-    "name_en": "AI Knowledge Base",
-    "desc": "用 Claude Code 加 Obsidian 搭的一套自用知识库：资料丢进去，AI 按我写的 SOP 通读、写摘要、交叉引用，还会定期体检——查互相矛盾的结论、没人链接的孤立条目、该补的缺口。",
-    "desc_en": "A knowledge base I run on Claude Code and Obsidian: sources go in, and the AI reads them through, summarises and cross-links them by an SOP I wrote — then runs a periodic health check for contradictions, orphaned notes and gaps worth filling.",
+    "status": "进行中",
+    "year": "2026",
+    "desc": "用 Claude Code 加 Obsidian 搭的一套自用知识库：资料丢进去，AI 按我写的 SOP 通读、写摘要、交叉引用，还会定期体检 —— 查互相矛盾的结论、没人链接的孤立条目、该补的缺口。",
     "stack": ["Claude Code", "Obsidian", "Markdown"],
     "link": "",
     "repo": "",
     "featured": true,
-    "year": "2026",
-    "status": "进行中",
-    "status_en": "In progress"
+    "summary": "资料丢进去，AI 按我写的 SOP 通读、写摘要、交叉引用，还会定期体检 —— 查互相矛盾的结论、没人链接的孤立条目、该补的缺口。",
+    "featuredStack": ["Claude Code", "Obsidian"]
   },
   {
     "slug": "claude-anki",
     "name": "Claude-Anki",
-    "name_en": "Claude-Anki",
+    "status": "在用",
+    "year": "2026",
     "desc": "把笔记自动加工成带真人发音的记忆卡片。已经产出 5 个牌组、260 张卡，每天在用。",
-    "desc_en": "Turns my notes into flashcards with real human pronunciation, automatically. Five decks and 260 cards so far, reviewed every day.",
     "stack": ["Claude Code", "Anki", "TTS"],
     "link": "",
     "repo": "https://github.com/leomfu/claude-Anki",
     "featured": true,
-    "year": "2026",
-    "status": "在用",
-    "status_en": "In use"
+    "summary": "把笔记自动加工成带真人发音的记忆卡片。已经产出 5 个牌组、260 张卡，每天在用。",
+    "featuredStack": ["Anki", "TTS"]
   },
   {
     "slug": "personal-site",
     "name": "个人网站",
-    "name_en": "This Site",
-    "desc": "你正在看的这个站。Next.js 16 静态导出，没有后台，所有内容都是仓库里的 markdown；黑白设计，中英双语。",
-    "desc_en": "The site you're reading. A statically exported Next.js 16 build with no backend — every page is markdown in the repo. Monochrome by design, bilingual throughout.",
+    "status": "在线",
+    "year": "2026",
+    "desc": "你正在看的这个站。Next.js 16 静态导出，没有后台，所有内容都是仓库里的 markdown，中英双语。",
     "stack": ["Next.js", "TypeScript", "Tailwind CSS"],
     "link": "",
     "repo": "https://github.com/leomfu/WL---",
     "featured": true,
-    "year": "2026",
-    "status": "在线",
-    "status_en": "Live"
+    "summary": "你正在看的这个站。Next.js 静态导出，没有后台，内容都是仓库里的 markdown；中英双语。",
+    "featuredStack": ["Next.js", "TypeScript"]
   }
 ]

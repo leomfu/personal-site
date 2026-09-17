@@ -7,17 +7,14 @@ import type { Video } from "@/lib/types";
 import { localized, shortDate } from "@/lib/format";
 
 /**
- * 视频卡片 —— 2026-09-17 改版重做（handoff §6.6）。
+ * 视频卡片 —— 改版定稿（docs/design/改版规格.md §6.6）。
  *
- * 一张单列玻璃大卡（页面那边收在 880px）：16:9 封面 + 正中 74px 的主色播放键，
- * 键下面挂一枚深色小胶囊「点击加载播放器」。信息区是 24px 手写标题 + 右对齐日期、
- * 14.5px/1.85 描述、一个次按钮「在哔哩哔哩打开 ↗」。
+ * 一张玻璃大卡（页面那边收在 880px）：16:9 封面（washed）+ 正中 74px 主色播放键（hover 放大 1.08），
+ * 键下面一枚深色小胶囊「点击加载播放器」。信息区：24px 手写标题 + 右对齐日期、
+ * 14.5px/1.85 描述、次按钮「在哔哩哔哩打开 ↗」。
  *
- * ⚠️ **懒加载逻辑一个字没改**：默认只画封面，点了才真的插入 iframe。
- * 这样一页放十条视频也不会一次性拉十个播放器。
- *
- * 封面走「washed」（去饱和 + 抬亮），让它沉进雾蓝底里；载入播放器之后
- * iframe 里是人家的画面，不做任何处理。
+ * ⚠️ **懒加载逻辑不动**：默认只画封面，点了才真的插入 iframe。
+ * 载入播放器之后 iframe 里是人家的画面，不做任何处理。
  */
 export function VideoCard({ video }: { video: Video }) {
   const t = useTranslations("videos");
@@ -39,7 +36,7 @@ export function VideoCard({ video }: { video: Video }) {
 
   return (
     <article className="glass overflow-hidden">
-      <div className="relative w-full overflow-hidden bg-neutral-300" style={{ aspectRatio: "16 / 9" }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
         {loaded ? (
           <iframe
             src={embed}
@@ -55,15 +52,15 @@ export function VideoCard({ video }: { video: Video }) {
             type="button"
             onClick={() => setLoaded(true)}
             aria-label={`${t("load")} — ${title}`}
-            className="group absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-5"
+            className="group absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3"
           >
             {video.cover ? (
               <Image
                 src={video.cover}
                 alt=""
                 fill
-                sizes="(min-width: 900px) 880px, 100vw"
-                className="object-cover saturate-[0.72] brightness-[1.06]"
+                sizes="(min-width: 940px) 880px, 100vw"
+                className="washed object-cover"
                 aria-hidden
               />
             ) : (
@@ -77,34 +74,36 @@ export function VideoCard({ video }: { video: Video }) {
               />
             )}
 
-            <span className="relative flex size-[74px] items-center justify-center rounded-full bg-accent text-neutral-100 shadow-lg transition-transform duration-300 group-hover:scale-[1.08]">
-              <svg width="20" height="22" viewBox="0 0 16 18" fill="currentColor" aria-hidden>
+            <span className="relative flex size-[74px] items-center justify-center rounded-full bg-accent pl-[5px] text-bg shadow-lg transition-transform duration-[250ms] group-hover:scale-[1.08]">
+              <svg width="24" height="26" viewBox="0 0 16 18" fill="currentColor" aria-hidden>
                 <path d="M15 9 0 18V0z" />
               </svg>
             </span>
 
-            <span className="relative rounded-full bg-neutral-900/80 px-[14px] py-[6px] text-[11.5px] text-neutral-200 backdrop-blur-sm">
+            <span className="relative rounded-full bg-neutral-900 px-4 py-[5px] font-hand text-[13px] text-bg opacity-[0.82]">
               {t("load")}
             </span>
           </button>
         )}
       </div>
 
-      <div className="flex flex-col gap-3 px-7 py-7 sm:px-9">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h3 className="font-hand text-[24px] leading-[1.3] font-normal text-ink">{title}</h3>
-          <span className="text-[12.5px] text-faint">{shortDate(video.date, locale)}</span>
+      <div className="flex flex-col gap-2 p-6">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="font-hand text-[24px] leading-[1.3] font-normal text-ink">{title}</h2>
+          <span className="text-[12.5px] whitespace-nowrap text-ink opacity-50">
+            {shortDate(video.date, locale)}
+          </span>
         </div>
 
-        <p className="text-[14.5px] leading-[1.85] text-body">{desc}</p>
+        <p className="text-[14.5px] leading-[1.85] text-ink opacity-[0.78]">{desc}</p>
 
         <a
           href={pageUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="glass-soft mt-2 w-fit rounded-full px-[22px] py-2.5 text-[13px] text-ink transition-colors hover:text-accent-700"
+          className="glass-soft mt-2 inline-flex min-h-11 w-fit items-center rounded-full px-5 py-2 text-[13px] text-ink transition-colors hover:text-accent-700 sm:min-h-0"
         >
-          {video.platform === "bilibili" ? t("onBilibili") : t("onYoutube")} ↗
+          {video.platform === "bilibili" ? t("onBilibili") : t("onYoutube")}
         </a>
       </div>
     </article>

@@ -97,35 +97,6 @@ export const siteConfig = {
     { key: "douyin", label: "抖音", labelEn: "Douyin", href: "", handle: "[主页]" },
   ] satisfies Social[],
 
-  /* --- 小工具（项目页「小工具」那一栏）--- */
-  gadgets: {
-    /** 番茄钟。分钟数，cycle = 做满几个专注换一次长休 */
-    pomodoro: { focus: 25, short: 5, long: 15, cycle: 4 },
-
-    /* 这里原来还有一个 `departures` 时刻表（「去哪儿听完整版」的一串外链），
-       和更早的 `scenes`（四套纯 CSS 背景）。2026-09-08 番茄钟和手记从整屏的
-       /focus 页搬进项目页时，时刻表按站主要求整个下线了，别再加回来。 */
-  },
-
-  /* --- 文章评论（需要 public 仓库 + 开 Discussions；2026-09-08 留言板页下线后只用于文章底部）--- */
-  giscus: {
-    repo: "leomfu/WL---",
-    /** 仓库的 GraphQL node id。取法：curl https://api.github.com/repos/<owner>/<repo> 里的 node_id */
-    repoId: "R_kgDOUCPA3g",
-    category: "Announcements",
-    /**
-     * 分类 id。要等仓库开了 Discussions **并且**装好 giscus app 之后才能拿到：
-     *   curl "https://giscus.app/api/discussions/categories?repo=leomfu/WL---"
-     * 没填之前评论区显示一行"还没开放"，不会向 GitHub 发任何请求。
-     */
-    categoryId: "DIC_kwDOUCPA3s4DEK0W",
-    /**
-     * giscus 主题。用的是本站那份黑白主题 public/giscus.css —— giscus 的 iframe 在
-     * giscus.app 域下，只认**绝对地址**，所以换域名之后这里要跟着改。
-     */
-    theme: "https://weiliang.dev/giscus.css",
-  },
-
   /* --- 访问统计（阶段 5 部署时接）--- */
   analytics: {
     umamiSrc: "",

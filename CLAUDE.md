@@ -44,7 +44,7 @@
 ## 项目自带的 skill
 
 - `.claude/skills/mono-color/` —— 单色/双色印刷版式设计系统（上游 MIT，见该目录 NOTICE.md）。
-  首页那张海报就是按它做的。要再做同类的图，**先读它的 `design-system/*.json`**，
+  旧版首页那张双色调海报是按它做的（2026-09-17 改版后已下线）。要再做同类的图，**先读它的 `design-system/*.json`**，
   SKILL.md 里写明目录是唯一事实来源、和散文冲突时以目录为准。
   ⚠️ 上游 `examples/` 里的示例图不在 MIT 范围内，没有拷进来，也不要拷。
 
@@ -52,8 +52,9 @@
 
 - `npm run dev` — 本地开发（http://localhost:3000）
 - `npm run build` — 生产构建（每次完工必须跑）
-- `npm run photos` — 摄影：扫 `photos-src/`（原图，不进仓库）压出缩略图/展示图，并写 `content/photos/*.json`（站主用法见 `docs/如何添加照片.md`）
-- `npm run hero` — 首页那张双色调照片：扫 `hero-src/road.png`（原图，不进仓库）印成双色调输出 `public/images/hero/road.webp`（换照片就换源文件重跑，组件不用动）
+- 图片不再有构建脚本（2026-09-17 改版下线了 `npm run photos` / `npm run hero`）：
+  摄影照片手动放进 `public/images/photos/` 再改 `content/photos/*.json`（见 `docs/如何添加照片.md`）；
+  首页拍立得头像是 `public/images/hero/poster.png`。洗白（washed）效果在 CSS 层做，不要重新导出图片。
 
 <!-- BEGIN:nextjs-agent-rules -->
 

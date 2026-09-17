@@ -5,25 +5,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { SocialIcon } from "@/components/icons/SocialIcon";
 import { NAV_HOME, NAV_TOP, localePath, type NavItem } from "@/lib/nav";
 import { siteConfig } from "~/site.config";
 
 /**
- * 顶栏 —— 2026-09-17 改版重做（handoff §6.1）。
+ * 顶栏 —— 改版定稿「左右分立」（docs/design/改版规格.md §6.1）。
  *
- * ⚠️ **顶栏是这次唯一不玻璃化的容器**：完全透明，无边框、无阴影、无 backdrop-filter。
- * 也正因为完全透明，它**不再 fixed**，而是跟着页面一起滚走 ——
- * 一条没有底、没有毛玻璃的横条钉在视窗上，内容滚到它下面就糊成一团。
- * 「融入背景」的前提是它真的只是页面顶上的一块，而不是浮在页面上的一层。
- * 相应地 SiteShell 也不再需要 padding-top 给它让位。
+ *   左   品牌：双色错版 logo + 「伟良」（margin-right:auto 把其余推到右边）
+ *   右   八项导航 + 中/EN 胶囊
+ *   底   一条 2px 的**渐变下法线**：主色从左侧渐退到右侧透明（globals.css 的 .nav-split）
  *
- * 品牌标记是「双色错版」：同一张 logo 用 CSS mask 印两遍，橙的那枚压在左下、
- * 蓝的那枚压在右上，错开 5px —— 套印没对准的那种手感。用 mask 而不是两张彩色图，
- * 是因为颜色要跟着 token 走（换主色时 logo 自动跟着换）。
+ * ⚠️ 顶栏本身**透明无底**（不毛玻璃、无阴影），所以它**不 fixed**，跟着页面一起滚走 ——
+ * 一条没有底的横条钉在视窗上，内容滚到它下面就糊成一团。
  *
- * 断点沿用原来的：<lg 汉堡 + 全屏抽屉；lg 导航平铺；xl 社交图标一起出来。
- * 抽屉底色从原来的近黑换成雾蓝玻璃 —— 亮侧的页面不该弹出一块暗侧的板。
+ * 品牌标记「双色错版」：同一张 logo 用 CSS mask 印两遍，橙的那枚在 left:5 top:10、
+ * opacity .75，蓝的那枚在 left:10 top:5。用 mask 而不是两张彩色图，颜色跟着 token 走。
+ *
+ * 断点沿用原来的：<lg 汉堡 + 全屏抽屉；lg 起导航平铺。
  */
 
 /** logo 蒙版那两枚方块共用的一份 style */
@@ -72,7 +70,7 @@ export function TopNav() {
   const name = locale === "en" ? siteConfig.nameEn : siteConfig.name;
   const homeHref = localePath(locale, NAV_HOME.path);
 
-  /** 一条导航项。当前项在下方画一条 2.5px 主色短横，左右各内缩 14px */
+  /** 一条导航项：13px、字距 .04em、常态 opacity .78。当前项下方一条 2.5px 主色短横（左右内缩 14px） */
   const renderLink = (item: NavItem) => {
     const active = isActive(item.path);
     return (
@@ -81,14 +79,14 @@ export function TopNav() {
         href={localePath(locale, item.path)}
         aria-current={active ? "page" : undefined}
         className={[
-          "relative rounded-full px-[14px] py-[7px] text-[14px] transition-colors",
-          active ? "text-ink" : "text-muted hover:bg-accent-100 hover:text-ink",
+          "relative rounded-full px-[14px] py-[7px] text-[13px] tracking-[0.04em] text-ink transition-[opacity,background-color] duration-200 hover:bg-accent-100 hover:opacity-100",
+          active ? "opacity-100" : "opacity-[0.78]",
         ].join(" ")}
       >
         {t(`nav.${item.key}`)}
         {active && (
           <span
-            className="absolute inset-x-[14px] -bottom-0.5 h-[2.5px] origin-left rounded-full bg-accent motion-safe:animate-[wlBar_.32s_ease]"
+            className="absolute inset-x-[14px] bottom-[2px] h-[2.5px] origin-left rounded-full bg-accent motion-safe:animate-[wlBar_.32s_ease]"
             aria-hidden
           />
         )}
@@ -97,12 +95,17 @@ export function TopNav() {
   };
 
   /**
-   * 中 / EN —— 胶囊组，选中那一枚实色主色填充。
+   * 中 / EN —— 胶囊组，选中那一枚实色主色填充 + 底色文字 + 700 字重，未选中 opacity .5。
    * ⚠️ 当前语言那一侧的 href 是 `"#"`（空操作），**不是首页**：
    * 写成 homeHref 的话在 /zh/blog/ 上点「中」会被踢回首页。
+   * 抽屉里那一份放大到 44px 高（手机触摸目标下限）。
    */
-  const localeSwitch = (
-    <span className="glass-soft flex items-center gap-1 rounded-full p-1 text-[12px]">
+  const localeSwitch = (large: boolean) => (
+    <span
+      className={`glass-soft flex w-fit items-center gap-[2px] rounded-full p-[5px] tracking-[0.06em] ${
+        large ? "text-[14px]" : "text-[12px]"
+      }`}
+    >
       {(["zh", "en"] as const).map((code) => {
         const current = locale === code;
         return (
@@ -110,11 +113,13 @@ export function TopNav() {
             key={code}
             href={current ? "#" : otherLocaleHref}
             aria-current={current ? "true" : undefined}
-            className={
+            className={[
+              "rounded-full",
+              large ? "flex min-h-[34px] min-w-[52px] items-center justify-center px-4" : "px-[11px] py-[3px]",
               current
-                ? "rounded-full bg-accent px-[11px] py-[3px] font-bold text-bg"
-                : "rounded-full px-[11px] py-[3px] text-muted opacity-50 transition-opacity hover:opacity-100"
-            }
+                ? "bg-accent font-bold text-bg"
+                : "text-ink opacity-50 transition-opacity hover:opacity-100",
+            ].join(" ")}
           >
             {t(`common.${code}`)}
           </Link>
@@ -123,44 +128,16 @@ export function TopNav() {
     </span>
   );
 
-  /** 社交图标一排（顶栏里只有图标，标题在 title/aria-label 上） */
-  const socialRow = (
-    <div className="flex items-center gap-4">
-      {siteConfig.socials.map((social) => {
-        const label = locale === "en" ? social.labelEn : social.label;
-        const href = social.href || undefined;
-        const external = Boolean(href) && !social.href.startsWith("/");
-
-        return (
-          <a
-            key={social.key}
-            href={href}
-            title={label}
-            aria-label={label}
-            {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
-            className={
-              href
-                ? "text-muted transition-colors hover:text-accent-700"
-                : "cursor-default text-line-strong"
-            }
-          >
-            <SocialIcon name={social.key} />
-          </a>
-        );
-      })}
-    </div>
-  );
-
   return (
     <>
-      {/* 完全透明：没有 bg / border / shadow / backdrop-filter，这是刻意的 */}
+      {/* 透明无底：没有 bg / shadow / backdrop-filter，这是刻意的。底部那条渐变线在 .nav-split::after */}
       <header className="w-full">
-        <div className="mx-auto flex w-full max-w-page flex-wrap items-center gap-y-3 px-6 py-4">
-          {/* 品牌：双色错版的 logo + 名字 */}
+        <div className="nav-split mx-auto flex w-full max-w-page flex-wrap items-center gap-x-[13.2px] gap-y-3 px-6 py-[23px]">
+          {/* 左：品牌 */}
           <Link
             href={homeHref}
             aria-label={t("nav.toHome")}
-            className="group flex shrink-0 items-center gap-2.5"
+            className="group mr-auto flex shrink-0 items-center gap-2.5"
           >
             <span className="relative block size-[36px]" aria-hidden>
               <span
@@ -175,26 +152,19 @@ export function TopNav() {
             <span className="text-[19px] tracking-[0.08em] text-ink">{name}</span>
           </Link>
 
-          {/* 导航（桌面端） */}
-          <nav className="mx-auto hidden items-center gap-1 lg:flex">
-            {NAV_TOP.map(renderLink)}
-          </nav>
+          {/* 右：导航组 + 语言切换（桌面端） */}
+          <nav className="hidden flex-wrap items-center gap-[2px] lg:flex">{NAV_TOP.map(renderLink)}</nav>
+          <span className="hidden lg:flex">{localeSwitch(false)}</span>
 
-          {/* 右侧：语言 · 社交 */}
-          <div className="ml-auto flex shrink-0 items-center gap-4">
-            <span className="hidden lg:flex">{localeSwitch}</span>
-            <span className="hidden xl:flex">{socialRow}</span>
-
-            {/* 移动端：汉堡 */}
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(true)}
-              aria-label={t("nav.menu")}
-              className="-mr-1 flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-accent-100 lg:hidden"
-            >
-              <MenuIcon />
-            </button>
-          </div>
+          {/* 移动端：汉堡 */}
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            aria-label={t("nav.menu")}
+            className="-mr-1 flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-accent-100 lg:hidden"
+          >
+            <MenuIcon />
+          </button>
         </div>
       </header>
 
@@ -208,22 +178,19 @@ export function TopNav() {
             transition={{ duration: reduced ? 0.01 : 0.24 }}
             className="fixed inset-0 z-50 overflow-y-auto bg-bg/95 text-ink backdrop-blur-xl lg:hidden"
           >
-            <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center justify-between px-6 py-[23px]">
               <span className="text-[19px] tracking-[0.08em]">{name}</span>
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label={t("nav.close")}
-                className="-mr-2 flex size-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-accent-100"
+                className="-mr-1 flex size-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-accent-100"
               >
                 <CloseIcon />
               </button>
             </div>
 
-            <nav
-              className="flex flex-col gap-2 px-6 pt-4"
-              onClick={() => setDrawerOpen(false)}
-            >
+            <nav className="flex flex-col gap-2 px-6 pt-2" onClick={() => setDrawerOpen(false)}>
               {NAV_TOP.map((item) => {
                 const active = isActive(item.path);
                 return (
@@ -242,13 +209,7 @@ export function TopNav() {
               })}
             </nav>
 
-            <div className="flex flex-col gap-6 px-6 py-10">
-              <div className="text-[11px] tracking-(--tracking-label) text-faint">
-                {t("nav.connect")}
-              </div>
-              {socialRow}
-              <div className="pt-2">{localeSwitch}</div>
-            </div>
+            <div className="px-6 py-10">{localeSwitch(true)}</div>
           </motion.div>
         )}
       </AnimatePresence>

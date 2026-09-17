@@ -57,7 +57,7 @@ export function MiniPlayer() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: reduced ? 0.01 : 0.32, ease: [0.22, 0.61, 0.36, 1] }}
-          className="glass fixed right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 w-[min(300px,calc(100vw-1.5rem))] rounded-[24px] px-4 py-3.5 sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
+          className="glass fixed right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 w-[min(300px,calc(100vw-1.5rem))] rounded-[calc(var(--radius-lg)*1.15)] px-4 py-3.5 sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
           role="region"
           aria-label={t("regionLabel")}
         >
@@ -99,7 +99,7 @@ export function MiniPlayer() {
               onClick={player.toggle}
               aria-label={shouldPlay ? t("pause") : t("play")}
               aria-pressed={shouldPlay}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-ink transition-colors hover:border-accent hover:text-accent-700"
+              className="btn-primary-glow flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full sm:size-9 bg-accent text-bg transition-colors hover:bg-accent-600"
             >
               {shouldPlay ? (
                 <svg
@@ -131,7 +131,7 @@ export function MiniPlayer() {
               type="button"
               onClick={player.stop}
               aria-label={t("close")}
-              className="flex size-6 shrink-0 items-center justify-center text-faint transition-colors hover:text-accent-700"
+              className="glass-soft flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full sm:size-9 text-muted transition-colors hover:text-accent-700"
             >
               <svg
                 width="9"
@@ -151,14 +151,14 @@ export function MiniPlayer() {
           {/* 进度：能拖，也能用键盘（原生 range 叠在上面，视觉那一层自己画） */}
           <div className="mt-2.5 flex items-center gap-2.5">
             <div className="relative h-3 grow">
-              <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-line" />
+              <div className="absolute top-1/2 left-0 h-[3px] w-full -translate-y-1/2 rounded-full bg-line" />
               <div
                 ref={fillRef}
-                className="absolute top-1/2 left-0 h-px w-0 -translate-y-1/2 bg-accent"
+                className="absolute top-1/2 left-0 h-[3px] w-0 -translate-y-1/2 rounded-full bg-accent"
               />
               <div
                 ref={knobRef}
-                className="absolute top-1/2 left-0 size-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
+                className="absolute top-1/2 left-0 size-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
               />
               <input
                 type="range"
@@ -184,7 +184,7 @@ export function MiniPlayer() {
               href={track.platformUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 block text-[10.5px] text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-accent-700"
+              className="link-underline mt-2 block text-[11px]"
             >
               {t("fullVersion")}
             </a>

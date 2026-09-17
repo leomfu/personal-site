@@ -8,14 +8,12 @@ import { localized } from "@/lib/format";
 import type { Photo } from "@/lib/photoTypes";
 
 /**
- * 一辑的缩略图网格 + 放大态。
- * 网格是接触印相式的方阵（缩略图裁成正方，整齐是这一页的主要秩序感来源），
- * 点开之后看到的才是整帧未裁的照片。
+ * 单辑页的照片网格 + 放大态。
  *
- * 2026-09-17 改版（handoff §6.7）：缩略图从正方接触印相改成 4/3 的 figure，
- * 28px 圆角、底下挂一行说明、hover 上浮 6px。图片统一走「washed」（去饱和 + 抬亮），
- * 让它沉进雾蓝底里而不是浮在上面；鼠标移上去恢复原色。
- * **放大态里的整帧照片不做任何处理** —— 那一刻看的就是作品本身。
+ * 网格和摄影页同一种 figure（改版规格 §6.7）：玻璃底、圆角 28px、4/3 裁切、底下一行图注、
+ * hover 上浮 6px；图片走 washed，鼠标移上去恢复原色。
+ * 点开之后看到的才是整帧未裁的照片 —— **放大态里的整帧照片不做任何处理**，那一刻看的就是作品本身。
+ * 放大态：← → 翻页、ESC 关闭；遮罩是 neutral-900（原来的暗侧 shell 色随改版删掉了）。
  */
 export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string }) {
   const t = useTranslations("photos");
@@ -58,32 +56,31 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
 
   return (
     <>
-      <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
+      <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))]">
         {photos.map((photo, i) => {
           const caption = captionOf(photo);
           return (
-            <figure key={photo.file} className="flex flex-col gap-2.5">
+            <figure
+              key={photo.file}
+              className="glass group overflow-hidden rounded-[var(--radius-lg)] transition-transform duration-[350ms] hover:-translate-y-[6px]"
+            >
               <button
                 type="button"
                 onClick={() => setOpenIndex(i)}
                 aria-label={t("photoAlt", { title, index: i + 1 })}
-                className="group relative w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-300 transition-transform duration-300 hover:-translate-y-1.5"
+                className="relative block w-full cursor-zoom-in"
                 style={{ aspectRatio: "4 / 3" }}
               >
                 <Image
-                  src={photo.thumb}
+                  src={photo.src}
                   alt={caption || t("photoAlt", { title, index: i + 1 })}
-                  width={600}
-                  height={Math.max(1, Math.round((600 * photo.height) / photo.width))}
-                  loading="lazy"
-                  sizes="(max-width: 640px) 100vw, 320px"
-                  className="size-full object-cover saturate-[0.78] brightness-[1.05] transition-[transform,filter] duration-[600ms] ease-out group-hover:scale-[1.04] group-hover:saturate-100 group-hover:brightness-100"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 560px"
+                  className="washed object-cover"
                 />
               </button>
               {caption && (
-                <figcaption className="px-1 text-[12.5px] leading-[1.6] text-muted opacity-70">
-                  {caption}
-                </figcaption>
+                <figcaption className="px-4 py-3 text-[12.5px] text-ink opacity-70">{caption}</figcaption>
               )}
             </figure>
           );
@@ -97,11 +94,11 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0.01 : 0.24 }}
-            className="fixed inset-0 z-50 flex flex-col bg-shell/97 backdrop-blur-[2px]"
+            className="fixed inset-0 z-50 flex flex-col bg-neutral-900/95 backdrop-blur-[2px]"
             onClick={close}
           >
             {/* 顶部：计数 + 关闭 */}
-            <div className="flex shrink-0 items-center justify-between px-5 py-4 text-[11.5px] tracking-[0.16em] text-shell-dim sm:px-8">
+            <div className="flex shrink-0 items-center justify-between px-5 py-4 text-[11.5px] tracking-[0.16em] text-neutral-400 sm:px-8">
               <span>
                 {pad(openIndex + 1)} / {pad(photos.length)}
               </span>
@@ -109,7 +106,7 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
                 type="button"
                 onClick={close}
                 aria-label={t("lightbox.close")}
-                className="cursor-pointer p-1.5 text-shell-dim transition-colors hover:text-shell-ink"
+                className="flex size-11 cursor-pointer items-center justify-center text-neutral-400 transition-colors hover:text-neutral-100"
               >
                 <CloseIcon />
               </button>
@@ -155,11 +152,11 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
             {/* 底部：说明文字 + 键盘提示 */}
             <div className="flex shrink-0 flex-col items-center gap-2 px-6 py-5 text-center">
               {captionOf(current) && (
-                <p className="max-w-[560px] text-[13px] leading-[1.7] text-shell-muted">
+                <p className="max-w-[560px] text-[13px] leading-[1.7] text-neutral-300">
                   {captionOf(current)}
                 </p>
               )}
-              <p className="hidden text-[11px] tracking-[0.14em] text-shell-faint sm:block">
+              <p className="hidden text-[11px] tracking-[0.14em] text-neutral-500 sm:block">
                 {t("lightbox.hint")}
               </p>
             </div>
@@ -184,7 +181,7 @@ function ArrowButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="flex size-10 shrink-0 cursor-pointer items-center justify-center text-shell-faint transition-colors hover:text-shell-ink"
+      className="flex size-11 shrink-0 cursor-pointer items-center justify-center text-neutral-400 transition-colors hover:text-neutral-100"
     >
       <svg
         width="22"

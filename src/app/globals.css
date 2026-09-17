@@ -2,10 +2,11 @@
 
 /* ==========================================================================
    设计 token —— 2026-09-17 全站改版「雾蓝底 · 蓝+橙双主色 · 玻璃卡面 · 手写标题」
-   定稿值来自 design_handoff_weiliang_redesign/tokens.css，**不要自行调整比例**。
+   定稿值来自 docs/design/tokens.css，**不要自行调整比例**。
 
-   原黑白系统那套名字（ink / body / muted / faint / line / shell-* / desk-*）
-   全部**保留同名**，只换值 —— 所以引用这些名字的组件一行都不用改。
+   原黑白系统那套名字（ink / body / muted / faint / line / card / paper）
+   **保留同名**，只换值 —— 所以引用这些名字的组件一行都不用改。
+   暗侧（shell-* / void）和专注区（desk-*）两组随对应页面下线已经删掉。
 
    `@theme static` 不是随手写的：Tailwind 4 默认只输出「被某个工具类用到」的 token，
    没被用到的会被摇掉。这套设计系统里有大量 token 是组件通过 var(--color-accent-700)
@@ -13,22 +14,22 @@
    摇掉之后那些引用会静默失效。static 让整块 token 原样输出。
    ========================================================================== */
 @theme static {
-  /* --- 亮侧：底色与表面 --- */
-  --color-bg: #edf1f7;       /* 全站底色（原 #fafafa 纸白） */
+  /* --- 底色与表面 --- */
+  --color-bg: #edf1f7;       /* 全站底色（雾蓝白） */
   --color-surface: #ffffff;  /* 卡面基色；玻璃态下按 42% 透明使用，见下面 .glass */
   --color-card: #ffffff;
   --color-paper: #f7f9fc;
 
-  /* --- 亮侧：文字层级（和原黑白系统一一对应） --- */
+  /* --- 文字层级 --- */
   --color-ink: #171b22;        /* 标题、主文字 */
   --color-body: #40464f;       /* 正文 */
   --color-muted: #5b636f;      /* 次要文字 */
   --color-faint: #78818f;      /* 日期、标签、占位 */
 
   /* --- 线 --- */
-  --color-line: #d8dde6;       /* 分割线、描边 */
-  --color-line-soft: #eceff5;  /* 卡面内部的行间分隔线，比 --color-line 轻一档 */
-  --color-line-strong: #b8c0cd;/* 正文链接下划线 */
+  --color-line: #d8dde6;
+  --color-line-soft: #eceff5;
+  --color-line-strong: #b8c0cd;
 
   /* --- 主色：蓝 ---
      ⚠️ 正文里的链接/强调文字用 --color-accent-700，不要用 --color-accent 本体：
@@ -65,66 +66,41 @@
   --color-neutral-600: #78818f;
   --color-neutral-700: #5b636f;
   --color-neutral-800: #40464f;
-  --color-neutral-900: #272b31;  /* 页脚底色、深色小面积块 */
+  --color-neutral-900: #272b31;  /* 页脚底色、深色小面积块、看大图的遮罩 */
 
-  /* --- 暗侧：侧栏 / 开场页 / 放松区 ---
-     不再是近黑的中性灰，改成同一蓝 family 的深色，暗侧和亮侧才是一套色 --- */
-  --color-shell: #121822;
-  --color-void: #0d1218;       /* 开场页底色，比顶栏再深一档 */
-  --color-shell-ink: #e9edf6;
-  --color-shell-muted: #a9b5c9;
-  --color-shell-dim: #8291ab;
-  --color-shell-faint: #5a6883;
-  --color-shell-mute: #3a4863;
-  --color-shell-line: #1f2836;
-  --color-shell-line-2: #26324a;
-  --color-shell-line-3: #2f3c56;
-
-  /* --- 专注区：书桌上那张纸（浅色）--- */
-  --color-desk-paper: #e6ebf3;
-  --color-desk-ink: #171b22;
-  --color-desk-dim: #5b636f;
-  --color-desk-faint: #97a0ae;
-  --color-desk-mute: #b8c0cd;
-  --color-desk-placeholder: #c9d0da;
-  --color-desk-line: #d8dde6;
-  --color-desk-line-2: #cfd6e1;
-  --color-desk-line-3: #c6cedb;
-
-  /* --- 品牌色：全站只在这两处出现 ---
-     brand-claude  工具页图标 hover
-     brand-bilibili 联系页/页脚那枚 B 站圆形图标底（handoff §6.9 指定的唯一一枚彩色） */
+  /* --- 品牌色 ---
+     brand-claude   工具页图标 hover
+     brand-bilibili 联系页那枚 B 站圆形图标底（handoff §6.9 指定的唯一一枚彩色） */
   --color-brand-claude: #c15f3c;
   --color-brand-bilibili: #fb7299;
 
-  /* --- 字体。五个 var() 都由 app/[locale]/layout.tsx 的 next/font/google 喂 ---
+  /* --- 字体。var() 都由 app/[locale]/layout.tsx 的 next/font/google 喂 ---
      ⚠️ --font-hand 的栈序不能反：Caveat 没有 CJK 字形，中文手写标题**必须**
      靠 Ma Shan Zheng 接；反过来写的话拉丁字母也会被 Ma Shan Zheng 接走。
      手写标题字重恒为 400，不要加粗。 */
   --font-hand: var(--font-caveat), var(--font-mashanzheng), var(--font-noto-sans-sc),
-    "PingFang SC", cursive;
+    "Noto Sans SC", cursive;
   --font-sans: var(--font-figtree), var(--font-noto-sans-sc), "PingFang SC",
     "Hiragino Sans GB", system-ui, sans-serif;
-  --font-serif: var(--font-noto-serif), "Noto Serif SC", "Source Han Serif SC",
-    "Songti SC", Georgia, serif;
+  --font-serif: var(--font-noto-serif), "Noto Serif SC", Georgia, serif;
 
   /* --- 间距：设计稿的 Organic 1.10× 密度 ---
      设计稿给的阶是 4.4 / 8.8 / 13.2 / 17.6 / 26.4 / 35.2px，正好是 Tailwind
      默认 4px 基数的 1.1 倍。所以这里不逐个覆盖 --spacing-1…8（那样只有这六档
      变了，p-5 / p-10 还留在 4px 基数上，一套尺子两种刻度），而是直接把基数
-     调成 4.4px —— 算出来的六档值和设计稿一字不差，其余档位也跟着等比缩放。
-     ⚠️ 这一行会同时影响全站所有数字型间距/尺寸类（p- m- gap- size- w- h- …）。 */
+     调成 4.4px —— 算出来的六档值和 tokens.css 一字不差，其余档位也跟着等比缩放。
+     ⚠️ 这一行会同时影响全站所有数字型间距/尺寸类（p- m- gap- size- w- h- …）。
+     设计稿里写死像素的地方（6px 上浮、44px 触摸目标……）组件里用 [6px] 这种任意值。 */
   --spacing: 0.275rem;        /* 4.4px ×4 = 17.6 ×6 = 26.4 ×8 = 35.2 */
 
-  /* --- 版心：外框那一层。宽度档位的完整说明见 docs/进度.md 末尾那张表 --- */
-  --spacing-page: 1180px;        /* 默认：列表、网格、照片墙铺满它（改版从 1240 收到 1180） */
-  --spacing-page-narrow: 1080px; /* 首页 / 关于 / 联系 —— 内容量少的那几页 */
+  /* --- 版心 --- */
+  --spacing-page: 1180px;        /* 默认版心（handoff §4） */
+  --spacing-page-narrow: 1080px;
 
-  /* --- 行宽（文字量度）：版心之内，一行字最多多长 ---
-     只有下面三档，**新代码不许再写裸值**，挑一档用。 */
-  --spacing-display: 860px;   /* 大字引言那一档 */
+  /* --- 行宽（文字量度）：新代码不许再写裸值，挑一档用 --- */
+  --spacing-display: 860px;
   --spacing-column: 700px;    /* 正文和引导语 —— markdown 正文也用它 */
-  --spacing-note: 420px;      /* 小注记、说明、一句话补充 */
+  --spacing-note: 420px;
 
   /* --- 圆角。卡片实际用 calc(var(--radius-lg) * 1.15) ≈ 32px；
          按钮 / 标签 / 输入框 / 胶囊行一律 999px --- */
@@ -155,27 +131,36 @@
     background: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-size: 15px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: var(--color-ink);
-    color: var(--color-paper);
+    background: var(--color-accent-200);
+    color: var(--color-ink);
+  }
+
+  /* 全站统一焦点环（handoff §7）。不要留浏览器默认那圈 */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
 /* ==========================================================================
-   改版三层：玻璃卡面 / 背景底纹 / 翻阅动效
-   （design_handoff_weiliang_redesign/README.md §5，值是定稿值）
+   改版三层：玻璃卡面 / 两颗光斑 / 错位滑入（改版规格 §五，值是定稿值）
+
+   定稿：**无底纹**（不画网格、圆点阵、纸纹）、**无顶部滚动进度条**。
+   tokens.css 里那两条备用的（网格底纹 / 滚动进度条）刻意没有搬进来。
 
    放在 @layer components 里、不是裸写在最外层 —— 裸写的规则优先级高过 Tailwind
-   的 utilities 层，`class="glass rounded-lg"` 里的 rounded-lg 就会被 .glass 自己的
+   的 utilities 层，`class="glass rounded-full"` 里的 rounded-full 就会被 .glass 自己的
    圆角吃掉。进了 components 层，组件上的 Tailwind 类才压得住它。
    ========================================================================== */
 @layer components {
-  /* --- 玻璃卡面。卡片 / 输入框都是这一套（顶栏是唯一不玻璃化的容器）---
-     ⚠️ 卡面是半透明的，底纹和光斑必须从它背后透出来：任何一处改成实色白，
+  /* --- 玻璃卡面。卡片 / 输入框都是这一套 ---
+     ⚠️ 卡面是半透明的，光斑必须从它背后透出来：任何一处改成实色白，
      那块就会显得像贴上去的。 */
   .glass {
     background: color-mix(in srgb, var(--color-surface) 42%, transparent);
@@ -194,11 +179,28 @@
     border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
   }
 
-  /* 标签 */
-  .glass-tag {
-    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  /* 标签：主色那一枚是定稿值（accent 22% + blur 10px）。
+     橙 / 中性两枚是同一配方换底色 —— 设计稿里的 tag-accent-2 / tag-neutral */
+  .glass-tag,
+  .glass-tag-2,
+  .glass-tag-neutral {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+  }
+
+  .glass-tag {
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    color: var(--color-accent-800);
+  }
+
+  .glass-tag-2 {
+    background: color-mix(in srgb, var(--color-accent-2) 22%, transparent);
+    color: var(--color-accent-2-800);
+  }
+
+  .glass-tag-neutral {
+    background: color-mix(in srgb, var(--color-neutral-500) 20%, transparent);
+    color: var(--color-body);
   }
 
   /* 主按钮的外发光 */
@@ -206,29 +208,7 @@
     box-shadow: 0 8px 26px color-mix(in srgb, var(--color-accent) 45%, transparent);
   }
 
-  /* --- 底纹「细网格」：fixed 的独立一层，30px 网格，顶部清晰、底部淡出。
-     用它的容器里，内容那一层必须 position: relative; z-index: 1，否则会被盖住。 */
-  .bg-texture {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px,
-        transparent 1px 30px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px,
-        transparent 1px 30px
-      );
-    -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
-    mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
-  }
-
-  /* --- 两颗漂移光斑 --- */
+  /* --- 两颗漂移光斑。外层 SiteShell 包了一个 fixed + overflow-hidden 的容器 --- */
   .bg-blob {
     position: absolute;
     width: 680px;
@@ -253,18 +233,32 @@
     animation: wlDrift2 32s ease-in-out infinite;
   }
 
-  /* --- 顶部滚动进度条 --- */
-  .scroll-progress {
-    position: fixed;
-    top: 0;
+  /* --- 顶栏「左右分立」的渐变下法线：主色从左侧渐退到右侧透明 --- */
+  .nav-split {
+    position: relative;
+  }
+
+  .nav-split::after {
+    content: "";
+    position: absolute;
     left: 0;
-    z-index: 99;
-    height: 3px;
-    width: 0;
-    background: var(--color-accent);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent), transparent);
     pointer-events: none;
-    transition: width 0.1s linear;
+  }
+
+  /* --- 内容图的「washed」：去饱和 + 降对比 + 抬亮，让图沉进雾蓝底里。
+     鼠标移到它所在的 .group 上恢复原色。首页拍立得头像和放大态整帧照片**不用**它。 */
+  .washed {
+    filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
+    transition: filter 0.4s ease;
+  }
+
+  .group:hover .washed,
+  .washed:hover {
+    filter: none;
   }
 
   /* --- 翻阅动效「错位滑入」，强度 k = 1.6 ---
@@ -296,7 +290,7 @@
 }
 
 :root {
-  --wl-k: 1.6;  /* 错位滑入的强度。改这一个数就能整体收放位移 */
+  --wl-k: 1.6;  /* 错位滑入的强度 */
 }
 
 @keyframes wlDrift {
@@ -330,29 +324,7 @@
   }
 }
 
-/* 小动作：上移淡入 / 弹出 / 下划线拉开 / 状态点脉冲 / 转圈 */
-@keyframes wlUp {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes wlPop {
-  from {
-    opacity: 0;
-    transform: scale(0.88);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
+/* 顶栏当前项下面那条短横拉开 */
 @keyframes wlBar {
   from {
     transform: scaleX(0);
@@ -362,6 +334,7 @@
   }
 }
 
+/* 关于页「现在」状态点的脉冲光环 */
 @keyframes wlPulse {
   0%,
   100% {
@@ -372,14 +345,8 @@
   }
 }
 
-@keyframes wlSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* 「减少动态效果」下：滑入的块直接就位，光斑和换页动画停掉。
-   下面第二条全局兜底把 duration 压到 0.01ms，但 [data-wl-rv] 的初始态是
+/* 「减少动态效果」下：滑入的块直接就位，光斑、换页、脉冲、唱片转动全部停掉。
+   第二条全局兜底把 duration 压到 0.01ms，但 [data-wl-rv] 的初始态是
    opacity:0，光压时长它会停在看不见的状态 —— 所以这里必须显式置为可见。 */
 @media (prefers-reduced-motion: reduce) {
   [data-wl-rv] {
@@ -392,14 +359,14 @@
   .page-enter {
     animation: none !important;
   }
-}
 
-/* 全站统一焦点环（handoff §7）。不要留浏览器默认那圈 —— 各家画得都不一样，
-   而且在雾蓝底上大多看不清。 */
-@layer base {
-  :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -407,9 +374,7 @@
    工具类
    ========================================================================== */
 
-/* 内容页「面」层 —— 2026-09-17 改版：从实色白卡换成玻璃卡面，配方和 .glass 一份。
-   列表组、图片卡都套它，所以改这一处 = 全站的面一起换。
-   ⚠️ 半透明是**故意的**：底纹和光斑要从卡背后透出来，换回实色白那块就像贴上去的。 */
+/* 玻璃卡面的工具类版本（配方和 .glass 一份），给需要和 Tailwind 类混排的地方用 */
 @utility card-face {
   background: color-mix(in srgb, var(--color-surface) 42%, transparent);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
@@ -417,15 +382,6 @@
   border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
   box-shadow: var(--shadow-glass);
   border-radius: calc(var(--radius-lg) * 1.15);
-}
-
-/* 内容页「零件」：小标签。改版后是 999px 的胶囊，不再是带框大写小字 */
-@utility tag-framed {
-  border-radius: 999px;
-  padding: 5px 14px;
-  font-size: 12px;
-  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  color: var(--color-accent-800);
 }
 
 /* 正文内联链接：主色 700 档（不是 --color-accent 本体，那一档在雾蓝底上不够 4.5:1）
@@ -442,114 +398,12 @@
   }
 }
 
-/* ==========================================================================
-   动效词汇表（PLAN.md §5）
-   Framer Motion 负责入场编排，这里放的是持续循环的氛围动画——
-   数量多（星点 46 个）或纯装饰的，交给 CSS 更省。
-   ========================================================================== */
-@keyframes dcTwinkle {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes dcGlow {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
-@keyframes dcFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-9px);
-  }
-}
-
-/* 进站过场：星点朝背离画面中心的方向甩出去并拉成光束（Starfield 喂 --warp-* 变量） */
-@keyframes dcWarp {
-  0% {
-    transform: rotate(var(--warp-a)) translateX(0) scaleX(1);
-  }
-  22% {
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(var(--warp-a)) translateX(var(--warp-d)) scaleX(var(--warp-x));
-    opacity: 0;
-  }
-}
-
-@keyframes dcBob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(6px);
-  }
-}
-
-@keyframes dcDrift {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 240px 720px;
-  }
-}
-
-@keyframes dcBreathe {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.075);
-    opacity: 1;
-  }
-}
-
-/* 开场页星点：只给亮星/中等星用，振幅由每颗星自己的 --o0/--o1 决定（Starfield.tsx 喂） */
-@keyframes dcStarBreathe {
-  0%,
-  100% {
-    opacity: var(--o0);
-  }
-  50% {
-    opacity: var(--o1);
-  }
-}
-
-/* 系统设置里开了「减少动态效果」就全部停掉（PLAN.md §5 硬性要求） */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
 
 /* ==========================================================================
    .prose-bw —— markdown 正文的排版（content/ 里的 md 渲染进来都套这个）
    彩色一律不进来：代码高亮走 src/lib/markdown.ts 里的灰阶主题。
    ========================================================================== */
-/* 正文自己收成阅读列：1240px 的版心对一行文字来说仍然太宽。
+/* 正文自己收成阅读列：1180px 的版心对一行文字来说仍然太宽。
    限宽放在 .prose-bw 上而不是外层容器上，是因为只有 markdown 正文需要它，
    列表、网格、照片墙都该铺满版心。 */
 .prose-bw {
@@ -564,15 +418,11 @@
   margin-top: 20px;
 }
 
-/* 首页块 B「关于」：比默认 .prose-bw（16px/1.9）再收紧一档，
-   密度要明显低于四周（首页那张「关于」玻璃卡在用） */
-.prose-about {
-  font-size: 15.5px;
-  line-height: 1.85;
-}
-
-.prose-about > * + * {
-  margin-top: 15px;
+/* 关于页正文：16px / 1.95，收在 62ch（改版规格 §6.3）。
+   .prose-bw 是不分层的规则，压得过 Tailwind 工具类，所以这一档写在这里而不是组件上 */
+.prose-bw.prose-about {
+  max-width: 62ch;
+  line-height: 1.95;
 }
 
 .prose-bw h2 {
@@ -585,16 +435,17 @@
 }
 
 .prose-bw h3 {
-  margin-top: 38px;
+  margin-top: 35.2px;
+  font-family: var(--font-hand);
   font-size: 24px;
-  font-weight: 500;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.3;
   color: var(--color-ink);
 }
 
 .prose-bw h2 + *,
 .prose-bw h3 + * {
-  margin-top: 14px;
+  margin-top: 13.2px;
 }
 
 .prose-bw a {
@@ -661,15 +512,14 @@
   margin: 44px 0;
 }
 
-/* 2026-09-17 改版：原来这里强制 grayscale(1) —— 那是老黑白系统的规矩，已经取消。
-   现在走设计稿的「washed」：轻微去饱和 + 抬亮，让图沉进雾蓝底里而不是浮在上面；
-   鼠标移上去恢复原色。 */
+/* 正文插图走设计稿的「washed」（和 .washed 同一份配方）：去饱和 + 降对比 + 抬亮，
+   让图沉进雾蓝底里而不是浮在上面；鼠标移上去恢复原色。 */
 .prose-bw img {
   max-width: 100%;
   height: auto;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-line);
-  filter: saturate(0.82) brightness(1.04);
+  filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
   transition: filter 400ms ease;
 }
 
@@ -732,8 +582,8 @@
 
    2026-08-30 重做：原来是一张正对着看的平面 SVG，改成**真的斜放在透视里**。
    2026-08-31 再改：撤掉了包着它的深色矩形容器（用户原话「我要的是与背景融入的，
-   不是你给我制作出来的分割」），唱片和唱臂现在直接坐在 <main> 的 bg-content
-   浅灰渐变上（见 components/shell/SiteShell.tsx）。黑胶本身还是黑的——那是材质，
+   不是你给我制作出来的分割」），唱片和唱臂现在直接坐在页面的
+   雾蓝底上（见 components/shell/SiteShell.tsx）。黑胶本身还是黑的——那是材质，
    不是「深色容器」，别混为一谈。
 
    结构（对应 components/records/Turntable.tsx）：

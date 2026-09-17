@@ -1,12 +1,11 @@
 ---
-title: 使用 AI 的这一年
-title_en: My Year of Using AI
+title: "使用 AI 的这一年"
 date: 2026-09-03
 type: essay
-tags: [AI, 成长]
+tags: [AI]
 lang: zh
-summary: 从 vibe coding 到在上海求职失败，再到重新认识这个工具——AI 太强了，强到让我误以为那份能力是我的。
-summary_en: From vibe coding to a failed job hunt in Shanghai, and back again — the tool was the strong one; I was just the person typing in front of it.
+summary: "从 vibe coding 到摔了一跤，再到重新认识这个工具 —— AI 太强了，强到让我误以为那份能力是我的。"
+minutes: 12
 ---
 
 2026 年初，作为一个刚满 20 岁、大专毕业，一个极其迷茫和没有方向的人。我第一次接触到 ChatGPT、Claude 这些前沿的大模型。那种冲击是实打实的——我好像一下子看清了这个时代正往哪里走，也第一次觉得，我或许可以往这个方向走。

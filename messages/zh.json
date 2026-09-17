@@ -1,54 +1,45 @@
 {
   "meta": {
     "title": "伟良",
-    "description": "伟良的个人网站。在上海，学着把 AI 真的用进手上的活里 —— 每学一样，得做出一个真在跑的东西。这里放做过的项目、写下的文章，和一直在做的那几样爱好。"
+    "description": "这个站是我给自己开的一块地方：说说我是谁，摊开我做出来的东西，也记下正在学的、想通的、拍到的。"
   },
   "pageMeta": {
     "home": {
       "title": "首页",
-      "description": "伟良的个人网站：现在在做什么、做过的项目、写下的文章。"
+      "description": "这个站是我给自己开的一块地方：说说我是谁，摊开我做出来的东西，也记下正在学的、想通的、拍到的。"
     },
     "projects": {
       "title": "项目",
-      "description": "做过的东西，以及这个站用到的开源。"
+      "description": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。"
     },
     "videos": {
       "title": "视频",
-      "description": "在哔哩哔哩和 YouTube 上发过的视频。"
+      "description": "自己拍的、剪的、发出去的东西。点播放键直接在这一页看。"
     },
     "photos": {
       "title": "摄影",
-      "description": "按专题和年份排的照片 —— 走过的地方、留下的光。"
+      "description": "三辑，都是路上随手拍的。上海、北京、青岛。"
     },
     "blog": {
       "title": "博客",
-      "description": "自己写的长文、随笔和想法。"
+      "description": "自己写的长文、随笔和想法，共 4 篇。"
     },
     "about": {
       "title": "关于",
-      "description": "关于我：背景、在做什么、感兴趣的东西，以及三样一直在做的爱好。"
+      "description": "学着用 AI 把手上的活干得更快更好，顺手做成能跑的东西。"
     },
     "tools": {
       "title": "工具",
-      "description": "我每天在用的软件、服务和硬件。"
+      "description": "我每天在用的东西。点一下直接去它们的官网。"
     },
     "contact": {
-      "title": "说点什么",
-      "description": "邮箱和社交账号 —— 想说点什么，这里都能找到我。"
+      "title": "联系",
+      "description": "想说点什么，写封邮件就好 —— 我一般两三天内回。"
     },
     "records": {
       "title": "唱片",
       "description": "一台真能转、真出声的黑胶唱机，和我按心情听的那些歌。"
     }
-  },
-  "intro": {
-    "eyebrow": "个人网站 · PERSONAL SITE",
-    "tagline": "活出自己想要的人生",
-    "taglineTail": "加油",
-    "enter": "进入网站",
-    "footer": "写字、做东西、发呆 · WRITING, MAKING, DOING NOTHING",
-    "switchLocale": "切换到英文",
-    "taglineSub": "The life I want — I'm going after it."
   },
   "nav": {
     "home": "首页",
@@ -68,68 +59,81 @@
   "common": {
     "language": "语言",
     "zh": "中",
-    "en": "EN",
-    "copy": "复制地址",
-    "copied": "已复制 ✓",
-    "empty": "这里还什么都没有。",
-    "placeholder": "占位内容 —— 素材到位后替换",
-    "backToHome": "回首页"
+    "en": "EN"
   },
   "home": {
-    "eyebrow": "首页 / HOME",
-    "aboutLabel": "关于 / ABOUT",
-    "nowTitle": "现在是",
-    "buildingTitle": "在做的",
-    "writingTitle": "最近写的",
-    "moreProjects": "更早的东西都在 <link>项目页</link> 里。",
-    "morePosts": "更多文章在 <link>博客</link>。",
-    "noPosts": "还没有文章 —— 第一篇很快就写。",
-    "footerNote": "想说点什么就 <link>写封邮件</link>，我一般两三天内回。",
-    "copyright": "© {year} {name}",
-    "quote": "每学一样，得做出一个真在跑的东西。",
-    "noProjects": "还没有标记为「在做的」项目 —— 都在项目页里。",
     "heroTag": "做东西 · 写笔记 · 拍照",
     "heroEyebrow": "WELCOME · 欢迎来到我的主页",
-    "heroTitle1": "每学一样，都要做出",
-    "heroTitle2": "真在跑的东西",
+    "heroTitle1": "我是伟良，",
+    "heroTitle2": "把想法做成",
+    "heroTitle3": "真在跑的东西",
     "ctaPrimary": "看看做了什么 →",
     "ctaSecondary": "联系我",
-    "avatarBadge": "come on",
+    "avatarAlt": "伟良",
+    "avatarCaption": "better stronger me",
+    "buildingTitle": "在做的",
+    "buildingNote": "2026 年 8 月",
+    "writingTitle": "最近写的",
     "photosTitle": "最近拍的",
-    "hobbiesTitle": "爱好"
+    "hobbiesTitle": "爱好",
+    "hobbies": {
+      "photos": "摄影",
+      "photosNote": "3 辑 · 上海 北京 青岛",
+      "records": "唱片",
+      "recordsNote": "20 首 · 循环里的那几张"
+    }
+  },
+  "about": {
+    "tag": "ABOUT",
+    "title": "关于我",
+    "lead": "学着用 AI 把手上的活干得更快更好，顺手做成能跑的东西。",
+    "nowLabel": "现在",
+    "cardTitle": "边做边记录",
+    "cardBody": "学 AI、做 AI 工具的过程，更新在「伟良-Evren」，小红书和 B 站同步。正在找 AI 运营方向的机会，想交流或有合作，欢迎私信。",
+    "cardTag1": "伟良-Evren",
+    "cardTag2": "小红书",
+    "cardTag3": "B 站",
+    "cardCta": "私信我 →"
   },
   "projects": {
+    "tag": "PROJECTS",
     "title": "项目",
-    "repo": "源码",
-    "noLink": "暂无公开链接",
-    "footerNote": "想聊聊其中任何一个，<link>写封邮件</link> 就好。",
-    "usesNote": "这个站站在 {n} 个开源项目上。带「自己找的」标记的是我自己翻到、拿来用的，其余是构建依赖。",
-    "tabMine": "我做的",
-    "tabUses": "用到的开源",
-    "mineNote": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。",
-    "foundByMe": "自己找的"
+    "lead": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。",
+    "repo": "源码 ↗",
+    "noLink": "暂无公开链接"
+  },
+  "blog": {
+    "tag": "WRITING",
+    "title": "博客",
+    "lead": "自己写的长文、随笔和想法，共 {count} 篇。",
+    "filterAll": "全部",
+    "types": {
+      "blog": "随笔",
+      "essay": "长文",
+      "thought": "想法"
+    },
+    "minutes": "{minutes} 分钟",
+    "toc": "目录",
+    "prev": "上一篇",
+    "next": "下一篇",
+    "backToList": "回到列表",
+    "originalLang": "原文为{lang}，暂无{target}版本",
+    "langZh": "中文",
+    "langEn": "英文"
   },
   "videos": {
+    "tag": "VIDEO",
     "title": "视频",
     "lead": "自己拍的、剪的、发出去的东西。点播放键直接在这一页看。",
-    "onBilibili": "在哔哩哔哩打开",
-    "onYoutube": "在 YouTube 打开",
     "load": "点击加载播放器",
-    "empty": "还没有视频 —— 清单在 content/videos.json 里，加进去就会出现在这一页。"
+    "onBilibili": "在哔哩哔哩打开 ↗",
+    "onYoutube": "在 YouTube 打开 ↗"
   },
   "photos": {
+    "tag": "PHOTOS",
     "title": "摄影",
-    "lead": "按下快门时我在看的东西。上面是成组的专题，下面是按年份排的档案。",
-    "feature": "专题 / SERIES",
-    "featureNote": "成组的作品",
-    "archive": "档案 / ARCHIVE",
-    "archiveNote": "按年份",
-    "kindFeature": "专题",
-    "kindArchive": "档案",
-    "frames": "{count} 帧",
-    "albumCount": "{count} 辑",
-    "empty": "这里还没有照片。",
-    "albumEmpty": "这一辑还没有照片。",
+    "lead": "三辑，都是路上随手拍的。上海、北京、青岛。",
+    "albumMeta": "{year} · {count} 张",
     "photoAlt": "{title} 第 {index} 张",
     "newer": "下一辑",
     "older": "上一辑",
@@ -142,56 +146,24 @@
     }
   },
   "tools": {
+    "tag": "TOOLS",
     "title": "工具",
-    "lead": "我每天在用的东西。点一下直接去它们的官网。",
-    "note": "图标平时是黑白的，鼠标移上去才亮起各自的品牌色。"
-  },
-  "about": {
-    "title": "关于",
-    "orbit": {
-      "photos": "摄影",
-      "records": "唱片",
-      "photosNote": "走过的地方，留下的光。按专题和年份收着，点进去看整辑。",
-      "recordsNote": "一台真能转、真出声的黑胶唱机，和一份按心情排的歌单。"
-    },
-    "nowLabel": "现在",
-    "cardTitle": "边做边记录",
-    "cardBody": "做过的东西、看过的光、听过的歌，趁还记得的时候写下来。这个站就是那个本子。",
-    "cardTag1": "自学",
-    "cardTag2": "摄影",
-    "cardTag3": "写字",
-    "cardCta": "私信我 →"
+    "lead": "我每天在用的东西。点一下直接去它们的官网。"
   },
   "contact": {
-    "title": "说点什么",
-    "lead": "合作、提问，或者只是想聊两句，都可以发邮件给我。我一般两三天内回。",
-    "emailLabel": "邮箱 / EMAIL",
-    "write": "写邮件",
-    "elsewhere": "在别处 / ELSEWHERE",
-    "footerNote": "更想随便翻翻？去 <link>博客</link> 看看。"
-  },
-  "blog": {
-    "title": "博客",
-    "lead": "自己写的长文、随笔和想法，共 <em>{count}</em> 篇。",
-    "filterAll": "全部",
-    "order": "按时间倒序",
-    "minutes": "{minutes} 分钟",
-    "empty": "还没有文章。放一份 markdown 进 content/posts/ 就会出现在这里。",
-    "toc": "目录",
-    "prev": "上一篇",
-    "next": "下一篇",
-    "backToList": "回到列表",
-    "originalLang": "原文为{lang}，暂无{target}版本",
-    "langZh": "中文",
-    "langEn": "英文",
-    "types": {
-      "blog": "随笔",
-      "essay": "长文",
-      "thought": "想法"
-    },
-    "footerNote": "想接着聊，<link>写封邮件</link> 就好。"
+    "tag": "CONTACT",
+    "title": "联系我",
+    "lead": "想说点什么，写封邮件就好 —— 我一般两三天内回。",
+    "emailLabel": "EMAIL",
+    "write": "写封邮件 →",
+    "socials": {
+      "github": "代码和这个站的源码",
+      "x": "日常想法，更新最勤",
+      "bilibili": "做出来的东西，录成视频"
+    }
   },
   "records": {
+    "tag": "RECORDS",
     "title": "唱片",
     "lead": "享受音乐的放松时刻，让自己慢下来感受自己寻找自己的内心深处。",
     "footnote": "离开这一页音乐不会停，右下角会出现一张小卡片接着控制它。「按心情听」那一组每首只放 30 秒试听，常驻那组是公共领域录音，完整播放。",
@@ -239,8 +211,10 @@
     "fullVersion": "去平台听完整版 ↗"
   },
   "footer": {
-    "line1": "有想法？",
-    "line2": "随时来找我聊。",
-    "cta": "写封邮件 →"
+    "line1": "做了什么、学了什么、",
+    "line2": "过得怎么样，都在这儿。",
+    "eyebrow": "ELSEWHERE",
+    "cta": "写封邮件 →",
+    "copyright": "© 2026 伟良 · weiliang.dev"
   }
 }

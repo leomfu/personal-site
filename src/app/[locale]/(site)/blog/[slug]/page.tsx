@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
  * 一千二百像素读起来累，而且贴着左边看整页是歪的（站主 2026-09-08 的原话：
  * 「看着有些分散太靠左边了」）。列表、网格、照片墙照旧铺满版心，只有正文收。
  * 侧边目录摆在这一列右边的留白里（`left-[calc(100%+56px)]` 是相对这一列算的）：
- * 列居中之后 700+56+190 = 946，落在 1240 版心内，正好把右边那块空白用掉。
+ * 列居中之后 700+56+190 = 946，落在 1180 版心内，正好把右边那块空白用掉。
  */
 export default async function PostPage({ params }: { params: Promise<Params> }) {
   const { locale, slug } = await params;
@@ -70,11 +70,17 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   const langMismatch = post.lang !== locale;
 
   return (
-    <div className="relative mx-auto max-w-column pt-6">
+    <div className="relative mx-auto max-w-column">
       <Reveal index={0}>
         <div className="flex flex-wrap items-center gap-3 text-[12.5px] text-faint">
           <span>{longDate(post.date, locale)}</span>
-          <span className="tag-framed">{tType(post.type)}</span>
+          <span
+            className={`rounded-full px-[14px] py-[5px] text-[12px] ${
+              post.type === "essay" ? "glass-tag" : post.type === "blog" ? "glass-tag-2" : "glass-tag-neutral"
+            }`}
+          >
+            {tType(post.type)}
+          </span>
           <span>{t("minutes", { minutes: post.minutes })}</span>
         </div>
 

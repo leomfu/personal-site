@@ -1,0 +1,9 @@
+{
+  "title": "青岛",
+  "year": "2024",
+  "order": 3,
+  "photos": [
+    { "file": "qingdao-01.webp", "width": 2000, "height": 1125, "caption": "五月的风" },
+    { "file": "qingdao-04.webp", "width": 1125, "height": 2000, "caption": "蓝调时刻" }
+  ]
+}

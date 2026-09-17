@@ -10,7 +10,6 @@ import type {
   RecordItem,
   Tool,
   Track,
-  UsedRepo,
   Video,
 } from "./types";
 
@@ -18,6 +17,11 @@ import type {
  * content/ 的读取层 —— 全部在构建时跑（Node API），组件里不写死内容。
  * 字段约定见 content/README.md。类型在 ./types，日期/双语格式化在 ./format
  * （客户端组件从那两个文件拿，因为这里有 node:fs）。
+ *
+ * ⚠️ 双语回退：content/ 目前只有中文。英文路由的做法是**直接读中文**，不复制一份到 .en 文件 ——
+ *   markdown 页：readDoc 找不到 `xxx.en.md` 就读 `xxx.zh.md`；
+ *   json 条目：没有 *_en / *En 字段，组件里的 localized() 自动退回中文字段。
+ * 以后要补英文，加 `.en.md` 或 `_en` 字段即可，这里不用改。
  */
 
 export type * from "./types";
@@ -32,7 +36,7 @@ const readJson = <T>(file: string, fallback: T): T =>
 
 /* ------------------------------------------------------------------ 纯 markdown 页 */
 
-/** about / home-intro 这类「一整篇正文」的页面 */
+/** about / home-intro 这类「一整篇正文」的页面。没有这一语言的文件就读中文 */
 function readDoc(dir: string, base: string, locale: string) {
   const file = `${base}.${locale}.md`;
   const fallback = `${base}.zh.md`;
@@ -43,12 +47,8 @@ function readDoc(dir: string, base: string, locale: string) {
 }
 
 export const getAbout = (locale: string) => readDoc("about", "about", locale);
+/** 首页 Hero 那句引导语（content/home/intro.zh.md，纯文本一段） */
 export const getHomeIntro = (locale: string) => readDoc("home", "intro", locale);
-
-export function getNow(locale: string) {
-  const { body, data } = readDoc("now", "now", locale);
-  return { body, updated: toISODate(data.updated) };
-}
 
 /** front-matter 里的日期：gray-matter 会把 2026-08-24 解析成 Date，统一转回 YYYY-MM-DD */
 function toISODate(value: unknown) {
@@ -62,16 +62,8 @@ function toISODate(value: unknown) {
 /* ------------------------------------------------------------------ 项目 */
 
 
-export function getProjects(): Project[] {
-  const list = readJson<Project[]>("projects/projects.json", []);
-  return [...list].sort((a, b) => (b.year ?? "").localeCompare(a.year ?? ""));
-}
-
-/** 项目页第二个筛选：这个站用到的开源仓库。
- *  顺序就是 json 里的顺序，**不要排序** —— 站主自己找来的（mine）排在最前面，是人工排的 */
-export function getUsedRepos(): UsedRepo[] {
-  return readJson<UsedRepo[]>("projects/repos.json", []);
-}
+/** 顺序就是 json 里的顺序（01 / 02 / 03 是人工排的），**不要排序** */
+export const getProjects = () => readJson<Project[]>("projects/projects.json", []);
 
 /* ------------------------------------------------------------------ 视频 */
 
@@ -113,7 +105,8 @@ export function getPosts(): Post[] {
         summary: String(d.summary ?? excerpt(body)),
         summary_en: d.summary_en ? String(d.summary_en) : undefined,
         body,
-        minutes: readingMinutes(body),
+        // front-matter 里写了 minutes 就用它（文案定稿给的阅读时长），没写就按字数估
+        minutes: Number(d.minutes) > 0 ? Number(d.minutes) : readingMinutes(body),
       } satisfies Post;
     })
     .sort((a, b) => b.date.localeCompare(a.date));

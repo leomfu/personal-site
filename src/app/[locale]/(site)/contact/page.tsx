@@ -1,13 +1,10 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SocialIcon } from "@/components/icons/SocialIcon";
-import { ContentFooter, PageHeader } from "@/components/ui/PageHeader";
-import { EmailActions } from "@/components/ui/EmailActions";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import { pageMetadata } from "@/lib/metadata";
-import { localePath } from "@/lib/nav";
 import { routing } from "@/i18n/routing";
-import { siteConfig } from "~/site.config";
+import { siteConfig, type SocialKey } from "~/site.config";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -22,16 +19,17 @@ export async function generateMetadata({
   return pageMetadata(locale, "contact", "/contact");
 }
 
+/** 右栏三行的顺序（文案定稿：GitHub / X / 哔哩哔哩）。链接取 site.config.ts 的 socials */
+const ROWS: SocialKey[] = ["github", "x", "bilibili"];
+
 /**
- * 联系页 —— 2026-09-17 改版重做（handoff §6.9）。左右两栏：
+ * 联系页 —— 改版定稿（docs/design/改版规格.md §6.9）。两列 minmax(290px, 1fr)：
  *
- *   左  一张**主色实底**的大卡（32px 圆角）：EMAIL 眉题 + 手写大字邮箱 +
- *       白底胶囊按钮。整页真正要人做的那件事，所以它是页面上唯一一块实色主色。
- *   右  一列 999px 的社交行：44px 圆形图标 + 两行文字 + 右侧主色 ↗，
- *       hover 整行往右挪 8px。
+ *   左  主色实底大卡（圆角 32px）：EMAIL 眉题 + 手写大字邮箱 + 底色胶囊按钮「写封邮件 →」
+ *   右  三个 999px 的玻璃社交行：44px 圆形图标（前两个 neutral-900 底，B 站用品牌色）
+ *       + 两行文字 + 右侧主色 ↗，hover 往右挪 8px
  *
- * 图标底色只有哔哩哔哩用品牌色（--color-brand-bilibili），其余是 neutral-900 ——
- * 一排彩色圆点会把这一栏变成贴纸墙，留一个就够认。
+ * 邮箱地址取 site.config.ts 的 email（站主本人的真实地址），不写死在这里。
  */
 export default async function ContactPage({
   params,
@@ -42,92 +40,62 @@ export default async function ContactPage({
   setRequestLocale(locale);
   const t = await getTranslations("contact");
 
-  const socials = siteConfig.socials;
+  const rows = ROWS.map((key) => siteConfig.socials.find((s) => s.key === key)).filter(
+    (s): s is (typeof siteConfig.socials)[number] => Boolean(s?.href),
+  );
 
   return (
-    <div className="mx-auto w-full max-w-page-narrow">
-      <PageHeader tag="CONTACT" title={t("title")} lead={t("lead")} />
+    <>
+      <PageHeader tag={t("tag")} title={t("title")} lead={t("lead")} />
 
-      <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(290px,1fr))]">
+      <div className="grid items-start gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr))]">
         {/* 左：主色实底大卡 */}
         <Reveal index={0}>
-          <div className="btn-primary-glow flex h-full flex-col rounded-[32px] bg-accent p-8 sm:p-10">
-            <span className="text-[12px] tracking-(--tracking-label) text-neutral-100/70">
-              {t("emailLabel")}
-            </span>
-            <p className="mt-5 font-hand text-[clamp(28px,3.4vw,44px)] leading-[1.2] break-all text-neutral-100">
-              {siteConfig.email}
-            </p>
-            <EmailActions email={siteConfig.email} />
+          <div className="rounded-[calc(var(--radius-lg)*1.15)] bg-accent p-8 text-bg shadow-md">
+            <span className="block text-[12px] tracking-[0.14em] opacity-80">{t("emailLabel")}</span>
+            <p className="mt-2 font-hand text-[clamp(22px,3vw,30px)] break-all">{siteConfig.email}</p>
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="mt-6 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-bg px-6 py-[11px] font-hand text-[14px] text-accent-800 transition-colors hover:bg-surface"
+            >
+              {t("write")}
+            </a>
           </div>
         </Reveal>
 
         {/* 右：社交行 */}
         <Reveal index={1}>
-          <span className="text-[12px] tracking-(--tracking-label) text-muted">
-            {t("elsewhere")}
-          </span>
-          <div className="mt-4 flex flex-col gap-2.5">
-            {socials.map((social) => {
+          <div className="flex flex-col gap-3">
+            {rows.map((social) => {
               const label = locale === "en" ? social.labelEn : social.label;
               const badge =
-                social.key === "bilibili"
-                  ? "bg-brand-bilibili text-neutral-100"
-                  : "bg-neutral-900 text-neutral-100";
-
-              const inner = (
-                <>
-                  <span
-                    className={`flex size-[44px] shrink-0 items-center justify-center rounded-full ${badge}`}
-                  >
-                    <SocialIcon name={social.key} size={18} />
-                  </span>
-                  <span className="flex min-w-0 flex-col gap-0.5">
-                    <span className="text-[15px] text-ink">{label}</span>
-                    <span className="truncate text-[12px] text-faint">{social.handle}</span>
-                  </span>
-                  {social.href && (
-                    <span className="ml-auto shrink-0 text-[16px] text-accent" aria-hidden>
-                      ↗
-                    </span>
-                  )}
-                </>
-              );
-
-              return social.href ? (
+                social.key === "bilibili" ? "bg-brand-bilibili text-white" : "bg-neutral-900 text-bg";
+              return (
                 <a
                   key={social.key}
                   href={social.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="glass flex items-center gap-4 rounded-full py-2.5 pr-6 pl-2.5 transition-transform duration-300 hover:translate-x-2"
+                  className="glass flex items-center gap-4 rounded-full px-6 py-4 transition-transform duration-[250ms] hover:translate-x-2"
                 >
-                  {inner}
+                  <span className={`flex size-[44px] shrink-0 items-center justify-center rounded-full ${badge}`}>
+                    <SocialIcon name={social.key} size={19} />
+                  </span>
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-[15.5px] font-semibold text-ink">{label}</span>
+                    <span className="text-[12.5px] text-ink opacity-60">
+                      {t(`socials.${social.key as "github" | "x" | "bilibili"}`)}
+                    </span>
+                  </span>
+                  <span className="ml-auto shrink-0 text-[15px] text-accent" aria-hidden>
+                    ↗
+                  </span>
                 </a>
-              ) : (
-                <div
-                  key={social.key}
-                  className="glass flex items-center gap-4 rounded-full py-2.5 pr-6 pl-2.5 opacity-45"
-                >
-                  {inner}
-                </div>
               );
             })}
           </div>
         </Reveal>
       </div>
-
-      <Reveal index={2}>
-        <ContentFooter
-          note={t.rich("footerNote", {
-            link: (chunks) => (
-              <Link href={localePath(locale, "/blog")} className="link-underline">
-                {chunks}
-              </Link>
-            ),
-          })}
-        />
-      </Reveal>
-    </div>
+    </>
   );
 }

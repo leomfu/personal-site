@@ -20,7 +20,9 @@ export async function generateMetadata({
 }
 
 /**
- * 视频作品区 —— 数据来自 content/videos.json，播放器点击后才加载 */
+ * 视频页 —— 数据来自 content/videos.json，播放器点击后才加载（改版规格 §6.6）。
+ * 单列玻璃卡收在 880px：视频是这一页唯一的内容，铺成两列只会让每一条都变小。
+ */
 export default async function VideosPage({
   params,
 }: {
@@ -32,23 +34,16 @@ export default async function VideosPage({
   const videos = getVideos();
 
   return (
-    /* 单列大卡，收在 880px（handoff §6.6）—— 视频是这一页唯一的内容，
-       铺成两列只会让每一条都变小。条数再多也还是一列。 */
-    <div className="mx-auto w-full max-w-[880px]">
-      <PageHeader tag="VIDEO" title={t("title")} lead={t("lead")} />
+    <>
+      <PageHeader tag={t("tag")} title={t("title")} lead={t("lead")} />
 
-      <div className="flex flex-col gap-8">
-        {videos.length === 0 && (
-          <Reveal index={0}>
-            <p className="text-[15px] leading-[1.9] text-muted">{t("empty")}</p>
-          </Reveal>
-        )}
+      <div className="flex max-w-[880px] flex-col gap-8">
         {videos.map((video, i) => (
           <Reveal key={`${video.platform}-${video.id}`} index={i}>
             <VideoCard video={video} />
           </Reveal>
         ))}
       </div>
-    </div>
+    </>
   );
 }

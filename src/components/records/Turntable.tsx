@@ -209,7 +209,7 @@ const Deck = memo(function Deck({
           这是让唱片「落在页面上」的关键，浅底上必须有它 */}
       <div className="vinyl-floor-shadow" aria-hidden />
       <div
-        className="vinyl-scene cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className="vinyl-scene cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
         onClick={handleClick}
         onKeyDown={onKeyDown}
         role="slider"
@@ -667,11 +667,11 @@ export function Turntable() {
 
   return (
     // 2026-08-31：这里原来是一层 bg-shell 的深色卡片，把唱机和页面浅灰背景割裂成
-    // 两块。撤掉了——唱片和唱臂现在直接坐在 <main> 的浅色背景上，没有任何容器边界，
+    // 两块。撤掉了——唱片和唱臂现在直接坐在 页面的雾蓝底上，没有任何容器边界，
     // 靠 Deck 里新增的地面投影落在页面上（见 globals.css 的 .vinyl-floor-shadow）。
     <section aria-label={t("regionLabel")}>
       {/* 唱片（左）+ 信息栏（右）：对照参考图的分类→歌名→艺人→专辑→描述→播放 那套
-          信息层级，但视觉是本站自己的黑白系统。窄屏堆叠，sm 起并排 */}
+          信息层级，视觉走本站的雾蓝 + 玻璃。窄屏堆叠，sm 起并排 */}
       <div className="grid gap-8 sm:grid-cols-[1.35fr_1fr] sm:items-center sm:gap-9 lg:gap-14">
         <Deck
           armRef={armRef}
@@ -696,9 +696,9 @@ export function Turntable() {
         {/* 信息栏 */}
         <div className="flex flex-col gap-4">
           {/* 分类小标：当前碟名，淡灰小字 */}
-          <p className="text-[10px] tracking-(--tracking-label) text-faint uppercase">
+          <span className="glass-tag w-fit rounded-full px-[14px] py-[5px] text-[12px]">
             {discName}
-          </p>
+          </span>
 
           <AnimatePresence mode="wait">
             <motion.h3
@@ -714,24 +714,24 @@ export function Turntable() {
           </AnimatePresence>
 
           <div className="-mt-1 flex flex-col gap-0.5">
-            <p className="text-[13.5px] text-muted">{artist}</p>
+            <p className="text-[14px] text-body">{artist}</p>
             {album && <p className="text-[12px] text-faint">{album}</p>}
           </div>
 
           {desc && (
-            <p className="max-w-[36em] text-[13px] leading-[1.8] text-muted">
+            <p className="max-w-[36em] text-[14px] leading-[1.8] text-ink opacity-[0.78]">
               {desc}
             </p>
           )}
 
           {/* 播放控件 + 去平台链接 */}
           <div className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => player.goto(player.index - 1)}
                 aria-label={t("prev")}
-                className="text-muted transition-colors hover:text-ink"
+                className="glass-soft flex size-11 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:text-accent-700"
               >
                 <svg
                   width="17"
@@ -752,7 +752,7 @@ export function Turntable() {
                 onClick={player.toggle}
                 aria-label={shouldPlay ? t("pause") : t("play")}
                 aria-pressed={shouldPlay}
-                className="flex size-[50px] cursor-pointer items-center justify-center rounded-full border border-line-strong text-accent-700 transition-colors hover:border-accent"
+                className="btn-primary-glow flex size-[56px] cursor-pointer items-center justify-center rounded-full bg-accent text-bg transition-colors hover:bg-accent-600"
               >
                 {shouldPlay ? (
                   <svg
@@ -784,7 +784,7 @@ export function Turntable() {
                 type="button"
                 onClick={() => player.goto(player.index + 1)}
                 aria-label={t("next")}
-                className="text-muted transition-colors hover:text-ink"
+                className="glass-soft flex size-11 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:text-accent-700"
               >
                 <svg
                   width="17"
@@ -806,7 +806,7 @@ export function Turntable() {
                 href={track.platformUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[12px] text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink"
+                className="link-underline text-[12.5px]"
               >
                 {t("fullVersion")}
               </a>
@@ -824,7 +824,7 @@ export function Turntable() {
               <span>{clock(total)}</span>
             </div>
             {isClip && (
-              <span className="border border-line-strong px-2 py-0.5 text-[10px] tracking-(--tracking-label) text-muted uppercase">
+              <span className="glass-tag-2 rounded-full px-[12px] py-[3px] text-[11px]">
                 {t("previewTag")}
               </span>
             )}
@@ -840,7 +840,7 @@ export function Turntable() {
       </div>
 
       {/* 音量 + 换碟 + 使用提示：全宽的次要控件区 */}
-      <div className="mt-9 flex flex-col gap-6 border-t border-line pt-7 sm:mt-10">
+      <div className="glass mt-9 flex flex-col gap-6 p-6 sm:mt-10 sm:p-8">
         {/* 音量 */}
         <div className="flex items-center gap-3 text-muted">
           <svg
@@ -856,14 +856,14 @@ export function Turntable() {
             <path d="M8 3.5 4.5 6.5H2v5h2.5L8 14.5z" />
             <path d="M11.2 6.4a3.6 3.6 0 0 1 0 5.2" />
           </svg>
-          <div className="relative h-4 w-[132px]">
-            <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-line" />
+          <div className="relative h-11 w-[132px]">
+            <div className="absolute top-1/2 left-0 h-[3px] w-full -translate-y-1/2 rounded-full bg-line" />
             <div
-              className="absolute top-1/2 left-0 h-px -translate-y-1/2 bg-accent"
+              className="absolute top-1/2 left-0 h-[3px] -translate-y-1/2 rounded-full bg-accent"
               style={{ width: `${player.volume * 100}%` }}
             />
             <div
-              className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
+              className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-sm"
               style={{ left: `${player.volume * 100}%` }}
             />
             <input
@@ -880,7 +880,7 @@ export function Turntable() {
 
         {/* 换碟 */}
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <span className="text-[9.5px] tracking-(--tracking-label) text-faint uppercase">
+          <span className="text-[11px] tracking-(--tracking-label) text-faint uppercase">
             {t("shelf")}
           </span>
           {/* 场景组多了之后这排会换行，所以每个自己带边框，不再是一条连体的分段控件 */}
@@ -894,10 +894,10 @@ export function Turntable() {
                   onClick={() => player.switchGroup(item.key)}
                   aria-pressed={on}
                   className={[
-                    "cursor-pointer rounded-full px-4 py-1.5 text-[12.5px] transition-colors",
+                    "min-h-11 cursor-pointer rounded-full px-5 py-2 text-[13px] transition-colors sm:min-h-0",
                     on
-                      ? "bg-accent font-medium text-neutral-100"
-                      : "glass-soft text-muted hover:text-accent-700",
+                      ? "btn-primary-glow bg-accent text-bg"
+                      : "glass-soft text-ink hover:text-accent-700",
                   ].join(" ")}
                 >
                   {item.label}
@@ -921,12 +921,12 @@ export function Turntable() {
       {/* 常驻那组（4 首肖邦）的可展开曲目清单——场景榜单已经被下面的 Chart 覆盖，
           这里只留常驻这组，避免和 Chart 重复列同一批歌 */}
       {group === RESIDENT && (
-        <div className="border-t border-line">
+        <div className="glass mt-4 overflow-hidden">
           <button
             type="button"
             onClick={() => setListOpen((open) => !open)}
             aria-expanded={listOpen}
-            className="flex w-full items-center justify-between py-3.5 text-[12.5px] text-muted transition-colors hover:text-ink"
+            className="flex min-h-11 w-full items-center justify-between px-6 py-3.5 text-[13px] text-ink transition-colors hover:bg-accent-100"
           >
             <span>
               {listOpen ? t("hideList") : t("showList")}
@@ -957,7 +957,7 @@ export function Turntable() {
                 }}
                 className="overflow-hidden"
               >
-                <ul className="border-t border-line">
+                <ul className="border-t border-line-soft">
                   {tracks.map((item, i) => {
                     const on = i === player.index;
                     const dead = Boolean(broken[item.id]);
@@ -968,12 +968,12 @@ export function Turntable() {
                           onClick={() => player.goto(i)}
                           disabled={dead}
                           className={[
-                            "flex w-full items-baseline gap-3.5 border-b border-line py-2.5 text-left transition-colors last:border-b-0",
+                            "flex w-full items-baseline gap-3.5 border-b border-line-soft px-6 py-3 text-left transition-colors last:border-b-0",
                             dead
                               ? "cursor-not-allowed text-faint"
                               : on
-                                ? "bg-paper text-ink"
-                                : "text-muted hover:bg-paper hover:text-ink",
+                                ? "bg-accent-100 text-accent-800"
+                                : "text-body hover:bg-accent-100 hover:text-ink",
                           ].join(" ")}
                         >
                           <span className="w-5 shrink-0 font-mono text-[11px] text-faint tabular-nums">
@@ -1005,7 +1005,7 @@ export function Turntable() {
       )}
 
       {/* 出处 */}
-      <p className="border-t border-line pt-3.5 text-[11.5px] leading-[1.8] text-faint">
+      <p className="mt-4 text-[12px] leading-[1.8] text-ink opacity-55">
         {group === RESIDENT
           ? t("residentCredit", { credit: library.residentCredit })
           : t("chartNote")}

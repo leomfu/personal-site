@@ -14,27 +14,17 @@ export type Project = {
   stack?: string[];
   link?: string;
   repo?: string;
+  /** true = 出现在首页「在做的」 */
   featured?: boolean;
   year?: string;
-  /** 首页「在做的」那三张卡上的状态小标签（"在用"/"在线"/"进行中"） */
+  /** 状态小标签（"进行中"/"在用"/"在线"） */
   status?: string;
   status_en?: string;
-};
-
-/**
- * 项目页第二块「这个站用到的仓库」。和 Project 分开：
- * Project 是站主自己的作品，这些是别人的开源仓库，混在一起会让人以为都是他写的。
- */
-export type UsedRepo = {
-  name: string;
-  repo: string;
-  /** 左列那个窄标签：框架 / 样式 / 文章 …… */
-  role: string;
-  role_en?: string;
-  desc: string;
-  desc_en?: string;
-  /** true = 站主自己找来的（不是这个站的构建依赖），排在最前面并带一个标记 */
-  mine?: boolean;
+  /** 首页「在做的」卡片上那段短一点的说明；没有就用 desc */
+  summary?: string;
+  summary_en?: string;
+  /** 首页卡片上只列的那几项技术栈；没有就用 stack */
+  featuredStack?: string[];
 };
 
 export type Video = {
@@ -47,6 +37,9 @@ export type Video = {
   desc_en?: string;
   /** 封面图（public 下路径），未加载播放器时显示 */
   cover?: string;
+  /** 首页「最近拍的」卡片上那句短说明；没有就用 desc */
+  summary?: string;
+  summary_en?: string;
 };
 
 export type Tool = {

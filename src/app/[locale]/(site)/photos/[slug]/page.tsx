@@ -2,12 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AlbumGrid } from "@/components/photos/AlbumGrid";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import { localized } from "@/lib/format";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
 import { getAlbums } from "@/lib/photos";
-import { albumDates } from "@/lib/photoTypes";
 import { routing } from "@/i18n/routing";
 
 type Params = { locale: string; slug: string };
@@ -25,12 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   if (!album) return {};
 
   const base = await pageMetadata(locale, "photos", `/photos/${slug}`);
+  const t = await getTranslations({ locale, namespace: "photos" });
   const title = localized(locale, album.title, album.titleEn);
-  const description =
-    localized(locale, album.summary ?? "", album.summaryEn) ||
-    [localized(locale, album.location ?? "", album.locationEn), albumDates(album.date, album.dateEnd)]
-      .filter(Boolean)
-      .join(" · ");
+  const description = t("albumMeta", { year: album.year, count: album.photos.length });
 
   return {
     ...base,
@@ -41,7 +38,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   };
 }
 
-/** 单辑页：缩略图网格 → 点开看整帧（← → 翻页、ESC 关闭），底部上一辑/下一辑 */
+/**
+ * 单辑页（设计稿没画这一页，沿用摄影页的页头和 figure 网格）：
+ * 页头（橙色 PHOTOS 标签 + 辑名 +「年份 · N 张」）→ 照片网格（点开看整帧，← → 翻页、ESC 关闭）→ 上一辑/下一辑
+ */
 export default async function AlbumPage({ params }: { params: Promise<Params> }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
@@ -51,85 +51,57 @@ export default async function AlbumPage({ params }: { params: Promise<Params> })
   if (index === -1) notFound();
 
   const album = albums[index];
-  const newer = albums[index - 1];
-  const older = albums[index + 1];
+  /** 顺序就是摄影页上的顺序：左边是上一辑，右边是下一辑 */
+  const prev = albums[index - 1];
+  const next = albums[index + 1];
 
   const t = await getTranslations("photos");
   const title = localized(locale, album.title, album.titleEn);
-  const summary = localized(locale, album.summary ?? "", album.summaryEn);
-  const location = localized(locale, album.location ?? "", album.locationEn);
 
   return (
     <>
-      <Reveal>
-        <Link
-          href={localePath(locale, "/photos")}
-          className="inline-block text-[12.5px] text-muted transition-colors hover:text-ink"
-        >
-          ← {t("title")}
-        </Link>
+      <PageHeader
+        tag={t("tag")}
+        tone="warm"
+        title={title}
+        lead={t("albumMeta", { year: album.year, count: album.photos.length })}
+      />
 
-        <h1 className="mt-5 font-serif text-[30px] leading-[1.35] font-light tracking-[-0.01em] text-ink sm:text-[38px]">
-          {title}
-        </h1>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-[12.5px] text-faint">
-          <span className="border border-line px-1.5 py-0.5 text-[10.5px] tracking-[0.1em]">
-            {album.kind === "feature" ? t("kindFeature") : t("kindArchive")}
-          </span>
-          {location && <span>{location}</span>}
-          <span>{albumDates(album.date, album.dateEnd)}</span>
-          <span>{t("frames", { count: album.photos.length })}</span>
-        </div>
-
-        {summary && (
-          <p className="mt-5 max-w-[560px] text-[14.5px] leading-[1.85] text-muted">{summary}</p>
-        )}
-      </Reveal>
-
-      <Reveal index={0} className="mt-9">
-        {album.photos.length > 0 ? (
-          <AlbumGrid photos={album.photos} title={title} />
-        ) : (
-          <p className="text-base leading-[1.9] text-muted">{t("albumEmpty")}</p>
-        )}
+      <Reveal index={0}>
+        <AlbumGrid photos={album.photos} title={title} />
       </Reveal>
 
       {/* 上一辑 / 下一辑 */}
-      <Reveal index={1} className="mt-[72px] border-t border-line pt-7">
+      <Reveal index={1} className="mt-[56px] border-t border-line pt-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:justify-between">
-          {newer ? (
+          {prev ? (
             <Link
-              href={localePath(locale, `/photos/${newer.slug}`)}
-              className="group flex max-w-[46%] flex-col gap-1.5"
+              href={localePath(locale, `/photos/${prev.slug}`)}
+              className="group flex flex-col gap-1.5 sm:max-w-[46%]"
             >
-              <span className="text-[10.5px] tracking-(--tracking-label) text-faint">
-                {t("newer")}
-              </span>
-              <span className="text-sm text-ink transition-colors group-hover:text-muted">
-                {localized(locale, newer.title, newer.titleEn)}
+              <span className="text-[11px] tracking-(--tracking-label) text-faint">{t("older")}</span>
+              <span className="font-hand text-[22px] text-ink transition-colors group-hover:text-accent-700">
+                {localized(locale, prev.title, prev.titleEn)}
               </span>
             </Link>
           ) : (
             <span />
           )}
-          {older && (
+          {next && (
             <Link
-              href={localePath(locale, `/photos/${older.slug}`)}
-              className="group flex max-w-[46%] flex-col gap-1.5 sm:items-end sm:text-right"
+              href={localePath(locale, `/photos/${next.slug}`)}
+              className="group flex flex-col gap-1.5 sm:max-w-[46%] sm:items-end sm:text-right"
             >
-              <span className="text-[10.5px] tracking-(--tracking-label) text-faint">
-                {t("older")}
-              </span>
-              <span className="text-sm text-ink transition-colors group-hover:text-muted">
-                {localized(locale, older.title, older.titleEn)}
+              <span className="text-[11px] tracking-(--tracking-label) text-faint">{t("newer")}</span>
+              <span className="font-hand text-[22px] text-ink transition-colors group-hover:text-accent-700">
+                {localized(locale, next.title, next.titleEn)}
               </span>
             </Link>
           )}
         </div>
         <Link
           href={localePath(locale, "/photos")}
-          className="mt-8 inline-block text-[12.5px] text-muted transition-colors hover:text-ink"
+          className="mt-8 inline-flex min-h-11 items-center text-[13px] text-muted transition-colors hover:text-accent-700"
         >
           ← {t("backToList")}
         </Link>
