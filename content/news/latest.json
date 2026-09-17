@@ -1,6 +1,6 @@
 {
   "note": "由 scripts/fetch-news.mjs 生成，别手改。源清单在 sources.json。",
-  "generatedAt": "2026-09-15T23:55:13.867Z",
+  "generatedAt": "2026-09-17T00:01:29.353Z",
   "boards": [
     {
       "key": "world",
@@ -53,244 +53,244 @@
       ],
       "items": [
         {
-          "title": "Argentina intensifies campaign against Falklands oil companies",
-          "url": "https://www.aljazeera.com/economy/2026/9/15/argentina-intensifies-campaign-against-falklands-oil-companies?traffic_source=rss",
+          "title": "Israel and Morocco agree to open embassies, upgrading diplomatic ties",
+          "url": "https://www.aljazeera.com/news/2026/9/16/israel-and-morocco-agree-to-open-embassies-upgrading-diplomatic-ties?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-15T23:03:52.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T23:26:27.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "Republican congressman calls to impeach US Defence Secretary Pete Hegseth",
-          "url": "https://www.aljazeera.com/news/2026/9/15/republican-congressman-calls-to-impeach-us-defence-secretary-pete-hegseth?traffic_source=rss",
+          "title": "US military claims Strait of Hormuz remains open amid ongoing blockade",
+          "url": "https://www.aljazeera.com/news/2026/9/16/us-military-claims-strait-of-hormuz-remains-open-amid-ongoing-blockade?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-15T22:38:08.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T23:14:46.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "Turks often keep gold as a hedge against inflation. It may be hurting Turkey's future",
-          "url": "https://www.npr.org/2026/09/15/nx-s1-5949212/turks-often-keep-gold-as-a-hedge-against-inflation-it-may-be-hurting-turkeys-future",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-15T22:26:14.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Ed Sheeran blames US tour promoter for dropping Macklemore",
-          "url": "https://www.aljazeera.com/news/2026/9/15/ed-sheeran-blames-us-tour-promoter-for-dropping-macklemore?traffic_source=rss",
+          "title": "‘People don’t have money’: Syrian fuel hikes deepen economic pain",
+          "url": "https://www.aljazeera.com/news/2026/9/16/people-dont-have-money-syrian-fuel-hikes-deepen-economic-pain?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-15T22:21:44.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T23:11:31.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "Why is the far-right embracing crypto?",
-          "url": "https://www.aljazeera.com/video/newsfeed/2026/9/15/why-is-the-far-right-embracing-crypto?traffic_source=rss",
+          "title": "What to know about US Federal Reserve’s first interest rate hike in 3 years",
+          "url": "https://www.aljazeera.com/news/2026/9/16/what-to-know-about-us-federal-reserves-first-interest-rate-hike-in-3-years?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-15T22:09:02.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T23:03:37.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "Algeria faces calls to drop death penalty plans after wildfires",
-          "url": "https://www.aljazeera.com/news/2026/9/15/algeria-faces-calls-to-drop-death-penalty-plans-after-wildfires?traffic_source=rss",
+          "title": "For checkpoint and settler attack news, Palestinians tune into the radio",
+          "url": "https://www.aljazeera.com/news/2026/9/16/for-checkpoint-and-settler-attack-news-palestinians-tune-into-the-radio?traffic_source=rss",
           "source": "半岛电视台",
           "sourceEn": "Al Jazeera",
-          "at": "2026-09-15T22:01:27.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T22:30:34.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "All support acts on Ed Sheeran's US tour quit after Macklemore dropped",
-          "url": "https://www.bbc.co.uk/news/articles/c3vgyn49y4l7o?at_medium=RSS&at_campaign=rss",
+          "title": "US interest rates raised for first time in three years",
+          "url": "https://www.bbc.co.uk/news/articles/cw4gmlyvj422o?at_medium=RSS&at_campaign=rss",
           "source": "BBC World",
           "sourceEn": "BBC World",
-          "at": "2026-09-15T21:07:13.000Z",
-          "date": "2026-09-16"
+          "at": "2026-09-16T22:16:51.000Z",
+          "date": "2026-09-17"
         },
         {
-          "title": "Criticism of LGBTQ+ raids in Turkey is growing",
-          "url": "https://www.dw.com/en/criticism-of-lgbtq-raids-in-turkey-is-growing/a-79284021?maca=en-rss-en-world-4025-rdf",
+          "title": "At Least 21 Dead in Gaza After Building Collapse, Officials Say",
+          "url": "https://www.nytimes.com/2026/09/16/world/middleeast/gaza-building-collapse.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-16T20:13:21.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "EU rolls out red carpet to Canada to become its first 'associate member'",
+          "url": "https://www.npr.org/2026/09/16/nx-s1-5971043/eu-canada-carney-tariffs-trump",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-16T20:08:27.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "US House votes to hold billionaire Epstein associate Leon Black in contempt",
+          "url": "https://www.bbc.co.uk/news/articles/c62l8g8qlr0ko?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-16T19:59:57.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "E.U.-Canada Ambitions Face Reality Check",
+          "url": "https://www.nytimes.com/2026/09/16/world/canada/eu-canada-associate-member-trade.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-16T19:30:23.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Belarus Frees 25 Political Prisoners in Exchange for U.S. Sanctions Relief",
+          "url": "https://www.nytimes.com/2026/09/16/world/europe/belarus-political-prisoner-release-us-sanctions.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-16T19:25:40.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Gold Mine Collapse in Sudan Kills at Least 70",
+          "url": "https://www.nytimes.com/2026/09/16/world/africa/sudan-gold-mine-collapse.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-16T18:49:34.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Photos show widespread damage at US sites from Iranian attacks",
+          "url": "https://www.bbc.co.uk/news/articles/c8g49e0gwxeno?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-16T18:36:16.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "UK: Village votes to 'secede' in asylum center plan protest",
+          "url": "https://www.dw.com/en/uk-village-votes-to-secede-in-asylum-center-plan-protest/a-79295826?maca=en-rss-en-world-4025-rdf",
           "source": "德国之声",
           "sourceEn": "DW",
-          "at": "2026-09-15T19:32:00.000Z",
+          "at": "2026-09-16T17:41:00.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Eight children among 21 killed after war-damaged Gaza building collapses, rescuers say",
+          "url": "https://www.bbc.co.uk/news/articles/cvp8d00j9gg5o?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-16T17:16:47.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "After a Desperate Search for Survivors, Rescuers Find Bodies at Nepal Power Plant",
+          "url": "https://www.nytimes.com/2026/09/16/world/asia/nepal-floods-chillime-hydropower-plant.html",
+          "source": "纽约时报",
+          "sourceEn": "NYT World",
+          "at": "2026-09-16T17:12:02.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Can Canada and the EU build a deeper partnership?",
+          "url": "https://www.dw.com/en/can-canada-and-the-eu-build-a-deeper-partnership/a-79295388?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-16T16:50:00.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "How Jared Kushner is mixing U.S. diplomacy with his billion-dollar business",
+          "url": "https://www.npr.org/2026/09/16/nx-s1-5971125/how-jared-kushner-is-mixing-u-s-diplomacy-with-his-billion-dollar-business",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-16T16:14:19.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Shock in Kosovo as Hague convicts former President Thaci",
+          "url": "https://www.dw.com/en/shock-in-kosovo-as-hague-convicts-former-president-thaci/a-79294916?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-16T15:59:00.000Z",
           "date": "2026-09-16"
         },
         {
-          "title": "Ferocious fight among Brazil’s supreme court erupts on eve of presidential election",
-          "url": "https://www.theguardian.com/world/2026/sep/15/brazil-supreme-court-presidential-election",
+          "title": "British-American writer Bonnie Greer dies aged 77",
+          "url": "https://www.dw.com/en/british-american-writer-bonnie-greer-dies-aged-77/a-79293174?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-16T15:12:00.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "‘We are prey’: discovery of seven women’s bodies fuels anger over femicide in South Africa",
+          "url": "https://www.theguardian.com/world/2026/sep/16/discovery-women-bodies-anger-femicide-south-africa",
           "source": "卫报",
           "sourceEn": "The Guardian",
-          "at": "2026-09-15T19:14:00.000Z",
+          "at": "2026-09-16T15:02:19.000Z",
           "date": "2026-09-16"
         },
         {
-          "title": "State of U.S. democracy reaches new low, report finds",
-          "url": "https://www.npr.org/2026/09/15/nx-s1-5969741/state-of-u-s-democracy-reaches-new-low-report-finds",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-15T18:57:42.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Ukraine and Russia Say There Is No Energy Truce, Despite Trump’s Claims",
-          "url": "https://www.nytimes.com/2026/09/15/world/europe/trump-energy-truce-ukraine-russia.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-15T18:44:19.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Carney Pitches Canada as a Haven of Investment Stability in a Chaotic World",
-          "url": "https://www.nytimes.com/2026/09/15/world/canada/carney-pitches-canada-as-a-stable-investment-in-a-chaotic-world.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-15T18:42:07.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "South African president vows justice as more women's bodies found near Johannesburg",
-          "url": "https://www.bbc.co.uk/news/articles/crgqde1nex2vo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-15T18:01:51.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Alex Saab, Venezuelan Tied to Maduro, Pleads Guilty in Florida",
-          "url": "https://www.nytimes.com/2026/09/14/us/alex-saab-maduro-money-laundering-plea.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-15T17:43:22.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Why do authoritarian regimes target the LGBTQ+ community?",
-          "url": "https://www.dw.com/en/why-do-authoritarian-regimes-target-the-lgbtq-community/a-79276831?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-15T16:14:00.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "Two sailors missing after tanker attacked in Strait of Hormuz, Oman says",
-          "url": "https://www.bbc.co.uk/news/articles/c3n07ydqdzlvo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-15T16:13:41.000Z",
-          "date": "2026-09-16"
-        },
-        {
-          "title": "《匹茲堡醫魂》拿走了六個艾美獎，它的忠粉都是真醫生",
-          "url": "https://www.bbc.com/zhongwen/articles/cmvgyn5gywz1o/trad?at_medium=RSS&at_campaign=rss",
+          "title": "美國能在外太空部署哪些武器？",
+          "url": "https://www.bbc.com/zhongwen/articles/c60re4x41yejo/trad?at_medium=RSS&at_campaign=rss",
           "source": "BBC 中文",
           "sourceEn": "BBC Chinese",
-          "at": "2026-09-15T15:23:06.000Z",
-          "date": "2026-09-15"
+          "at": "2026-09-16T14:57:03.000Z",
+          "date": "2026-09-16"
         },
         {
-          "title": "What weapon could the US have put into space?",
-          "url": "https://www.bbc.co.uk/news/articles/cmy4zqgk97wlo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-15T14:23:14.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "Yemen’s Houthis Show Growing Sophistication and Self-Reliance in Weaponry",
-          "url": "https://www.nytimes.com/2026/09/15/world/middleeast/yemen-houthis-weapons.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-15T14:03:21.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "Saudi Arabia faces hard choices as Houthis gain in Yemen",
-          "url": "https://www.dw.com/en/saudi-arabia-faces-hard-choices-as-houthis-gain-in-yemen/a-79274826?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-15T14:03:00.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "Why the era of cheap government debt is over",
-          "url": "https://www.dw.com/en/why-the-era-of-cheap-government-debt-is-over/a-79259272?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-15T13:17:00.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "US allies in Asia alarmed as think tank calls for pullback",
-          "url": "https://www.dw.com/en/us-allies-in-asia-alarmed-as-think-tank-calls-for-pullback/a-79275554?maca=en-rss-en-world-4025-rdf",
-          "source": "德国之声",
-          "sourceEn": "DW",
-          "at": "2026-09-15T12:32:00.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "美國首認部署太空武器 中國警告勿搞軍事競賽",
-          "url": "https://www.bbc.com/zhongwen/articles/c6n9wzxjy92lo/trad?at_medium=RSS&at_campaign=rss",
+          "title": "區錦新案：澳門首宗國安案閉門開審，我們知道多少？",
+          "url": "https://www.bbc.com/zhongwen/articles/c6jrxzq3777wo/trad?at_medium=RSS&at_campaign=rss",
           "source": "BBC 中文",
           "sourceEn": "BBC Chinese",
-          "at": "2026-09-15T12:18:38.000Z",
-          "date": "2026-09-15"
+          "at": "2026-09-16T14:28:10.000Z",
+          "date": "2026-09-16"
         },
         {
-          "title": "Denmark says Russian warship fired flares at military helicopter",
-          "url": "https://www.bbc.co.uk/news/articles/cwn8mjl31p5yo?at_medium=RSS&at_campaign=rss",
-          "source": "BBC World",
-          "sourceEn": "BBC World",
-          "at": "2026-09-15T11:40:00.000Z",
-          "date": "2026-09-15"
+          "title": "How the Houthis are also putting Egypt under pressure",
+          "url": "https://www.dw.com/en/how-the-houthis-are-also-putting-egypt-under-pressure/a-79291103?maca=en-rss-en-world-4025-rdf",
+          "source": "德国之声",
+          "sourceEn": "DW",
+          "at": "2026-09-16T13:56:00.000Z",
+          "date": "2026-09-16"
         },
         {
-          "title": "SCOTUS rejects Trump's mail voting limits. And, the Kennedy Center financial crisis",
-          "url": "https://www.npr.org/2026/09/15/g-s1-143294/up-first-newsletter-bernie-sanders-steve-bannon-ai-mail-in-ballots-kennedy-center-emmys",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-15T11:35:49.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "Trump says Ukraine and Russia agreed to stop attacks on energy sites",
-          "url": "https://www.npr.org/2026/09/15/nx-s1-5968728/trump-says-ukraine-and-russia-agreed-to-stop-attacks-on-energy-sites",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-15T10:42:10.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "Air pollution spiked after the Trump administration stopped embassy monitoring",
-          "url": "https://www.npr.org/2026/09/15/nx-s1-5966503/air-pollution-spiked-after-the-trump-administration-stopped-embassy-monitoring",
-          "source": "NPR",
-          "sourceEn": "NPR",
-          "at": "2026-09-15T10:26:08.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "It’s Boom Time in Kyrgyzstan, Courtesy in Part of the War in Ukraine",
-          "url": "https://www.nytimes.com/2026/09/15/world/asia/kyrgyzstan-economy-russia-war.html",
-          "source": "纽约时报",
-          "sourceEn": "NYT World",
-          "at": "2026-09-15T09:13:29.000Z",
-          "date": "2026-09-15"
-        },
-        {
-          "title": "威爾士、蘇格蘭和北愛爾蘭一起要「公投權」英國是否面臨分裂？",
-          "url": "https://www.bbc.com/zhongwen/articles/c85yd2dnw25vo/trad?at_medium=RSS&at_campaign=rss",
+          "title": "香港施政報告與「一五」同步公佈 聚焦北部都會區、國安與鼓勵生育",
+          "url": "https://www.bbc.com/zhongwen/articles/cm207gqz55r0o/trad?at_medium=RSS&at_campaign=rss",
           "source": "BBC 中文",
           "sourceEn": "BBC Chinese",
-          "at": "2026-09-15T07:37:34.000Z",
-          "date": "2026-09-15"
+          "at": "2026-09-16T13:36:44.000Z",
+          "date": "2026-09-16"
         },
         {
-          "title": "‘I believed the hype’: the white South Africans denied refugee status in the US",
-          "url": "https://www.theguardian.com/world/2026/sep/15/white-south-africans-denied-refugee-status-us",
+          "title": "Russia seizes Ukrainian POWs, then it demands favors from their relatives",
+          "url": "https://www.npr.org/2026/09/16/nx-s1-5904423/russia-seizes-ukrainian-pows-then-it-demands-favors-from-their-relatives",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-16T13:33:53.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "EU chief backs plan for Canada to become 'associate member'",
+          "url": "https://www.bbc.co.uk/news/articles/cjwyzrr9d3dko?at_medium=RSS&at_campaign=rss",
+          "source": "BBC World",
+          "sourceEn": "BBC World",
+          "at": "2026-09-16T12:36:51.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "US to bar some South Africans over claims of anti-white discrimination",
+          "url": "https://www.theguardian.com/world/2026/sep/16/us-visa-restrictions-south-africans-trump-claims-anti-white-discrimination",
           "source": "卫报",
           "sourceEn": "The Guardian",
-          "at": "2026-09-15T04:00:27.000Z",
-          "date": "2026-09-15"
+          "at": "2026-09-16T12:35:45.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "Fed expected to raise interest rates. And, board votes to close Kennedy Center",
+          "url": "https://www.npr.org/2026/09/16/g-s1-143569/up-first-newsletter-fed-reserve-interest-rates-iran-war-kennedy-center-contraception",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-16T11:19:46.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "EU's Ursula von der Leyen says she wants Canada to become an associate member",
+          "url": "https://www.npr.org/2026/09/16/nx-s1-5970985/canada-become-eu-associate-member",
+          "source": "NPR",
+          "sourceEn": "NPR",
+          "at": "2026-09-16T10:48:22.000Z",
+          "date": "2026-09-16"
         }
       ]
     },
@@ -334,6 +334,54 @@
         }
       ],
       "items": [
+        {
+          "title": "Our framework for reporting model misalignment",
+          "url": "https://openai.com/index/model-misalignment-reporting-framework",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-16T17:00:00.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Issues with Google Play subscriptions",
+          "url": "https://status.claude.com/incidents/t8fpw9vcshl9",
+          "source": "Claude 状态",
+          "sourceEn": "Claude status",
+          "at": "2026-09-16T16:51:09.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Helping older adults use AI in everyday life",
+          "url": "https://openai.com/index/helping-older-adults-use-ai-in-everyday-life",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-16T16:00:00.000Z",
+          "date": "2026-09-17"
+        },
+        {
+          "title": "Reimagining advertising with AI",
+          "url": "https://openai.com/index/reimagining-advertising-with-ai",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-16T13:00:00.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "How to connect AI usage to business value",
+          "url": "https://openai.com/index/how-to-connect-ai-usage-to-business-value",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-16T12:00:00.000Z",
+          "date": "2026-09-16"
+        },
+        {
+          "title": "How workers are unlocking new ways of working",
+          "url": "https://openai.com/index/unlocking-new-ways-of-working",
+          "source": "OpenAI",
+          "sourceEn": "OpenAI",
+          "at": "2026-09-16T09:00:00.000Z",
+          "date": "2026-09-16"
+        },
         {
           "title": "v2.1.273",
           "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.273",
@@ -471,59 +519,11 @@
           "date": "2026-09-12"
         },
         {
-          "title": "Cognition helps Devin test its own work with GPT‑6 Astra",
-          "url": "https://openai.com/index/cognition-devin-testing-with-astra",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
-          "at": "2026-09-11T16:00:00.000Z",
-          "date": "2026-09-12"
-        },
-        {
           "title": "Elevated errors for Claude Mythos 5.1 and Claude Fable 5.1",
           "url": "https://status.claude.com/incidents/t33dncr5ydvl",
           "source": "Claude 状态",
           "sourceEn": "Claude status",
           "at": "2026-09-11T14:37:11.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Rapidly scaling online storage to serve over 1 billion ChatGPT users",
-          "url": "https://openai.com/index/scaling-storage-one-billion-users-part-one",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
-          "at": "2026-09-11T10:00:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "Elevated latency on the Claude API for some users",
-          "url": "https://status.claude.com/incidents/2pt83vlkk7x7",
-          "source": "Claude 状态",
-          "sourceEn": "Claude status",
-          "at": "2026-09-10T23:24:22.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "v2.1.268",
-          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.268",
-          "source": "Claude Code 发版",
-          "sourceEn": "Claude Code releases",
-          "at": "2026-09-10T20:30:54.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "How a researcher uses Codex and ChatGPT to search for new antimicrobial molecules",
-          "url": "https://openai.com/index/using-codex-chatgpt-to-search-for-new-antimicrobials",
-          "source": "OpenAI",
-          "sourceEn": "OpenAI",
-          "at": "2026-09-10T16:00:00.000Z",
-          "date": "2026-09-11"
-        },
-        {
-          "title": "3 ways to prep for your next big race with Search",
-          "url": "https://blog.google/products-and-platforms/products/search/running-race-training-tips/",
-          "source": "Google AI",
-          "sourceEn": "Google AI",
-          "at": "2026-09-10T16:00:00.000Z",
           "date": "2026-09-11"
         }
       ]
