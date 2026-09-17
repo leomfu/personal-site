@@ -3,8 +3,14 @@ import { ToolIcon } from "@/components/icons/ToolIcon";
 import type { Tool } from "@/lib/types";
 
 /**
- * 工具卡片 —— 对照 docs/design/Tools.dc.html（左上角那张就是 hover 态）。
- * 图标平时黑白，hover 时亮起 brandColor：全站唯一允许出现彩色的地方（PLAN.md §5）。
+ * 工具卡片 —— 2026-09-17 改版重做（handoff §6.8）。
+ *
+ * 一枚 999px 的胶囊卡：48px 圆形图标底（雾蓝底 + accent-800 的图标）、
+ * 15.5px/600 名称、12.5px opacity .6 说明、右侧主色 ↗。
+ * hover 上浮 4px 并升到 shadow-md。
+ *
+ * ⚠️ **图标 hover 亮各自品牌色这条例外保留**：这是全站少数几处彩色之一，
+ * 改版前后都成立（现在页面本来就有蓝橙两色，但品牌色仍然只在这里出现）。
  */
 export function ToolCard({
   tool,
@@ -18,19 +24,19 @@ export function ToolCard({
       href={tool.url}
       target="_blank"
       rel="noreferrer noopener"
-      style={{ "--brand": tool.brandColor || "#111111" } as CSSProperties}
-      className="group flex items-center gap-[15px] rounded-[11px] border border-line bg-card px-[17px] py-[15px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:border-ink hover:shadow-[0_8px_22px_rgba(0,0,0,0.10)]"
+      style={{ "--brand": tool.brandColor || "var(--color-accent-700)" } as CSSProperties}
+      className="glass group flex items-center gap-4 rounded-full py-2.5 pr-6 pl-2.5 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-md"
     >
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-[10px] border border-[#F0F0F0] bg-[#FBFBFB] text-ink transition-colors duration-300 group-hover:text-[var(--brand)]">
+      <span className="flex size-[48px] shrink-0 items-center justify-center rounded-full bg-bg text-accent-800 transition-colors duration-300 group-hover:text-[var(--brand)]">
         <ToolIcon name={tool.icon} />
       </span>
-      <span className="flex min-w-0 grow flex-col gap-1">
-        <span className="truncate text-[15.5px] tracking-[0.01em] text-ink">
-          {tool.name}
-        </span>
-        <span className="truncate text-[12.5px] text-muted">{desc}</span>
+      <span className="flex min-w-0 grow flex-col gap-0.5">
+        <span className="truncate text-[15.5px] font-semibold text-ink">{tool.name}</span>
+        <span className="truncate text-[12.5px] text-muted opacity-60">{desc}</span>
       </span>
-      <span className="text-sm text-[#C4C4C4] transition-colors group-hover:text-ink">↗</span>
+      <span className="shrink-0 text-[15px] text-accent" aria-hidden>
+        ↗
+      </span>
     </a>
   );
 }

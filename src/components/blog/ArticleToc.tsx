@@ -33,8 +33,8 @@ export function ArticleToc({ headings }: { headings: Heading[] }) {
   }, [headings]);
 
   return (
-    <div className="sticky top-[104px] flex flex-col gap-3">
-      <span className="text-[10px] tracking-(--tracking-label) text-faint">
+    <div className="sticky top-8 flex flex-col gap-3">
+      <span className="text-[11px] tracking-(--tracking-label) text-faint">
         {t("toc")}
       </span>
       <nav className="flex flex-col gap-2 border-l border-line pl-3.5">
@@ -45,7 +45,7 @@ export function ArticleToc({ headings }: { headings: Heading[] }) {
             className={[
               "text-[12.5px] leading-[1.5] transition-colors",
               heading.depth === 3 ? "pl-3" : "",
-              active === heading.id ? "text-ink" : "text-faint hover:text-muted",
+              active === heading.id ? "text-accent-700" : "text-faint hover:text-muted",
             ].join(" ")}
           >
             {heading.text}

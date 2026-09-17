@@ -1,0 +1,247 @@
+/* ============================================================================
+   weiliang.dev 改版 —— 设计 token（定稿值）
+   来源：设计稿 weiliang.dev 改版.dc.html
+   配色「雾蓝 · 蓝+橙」+ 皮肤「玻璃 · 手写标题」，已把两层合并成最终值。
+
+   用法：把下面 @theme 块整段替换掉 src/app/globals.css 里现有的 @theme 块。
+   下半部分（玻璃表面 / 底纹 / 动效）是新增的基础层 CSS，追加到 @layer base 之后。
+   ========================================================================== */
+
+@theme {
+  /* ── 页面底色与表面 ───────────────────────────────────────────── */
+  --color-bg: #edf1f7;          /* 全站底色（原 #fafafa 纸白） */
+  --color-surface: #ffffff;     /* 卡面（玻璃态下按 42% 透明使用，见下方 .glass） */
+  --color-card: #ffffff;
+  --color-paper: #f7f9fc;
+
+  /* ── 文字层级（亮侧）───────────────────────────────────────────
+     和原黑白系统一一对应替换：ink/body/muted/faint 保持同名同角色 */
+  --color-ink: #171b22;
+  --color-body: #40464f;
+  --color-muted: #5b636f;
+  --color-faint: #78818f;
+
+  /* ── 线 ───────────────────────────────────────────────────────── */
+  --color-line: #d8dde6;
+  --color-line-soft: #eceff5;
+  --color-line-strong: #b8c0cd;
+
+  /* ── 主色：蓝 ─────────────────────────────────────────────────── */
+  --color-accent: #4f79cf;
+  --color-accent-100: #eef3fe;
+  --color-accent-200: #dae5fb;
+  --color-accent-300: #b8ccf5;
+  --color-accent-400: #8ba8e9;
+  --color-accent-500: #5b83d6;
+  --color-accent-600: #3a63bd;
+  --color-accent-700: #2a4a95;  /* 正文里的链接色用这一档，保证 4.5:1 */
+  --color-accent-800: #1d346b;
+  --color-accent-900: #142343;
+
+  /* ── 第二主色：橙 ─────────────────────────────────────────────── */
+  --color-accent-2: #d98341;
+  --color-accent-2-100: #fff3e9;
+  --color-accent-2-200: #ffe2cb;
+  --color-accent-2-300: #fcc79f;
+  --color-accent-2-400: #f0a367;
+  --color-accent-2-500: #d98341;
+  --color-accent-2-600: #b66627;
+  --color-accent-2-700: #8e4d19;
+  --color-accent-2-800: #663512;
+  --color-accent-2-900: #40230f;
+
+  /* ── 中性阶 ───────────────────────────────────────────────────── */
+  --color-neutral-100: #f7f9fc;
+  --color-neutral-200: #eceff5;
+  --color-neutral-300: #d8dde6;
+  --color-neutral-400: #b8c0cd;
+  --color-neutral-500: #97a0ae;
+  --color-neutral-600: #78818f;
+  --color-neutral-700: #5b636f;
+  --color-neutral-800: #40464f;
+  --color-neutral-900: #272b31;   /* 页脚底色、深色小面积块 */
+
+  /* ── 暗侧：侧栏 / 开场页 / 放松区（原 shell / void 一组）───────
+     不再是近黑的中性灰，改成同一蓝family的深色，才和亮侧是一套 */
+  --color-shell: #121822;
+  --color-void: #0d1218;
+  --color-shell-ink: #e9edf6;
+  --color-shell-muted: #a9b5c9;
+  --color-shell-dim: #8291ab;
+  --color-shell-faint: #5a6883;
+  --color-shell-mute: #3a4863;
+  --color-shell-line: #1f2836;
+  --color-shell-line-2: #26324a;
+  --color-shell-line-3: #2f3c56;
+
+  /* ── 专注区：桌上那张纸（原 desk 一组）───────────────────────── */
+  --color-desk-paper: #e6ebf3;
+  --color-desk-ink: #171b22;
+  --color-desk-dim: #5b636f;
+  --color-desk-faint: #97a0ae;
+  --color-desk-mute: #b8c0cd;
+  --color-desk-placeholder: #c9d0da;
+  --color-desk-line: #d8dde6;
+  --color-desk-line-2: #cfd6e1;
+  --color-desk-line-3: #c6cedb;
+
+  /* ── 彩色的唯一例外保留 ───────────────────────────────────────── */
+  --color-brand-claude: #c15f3c;
+
+  /* ── 字体 ─────────────────────────────────────────────────────────
+     标题是手写体：Caveat 只有拉丁字形，中文必须靠 Ma Shan Zheng 兜底，
+     两者都用 next/font/google 自托管（见 README §字体）。*/
+  --font-hand: var(--font-caveat), var(--font-mashanzheng), "Noto Sans SC", cursive;
+  --font-sans: var(--font-figtree), var(--font-noto-sans-sc), "PingFang SC",
+    "Hiragino Sans GB", system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif), "Noto Serif SC", Georgia, serif;
+
+  /* ── 间距（设计稿定稿：Organic 1.10× 密度）────────────────────── */
+  --spacing-1: 4.4px;
+  --spacing-2: 8.8px;
+  --spacing-3: 13.2px;
+  --spacing-4: 17.6px;
+  --spacing-6: 26.4px;
+  --spacing-8: 35.2px;
+
+  /* ── 圆角 ─────────────────────────────────────────────────────── */
+  --radius-sm: 8px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  /* 卡片实际用 calc(var(--radius-lg) * 1.15) = 32.2px；按钮 / 标签 / 输入框 999px */
+
+  /* ── 阴影 ─────────────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+  --shadow-glass: 0 10px 36px color-mix(in srgb, #171b22 16%, transparent);
+
+  /* ── 版心 / 行宽（沿用原有档位，只改版心宽度到设计稿的 1180）──── */
+  --spacing-page: 1180px;
+  --spacing-page-narrow: 1080px;
+  --spacing-display: 860px;
+  --spacing-column: 700px;
+  --spacing-note: 420px;
+
+  --tracking-label: 0.2em;
+  --tracking-eyebrow: 0.36em;
+}
+
+/* ============================================================================
+   基础层追加：玻璃表面
+   设计稿里 .card / .nav / .input 都是这一套；组件里复用 .glass 即可。
+   ========================================================================== */
+.glass {
+  background: color-mix(in srgb, var(--color-surface) 42%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  box-shadow: var(--shadow-glass);
+  border-radius: calc(var(--radius-lg) * 1.15);
+}
+.glass-soft {                               /* 次要按钮那一档 */
+  background: color-mix(in srgb, var(--color-surface) 45%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+.glass-tag {                                /* 标签 */
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.btn-primary-glow { box-shadow: 0 8px 26px color-mix(in srgb, var(--color-accent) 45%, transparent); }
+
+/* ============================================================================
+   基础层追加：背景
+   定稿：**无底纹**。只挂两颗漂移光斑；下方 .bg-texture 是备用，本次不要用。
+   内容层仍要 position:relative; z-index:1。
+   ========================================================================== */
+.bg-texture {          /* 备用：本次不要挂到页面上 */
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 1;                               /* 设计稿强度 2.5 → 已到满档 */
+  background-image:
+    repeating-linear-gradient(0deg,  color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px, transparent 1px 30px);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
+}
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: .95;
+  pointer-events: none;
+}
+.bg-blob-a {                                /* 右上 */
+  top: -180px; right: -140px; width: 680px; height: 680px;
+  background: radial-gradient(circle at 35% 35%, var(--color-accent-200), transparent 68%);
+  animation: wlDrift 26s ease-in-out infinite;
+}
+.bg-blob-b {                                /* 左中 */
+  top: 640px; left: -220px; width: 680px; height: 680px;
+  background: radial-gradient(circle at 60% 40%, var(--color-accent-2-200), transparent 70%);
+  animation: wlDrift2 32s ease-in-out infinite;
+}
+@keyframes wlDrift  { 0%,100% { transform: translate(0,0) scale(1) } 50% { transform: translate(28px,-34px) scale(1.07) } }
+@keyframes wlDrift2 { 0%,100% { transform: translate(0,0) }          50% { transform: translate(-36px,26px) } }
+
+/* ============================================================================
+   基础层追加：翻阅动效「错位滑入」，强度 k = 1.6
+   Reveal 组件给每个块加 data-wl-rv；奇数序号加 data-wl-alt（从右进）；
+   进入视口后加 data-wl-in。延迟 (index % 4) * 110ms。
+   ========================================================================== */
+:root { --wl-k: 1.6; }
+
+[data-wl-rv] {
+  opacity: 0;
+  transform: translate3d(calc(-96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(.965);
+  transition: opacity .6s ease, transform .86s cubic-bezier(.16,.86,.22,1);
+  will-change: opacity, transform;
+}
+[data-wl-rv][data-wl-alt] {
+  transform: translate3d(calc(96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(.965);
+}
+[data-wl-rv][data-wl-in],
+[data-wl-rv][data-wl-alt][data-wl-in] { opacity: 1; transform: none; }
+
+/* 换页时整块 main 的入场 */
+@keyframes wlPgSlide { from { opacity: 0; transform: translateX(44px) } to { opacity: 1; transform: none } }
+.page-enter { animation: wlPgSlide .55s cubic-bezier(.2,.8,.3,1) both; }
+
+/* 小动作 */
+@keyframes wlUp   { from { opacity: 0; transform: translateY(22px) } to { opacity: 1; transform: none } }
+@keyframes wlPop  { from { opacity: 0; transform: scale(.88) }       to { opacity: 1; transform: none } }
+@keyframes wlBar  { from { transform: scaleX(0) }                    to { transform: scaleX(1) } }
+@keyframes wlPulse{ 0%,100% { box-shadow: 0 0 0 5px var(--color-accent-200) }
+                    50%     { box-shadow: 0 0 0 11px color-mix(in srgb, var(--color-accent) 10%, transparent) } }
+@keyframes wlSpin { to { transform: rotate(360deg) } }
+
+/* 顶部滚动进度条——备用：定稿已关，本次不要挂上 */
+.scroll-progress {
+  position: fixed; left: 0; top: 0; height: 3px; width: 0; z-index: 99;
+  background: var(--color-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  pointer-events: none;
+  transition: width .1s linear;
+}
+
+/* ============================================================================
+   基础层追加：顶栏「左右分立」的渐变下法线
+   ========================================================================== */
+.nav-split { position: relative; }
+.nav-split::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-wl-rv] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .bg-blob, .page-enter { animation: none !important; }
+}

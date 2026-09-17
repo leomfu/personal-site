@@ -9,7 +9,7 @@ import type { MusicLibrary, Track } from "@/lib/types";
 /**
  * 全站唯一的播放器。
  *
- * **为什么挂在 `app/[locale]/layout.tsx`**：那是 `(site)` 和 `focus` 的共同祖先，
+ * **为什么挂在 `app/[locale]/layout.tsx`**：那是所有页面的共同祖先，
  * 客户端跳页时这一层不会卸载。<audio> 要是留在唱片页里，一离开页面组件就被卸掉，
  * 音乐当场断掉 —— 用户要的正是「走开了还接着放」。
  *

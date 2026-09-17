@@ -32,26 +32,19 @@ export default async function VideosPage({
   const videos = getVideos();
 
   return (
-    <div className={videos.length <= 2 ? "mx-auto w-full max-w-[960px]" : ""}>
-      <PageHeader title={t("title")} lead={t("lead")} />
+    /* 单列大卡，收在 880px（handoff §6.6）—— 视频是这一页唯一的内容，
+       铺成两列只会让每一条都变小。条数再多也还是一列。 */
+    <div className="mx-auto w-full max-w-[880px]">
+      <PageHeader tag="VIDEO" title={t("title")} lead={t("lead")} />
 
-
-      {/* 条数少就单列大卡居中，多了才铺两列 —— 一条视频排成两列，右半边是空的。
-          阈值写在这儿而不是写死列数：以后多发几条不用回来改代码。 */}
-      <div
-        className={
-          videos.length <= 2
-            ? "mt-11 grid grid-cols-1 gap-7"
-            : "mt-11 grid grid-cols-1 gap-7 xl:grid-cols-2"
-        }
-      >
+      <div className="flex flex-col gap-8">
         {videos.length === 0 && (
-          <Reveal delay={120}>
-            <p className="text-base leading-[1.9] text-muted">{t("empty")}</p>
+          <Reveal index={0}>
+            <p className="text-[15px] leading-[1.9] text-muted">{t("empty")}</p>
           </Reveal>
         )}
         {videos.map((video, i) => (
-          <Reveal key={`${video.platform}-${video.id}`} delay={120 + i * 90}>
+          <Reveal key={`${video.platform}-${video.id}`} index={i}>
             <VideoCard video={video} />
           </Reveal>
         ))}

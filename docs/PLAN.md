@@ -18,7 +18,7 @@
 | 语言 | 中英双语切换（默认中文），顶部有 EN/中 切换按钮 |
 | 放松区 | 三层方案：氛围音自托管（CC0 免费素材，随场景自动淡入）；音乐用**网易云歌单外链播放器**嵌入；播客用小宇宙/YouTube 播放列表嵌入 |
 | 扩展功能（已确认要做） | 视频作品区、书影音收藏页、工具页、文章评论（giscus；~~访客留言板~~ 2026-09-08 下线）、⌘K 搜索面板、访问统计（部署阶段接入 Umami/Vercel Analytics） |
-| 视觉稿（阶段 0 已完成并确认） | `docs/design/` 下 5 个画板：Intro / Main / BlogContact / Lounge / Tools（.dc.html），**是唯一视觉依据**，开发时在浏览器打开对照还原 |
+| 视觉稿 | `docs/design/改版规格.md` + `tokens.css`（2026-09-17 改版定稿），**是唯一视觉依据**；效果图 `weiliang-redesign-reference.html` 用浏览器打开对照 |
 | 布局（2026-09-08 改版） | **顶部暗色导航条**（64px，fixed，导航组绝对居中）+ **1240px 居中版心**的浅色内容区。~~原为左侧 264px 暗色侧边栏 + 700px 内容列~~。版心之内文章正文再收一层（`.prose-bw`，700px 阅读列） |
 | Now | 不单独成页，作为首页"现在是"板块（内容仍由 content/now/ 驱动） |
 | 部署 | 暂不决定。开发阶段保证纯静态可导出（`next build` 静态输出），Vercel / Cloudflare Pages / GitHub Pages 都能上 |
@@ -83,25 +83,67 @@
 **评论（giscus）前提**：GitHub 仓库必须为 **public** 且开启 **Discussions**，评论数据存在仓库 Discussions 里。文章详情页底部挂评论组件。
 ~~/guestbook 独立留言串~~ —— 留言板 2026-09-08 按站主要求整个下线，文章底下的评论保留。
 
-## 5. 设计规范（以 docs/design/ 视觉稿为准）
+## 5. 设计规范（2026-09-17 改版定稿）
 
-**总原则：视觉稿 5 个画板是唯一视觉依据。实现时在浏览器打开对应 .dc.html 对照还原布局、间距、灰阶层级和动效气质，吃不准就以画板为准。** 以下 tokens 从画板中提取：
+> ⚠️ **这一节 2026-09-17 整个重写过。** 原来那套「黑白设计系统」（暗侧 `#0A0A0A` +
+> 亮侧浅灰渐变 + 细衬线大标题 + 全站只用黑白灰）连同它依据的五个 `.dc.html` 画板
+> 和 `design-v2/` 一起**已经删除**。下面是现行规范。
 
-- **配色（暗侧）**：顶栏（原侧边栏）底色 `#0A0A0A`（开场页 `#060606`），主文字 `#EDEDED`，次要 `#A3A3A3`/`#8A8A8A`，弱化 `#5A5A5A`，分割线 `#1F1F1F`/`#262626`，当前导航项反色（`#EDEDED` 底 + `#0A0A0A` 字）。
-- **配色（亮侧）**：内容区背景为浅灰渐变 `linear-gradient(158deg, #F1F1F1, #FAFAFA 34%, #F7F7F7 66%, #ECECEC)`，主文字 `#111111`，正文 `#333333`，次要 `#666666`，弱化 `#999999`，分割线 `#E5E5E5`，链接样式 = 文字下细灰底线（`#C9C9C9`），hover 变深。
-- **彩色的唯一例外**：工具页图标 hover 时亮各自品牌色（如 Claude 橙 `#C15F3C`）；其余全站黑白灰。
-- **字体**：正文 Inter + PingFang SC；大标题用 `Noto Serif SC` 细衬线（font-weight 300，46px 级）制造对比；小标签用大字距全大写（letter-spacing 0.2em 上下）。
-- **质感层**（暗色页面标配，见 Intro/Lounge 画板）：径向辉光渐变 + SVG feTurbulence 颗粒噪点（opacity ≈0.06，mix-blend-mode: screen）+ 四周暗角渐晕；开场页另有星点闪烁（dcTwinkle）。
-- **动效词汇表**（画板中已定义，代码里用 Framer Motion 等价实现）：
-  - `dcRise`：入场淡入上移（各区块 stagger 延迟 ~120ms 递进）
-  - `dcWiden`：分割线从中心/一侧划开
-  - `dcFloat`/`dcSheen`：Logo 缓慢浮动 + 光泽扫过
-  - `dcBob`：进入按钮上下轻浮动
-  - `dcBreathe`：放松区同心圆环呼吸（错相 260ms）
-  - `dcTwinkle`/`dcGlow`/`dcDrift`：星点闪烁 / 辉光呼吸 / 斜纹漂移
-  - 通用：页面切换淡入、hover 下划线、滚动进入视口 stagger 淡入；全部尊重 prefers-reduced-motion
-- **暗色模式**：整站本身就是"暗导航 + 亮内容"的定稿设计，不做全局明暗切换（如后期想要，阶段 5 再议，不提前实现）。
-- **响应式**：视觉稿为 1440px 桌面版；移动端自行推导（§4 末尾的原则），保持同一气质，手机优先保证可读性。
+**唯一视觉依据**：`docs/design/改版规格.md`（完整规格，分节对应每一页）+ `docs/design/tokens.css`（定稿 token）。
+效果图是 `docs/design/weiliang-redesign-reference.html`（26 MB 单文件，不进 git，浏览器直接打开）。
+**颜色、字号、圆角、阴影、动效时长都是定稿值，不要自行调整比例。**
+
+token 全部落在 `src/app/globals.css` 的 `@theme static` 块里（`static` 不能去掉：
+Tailwind 4 默认会把「没有工具类用到」的 token 摇掉，而这套系统里大量 token 是组件
+直接 `var(--color-accent-700)` 引用的，摇掉之后静默失效）。
+
+- **配色（亮侧）**：底色雾蓝 `--color-bg #edf1f7`；文字 `ink #171b22` / `body #40464f` /
+  `muted #5b636f` / `faint #78818f`；线 `line #d8dde6`。
+  主色蓝 `accent #4f79cf`（100→900 九档），第二主色橙 `accent-2 #d98341`（同样九档）。
+  **正文级的蓝字必须用 `accent-700 #2a4a95`**，`accent` 本体在雾蓝底上只有 3:1 出头，
+  只够图标和大标题；橙色同理用 `accent-2-700`。
+- **配色（暗侧）**：`shell-*` 和 `desk-*` 两组**保留同名**，值重调成同一蓝 family 的
+  深色/浅色 —— 暗侧和亮侧因此是一套色，而不是两套。页脚底色是 `neutral-900 #272b31`。
+- **彩色的例外只有两处**：工具页图标 hover 亮各自品牌色（`--color-brand-claude`），
+  联系页/页脚那枚 B 站图标底（`--color-brand-bilibili`）。
+- **内容图片一律原色**（摄影、视频封面、唱片封面都是作品）。页面里统一走「washed」
+  （`saturate(.78) brightness(1.05)`）让它沉进底色，hover 恢复原色；
+  **放大态的整帧照片不做任何处理**。
+- **字体**：标题 `--font-hand` = Caveat（拉丁）→ Ma Shan Zheng（中文兜底），**栈序不能反**，
+  字重恒为 400；正文 `--font-sans` = Figtree + Noto Sans SC；markdown 正文和引言继续用
+  `--font-serif`（思源宋体）。五个字体全部 `next/font/google` 自托管，**不引 CDN**。
+- **间距**：设计稿是 Organic 1.10× 密度（4.4 / 8.8 / 13.2 / 17.6 / 26.4 / 35.2px）。
+  实现方式是把 Tailwind 的基数调成 `--spacing: 0.275rem`（4.4px），算出来的六档和设计稿
+  一字不差，其余档位等比缩放 —— 不逐个覆盖 `--spacing-1…8`，那样会变成一把尺子两种刻度。
+- **圆角**：`sm 8` / `md 18` / `lg 28`；卡片实际 `calc(var(--radius-lg) * 1.15)` ≈ 32px；
+  按钮、标签、输入框、胶囊行一律 999px；页脚顶部 56px。
+- **版心**：`--spacing-page 1180px`（改版从 1240 收窄），`--spacing-page-narrow 1080px`
+  （首页 / 关于 / 项目 / 联系），行宽三档 860 / 700 / 420 不变。
+
+### 三层体感（改版的全部来源，缺一层就不成立）
+
+1. **玻璃卡面** `.glass` / `card-face`：`surface 42%` + `blur(20px) saturate(1.4)` +
+   `ink 14%` 描边 + `--shadow-glass`。**半透明是故意的** —— 底纹和光斑要从卡背后透出来，
+   任何一处改成实色白，那块就像贴上去的。
+2. **背景两层**（挂在 `components/shell/SiteShell`）：`.bg-texture` 是 `position:fixed` 的
+   30px 细网格（`accent 13%`，径向遮罩让顶部清晰、底部淡出）；两颗 680px 光斑
+   `.bg-blob-a`（右上，蓝，26s）和 `.bg-blob-b`（左中，橙，32s）。内容层 `relative z-1`。
+3. **翻阅动效「错位滑入」** `components/ui/Reveal`：滚进视口时左右交替滑入
+   （强度 `--wl-k: 1.6`，`opacity .6s ease, transform .86s cubic-bezier(.16,.86,.22,1)`），
+   错峰延迟 `(index % 4) * 110ms`，IntersectionObserver `rootMargin "0px 0px -16% 0px"` /
+   `threshold .04`，**外加一个 1600ms 的兜底定时器**（图没加载完时观察器可能一直不响）。
+   卡片网格是**一张张分别进**，所以每张卡各自包一个 `<Reveal index={i}>`。
+   换页时整块 main 播一次 `.page-enter`；顶部还有一条 3px 的滚动进度条。
+
+### 其它
+
+- **顶栏是唯一不玻璃化的容器**：完全透明，无边框无阴影无 backdrop-filter。
+  也正因为完全透明，它**不 fixed**，跟着页面滚走。
+- **焦点环全站统一**：`:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px }`。
+- **hover 位移两档**：卡片 `translateY(-6px)`，行式元素 `translateX(6–8px)`；过渡 .25–.35s。
+- **`prefers-reduced-motion: reduce` 下全部关闭**：滑入的块直接就位，光斑 / 换页 / 脉冲 / 进度条全停。
+- **暗色模式**：不做全局明暗切换。「暗侧」只指本来就是深色的那几块（页脚、照片放大态）。
+- **响应式**：网格一律 `repeat(auto-fit, minmax(...))`；手机上触摸目标不小于 44px。
 
 ## 6. 放松区（Lounge）详细方案 —— 三层混合
 
@@ -135,7 +177,7 @@ public/
 
 | 阶段 | 内容 | 产出 |
 |---|---|---|
-| 阶段 0 ✅ 已完成 | 视觉稿：docs/design/ 下 5 个画板（Intro/Main/BlogContact/Lounge/Tools），用户已确认 | 唯一视觉依据 |
+| 阶段 0 ✅ 已完成 | 视觉稿。⚠️ 原来那五个黑白画板 2026-09-17 已删，现行稿是 docs/design/改版规格.md | 唯一视觉依据 |
 | 阶段 1 | 脚手架：Next.js 项目初始化、Tailwind、设计系统 tokens（按视觉稿提取）、双语框架、git init + GitHub 仓库、Hello 开场页（还原 Intro 画板） | 可运行的项目 + 开场页 |
 | 阶段 2 | 主站骨架：左侧边栏导航、首页（含"现在是"板块）、About、Projects、视频作品区、工具页、Contact | 主要静态页面完成 |
 | 阶段 3 | 内容管线：markdown 读取/渲染、博客列表与详情页、标签分类、书影音页、RSS、⌘K 搜索面板、giscus 评论 + 留言板 | 博客系统与互动功能完成 |

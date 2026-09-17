@@ -39,24 +39,23 @@ export async function PhotosSection({ locale }: { locale: string }) {
   return (
     <>
       {/* 开场大图：负边距顶掉 main 的左右内边距，让海报铺满整个版心还多出一点 */}
-      <div className="-mx-5 mb-12 sm:-mx-10">
+      <div className="-mx-6 mb-6">
         <PosterHero />
       </div>
 
-      <PageHeader title={t("title")} lead={t("lead")} />
+      <PageHeader tag="PHOTOS" tone="warm" title={t("title")} lead={t("lead")} />
 
       {albums.length === 0 && (
-        <Reveal delay={120}>
-          <p className="mt-11 text-base leading-[1.9] text-muted">{t("empty")}</p>
+        <Reveal index={0}>
+          <p className="text-[15px] leading-[1.9] text-muted">{t("empty")}</p>
         </Reveal>
       )}
 
-      {/* ---------------- 专题：图片卡（对照 design-v2/ContentTemplate.dc.html §③）---------------- */}
+      {/* ---------------- 专题：图片卡 ---------------- */}
       {features.length > 0 && (
-        <Reveal delay={120} className="mt-12">
+        <Reveal index={0} className="pb-14">
           <SectionLabel label={t("feature")} note={t("featureNote")} />
-          {/* 整幅版面下专题卡排两列；原来是 700px 窄列所以只能单列 */}
-          <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="mt-8 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
             {features.map((album) => {
               const cover = album.photos[0];
               const title = localized(locale, album.title, album.titleEn);
@@ -75,7 +74,7 @@ export async function PhotosSection({ locale }: { locale: string }) {
                         height={cover.height}
                         loading="lazy"
                         sizes="(max-width: 1280px) 100vw, 50vw"
-                        className="absolute inset-0 size-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.02]"
+                        className="absolute inset-0 size-full object-cover saturate-[0.78] brightness-[1.05] transition-[transform,filter] duration-[900ms] ease-out group-hover:scale-[1.02] group-hover:saturate-100 group-hover:brightness-100"
                       />
                     )
                   }
@@ -91,21 +90,23 @@ export async function PhotosSection({ locale }: { locale: string }) {
 
       {/* ---------------- 档案 ---------------- */}
       {archive.length > 0 && (
-        <Reveal delay={200} className={features.length > 0 ? "mt-[76px]" : "mt-12"}>
+        <Reveal index={1}>
           <SectionLabel label={t("archive")} note={t("archiveNote")} />
 
           <div className="mt-2">
             {archive.map(({ year, albums: list }) => (
-              <div key={year} className="mt-9">
-                <div className="flex items-center gap-4">
-                  <span className="text-[12.5px] tracking-[0.14em] text-faint">{year}</span>
-                  <span className="h-px flex-1 bg-line" />
-                  <span className="text-[11px] tracking-[0.08em] text-faint">
+              <div key={year} className="mt-10">
+                {/* 分辑标题：28px 那一档手写体（比板块标题小，比卡片标题大）*/}
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <h3 className="font-hand text-[28px] leading-[1.2] font-normal text-ink">
+                    {year}
+                  </h3>
+                  <span className="text-[12.5px] text-faint">
                     {t("albumCount", { count: list.length })}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="mt-5 grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
                   {list.map((album) => {
                     const cover = album.photos[0];
                     const title = localized(locale, album.title, album.titleEn);
@@ -122,7 +123,7 @@ export async function PhotosSection({ locale }: { locale: string }) {
                               height={cover.height}
                               loading="lazy"
                               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                              className="absolute inset-0 size-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.02]"
+                              className="absolute inset-0 size-full object-cover saturate-[0.78] brightness-[1.05] transition-[transform,filter] duration-[900ms] ease-out group-hover:scale-[1.02] group-hover:saturate-100 group-hover:brightness-100"
                             />
                           )
                         }
@@ -149,12 +150,14 @@ export async function PhotosSection({ locale }: { locale: string }) {
   );
 }
 
-/** 板块小标签：大字距全大写那一档（对照画板里 label 的处理） */
+/** 板块标题：手写大字 + 一行小注记（和 ui/PageHeader 的 SectionTitle 同一档） */
 function SectionLabel({ label, note }: { label: string; note?: string }) {
   return (
-    <div className="flex items-baseline gap-3 border-b border-line pb-3">
-      <span className="text-[10.5px] tracking-(--tracking-label) text-faint">{label}</span>
-      {note && <span className="text-[12px] text-faint">{note}</span>}
+    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <h2 className="font-hand text-[clamp(34px,4.4vw,54px)] leading-[1.1] font-normal text-ink">
+        {label}
+      </h2>
+      {note && <span className="text-[13px] text-faint">{note}</span>}
     </div>
   );
 }

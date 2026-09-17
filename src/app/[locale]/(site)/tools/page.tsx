@@ -19,7 +19,7 @@ export async function generateMetadata({
   return pageMetadata(locale, "tools", "/tools");
 }
 
-/** 工具页 —— 对照 docs/design/Tools.dc.html，数据来自 content/tools.json */
+/** 工具页 —— 对照 docs/design/改版规格.md §6.8，数据来自 content/tools.json */
 export default async function ToolsPage({
   params,
 }: {
@@ -32,17 +32,17 @@ export default async function ToolsPage({
 
   return (
     <>
-      <PageHeader title={t("title")} lead={t("lead")} />
+      <PageHeader tag="TOOLS" title={t("title")} lead={t("lead")} />
 
-      <div className="mt-11 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(250px,1fr))]">
         {tools.map((tool, i) => (
-          <Reveal key={tool.name} delay={120 + i * 55}>
+          <Reveal key={tool.name} index={i}>
             <ToolCard tool={tool} desc={localized(locale, tool.desc, tool.desc_en)} />
           </Reveal>
         ))}
       </div>
 
-      <Reveal delay={700}>
+      <Reveal index={0}>
         <FootNote>{t("note")}</FootNote>
       </Reveal>
     </>

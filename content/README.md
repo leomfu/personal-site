@@ -33,18 +33,9 @@ summary_en: One-line summary
 
 `about.zh.md` / `about.en.md`，纯正文，无 front-matter 要求。
 
-`timeline.json` —— 关于页那条履历，一格一年：
-`year`（`YYYY.MM`）、`title`/`titleEn`、`detail`/`detailEn`。
-**按时间正序写，页面照原样渲染不排序**；最后一格的圆点是实心的（= 现在停在这儿）。
-
 ## now/ —— 首页「现在是」板块
 
 `now.zh.md` / `now.en.md`，front-matter 里带 `updated: 2026-08-24`。
-
-## library/ —— 书影音
-
-`library.json`，或一条一个 `.md`。字段：
-`type: book|movie|album, title, creator, rating, note, note_en, date`
 
 ## videos.json —— 视频作品
 

@@ -10,16 +10,16 @@ import { siteConfig } from "~/site.config";
  * ── 图从哪来 ──
  * **是那张真照片，不是画的。** 原图放在 hero-src/（不进 git），
  * `npm run hero`（scripts/build-hero.mjs）把它印成双色调再输出 webp 进仓库 ——
- * 和 npm run photos / og / news 是同一套「本地跑、产物进仓库」的约定。
+ * 和 npm run photos / og 是同一套「本地跑、产物进仓库」的约定。
  * 换照片就替换 hero-src/road.png 重跑一次，这个组件不用动。
  *
  * ── 配方（SKILL.md 要求的 manifest）──
  *   subject         一个人背对镜头走在空旷的校园马路上
  *   representation  faithful reproduction（照片本身转网点/双色，不是抽象重画）
- *   substrate       Neutral White #FAFAF7 —— 和内容区的 #fafafa 几乎同色，
+ *   substrate       页面底色 --color-bg —— 和内容区同色，
  *                   海报因此像印在页面上；照片的高光被硬剪到纸色，
  *                   天空那一带直接融进页面，看不到图片的矩形上边
- *   palette         Ultramarine + Safety Orange（目录指定用于 movement /
+ *   palette         Ultramarine + Safety Orange（改版后油墨色走 --color-accent-800，目录指定用于 movement /
  *                   youth culture / active urban subjects）
  *   plate roles     群青 = 整张照片的影调；橙 = **只有路面那条中线**（占 0.77% 像素）
  *   layout          image field：照片占约 70%、在右边缘出血；标题**穿进**照片
@@ -39,8 +39,13 @@ const H = 900;
 /** 照片在版面里的位置：右边缘出血（skill 要求「在至少一个边缘果断裁切」） */
 const IMG = { x: 470, y: 108, w: 1190, h: 720 };
 
-const PAPER = "#FAFAF7";
-const INK = "#263E99";
+/* 2026-09-17 改版：纸色跟着页面底色走（--color-bg #edf1f7），海报因此仍然像
+   **印在页面上**而不是贴上去的一张图；油墨色换成新主色的 800 档。
+   ⚠️ 照片本身那层双色调是 scripts/build-hero.mjs 按旧纸色 #FAFAF7 印出来的，
+   换底色之后照片高光和纸色之间会有一丝极淡的色差。要完全消掉得改那个脚本的
+   substrate 再重跑 `npm run hero` —— 这次没动 scripts/。 */
+const PAPER = "var(--color-bg)";
+const INK = "var(--color-accent-800)";
 
 /**
  * 标题。要画两遍（群青一遍、纸色一遍 clip 在照片里），内容必须完全一致，

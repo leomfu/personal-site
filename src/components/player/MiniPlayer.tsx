@@ -57,7 +57,7 @@ export function MiniPlayer() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: reduced ? 0.01 : 0.32, ease: [0.22, 0.61, 0.36, 1] }}
-          className="fixed right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 w-[min(300px,calc(100vw-1.5rem))] border border-[#232323] bg-[#0A0A0A]/95 px-3.5 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
+          className="glass fixed right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 w-[min(300px,calc(100vw-1.5rem))] rounded-[24px] px-4 py-3.5 sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
           role="region"
           aria-label={t("regionLabel")}
         >
@@ -83,13 +83,13 @@ export function MiniPlayer() {
               className="min-w-0 grow"
               aria-label={t("toRecords")}
             >
-              <p className="truncate text-[12.5px] text-[#EDEDED]">
+              <p className="truncate text-[12.5px] text-ink">
                 {en ? track.titleEn : track.title}
               </p>
-              <p className="mt-0.5 truncate text-[11px] text-[#8A8A8A]">
+              <p className="mt-0.5 truncate text-[11px] text-muted">
                 {en ? track.artistEn : track.artist}
                 {isClip && (
-                  <span className="ml-1.5 text-[#5A5A5A]">· {t("preview")}</span>
+                  <span className="ml-1.5 text-faint">· {t("preview")}</span>
                 )}
               </p>
             </Link>
@@ -99,7 +99,7 @@ export function MiniPlayer() {
               onClick={player.toggle}
               aria-label={shouldPlay ? t("pause") : t("play")}
               aria-pressed={shouldPlay}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#2E2E2E] text-[#EDEDED] transition-colors hover:border-[#EDEDED]"
+              className="flex size-8 shrink-0 items-center justify-center rounded-full border border-line-strong text-ink transition-colors hover:border-accent hover:text-accent-700"
             >
               {shouldPlay ? (
                 <svg
@@ -131,7 +131,7 @@ export function MiniPlayer() {
               type="button"
               onClick={player.stop}
               aria-label={t("close")}
-              className="flex size-6 shrink-0 items-center justify-center text-[#5A5A5A] transition-colors hover:text-[#EDEDED]"
+              className="flex size-6 shrink-0 items-center justify-center text-faint transition-colors hover:text-accent-700"
             >
               <svg
                 width="9"
@@ -151,14 +151,14 @@ export function MiniPlayer() {
           {/* 进度：能拖，也能用键盘（原生 range 叠在上面，视觉那一层自己画） */}
           <div className="mt-2.5 flex items-center gap-2.5">
             <div className="relative h-3 grow">
-              <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-[#262626]" />
+              <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-line" />
               <div
                 ref={fillRef}
-                className="absolute top-1/2 left-0 h-px w-0 -translate-y-1/2 bg-[#EDEDED]"
+                className="absolute top-1/2 left-0 h-px w-0 -translate-y-1/2 bg-accent"
               />
               <div
                 ref={knobRef}
-                className="absolute top-1/2 left-0 size-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#EDEDED]"
+                className="absolute top-1/2 left-0 size-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
               />
               <input
                 type="range"
@@ -171,7 +171,7 @@ export function MiniPlayer() {
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               />
             </div>
-            <span className="shrink-0 font-mono text-[10px] text-[#5A5A5A] tabular-nums">
+            <span className="shrink-0 font-mono text-[10px] text-faint tabular-nums">
               <span ref={timeRef}>{clock(elapsed)}</span>
               {" / "}
               {clock(total)}
@@ -184,7 +184,7 @@ export function MiniPlayer() {
               href={track.platformUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 block text-[10.5px] text-[#8A8A8A] underline decoration-[#333333] underline-offset-4 transition-colors hover:text-[#EDEDED]"
+              className="mt-2 block text-[10.5px] text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-accent-700"
             >
               {t("fullVersion")}
             </a>

@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/build-news-data.mjs && next dev",
-    "prebuild": "node scripts/build-news-data.mjs",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -13,7 +12,6 @@
     "music": "node scripts/fetch-netease.mjs",
     "records": "node scripts/fetch-record-covers.mjs",
     "chart": "node scripts/fetch-music-chart.mjs",
-    "news": "node scripts/fetch-news.mjs",
     "photos": "node scripts/build-photos.mjs"
   },
   "dependencies": {

@@ -5,13 +5,19 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import type { Video } from "@/lib/types";
 import { localized, shortDate } from "@/lib/format";
-import { MediaCard } from "@/components/ui/MediaCard";
 
 /**
- * 视频卡片：默认只画封面（没有 cover 就是黑白占位画面），点了才真的插入 iframe。
- * 这样一页放十条视频也不会一次性拉十个播放器（PLAN.md §4「懒加载」）。
- * 外壳换成通用的 MediaCard（对照 design-v2/ContentTemplate.dc.html §③「图片卡」），
- * 播放按钮、懒加载 iframe 这些交互原样搬进 `media` 插槽，逻辑没有变。
+ * 视频卡片 —— 2026-09-17 改版重做（handoff §6.6）。
+ *
+ * 一张单列玻璃大卡（页面那边收在 880px）：16:9 封面 + 正中 74px 的主色播放键，
+ * 键下面挂一枚深色小胶囊「点击加载播放器」。信息区是 24px 手写标题 + 右对齐日期、
+ * 14.5px/1.85 描述、一个次按钮「在哔哩哔哩打开 ↗」。
+ *
+ * ⚠️ **懒加载逻辑一个字没改**：默认只画封面，点了才真的插入 iframe。
+ * 这样一页放十条视频也不会一次性拉十个播放器。
+ *
+ * 封面走「washed」（去饱和 + 抬亮），让它沉进雾蓝底里；载入播放器之后
+ * iframe 里是人家的画面，不做任何处理。
  */
 export function VideoCard({ video }: { video: Video }) {
   const t = useTranslations("videos");
@@ -31,100 +37,76 @@ export function VideoCard({ video }: { video: Video }) {
       ? `https://www.bilibili.com/video/${video.id}`
       : `https://www.youtube.com/watch?v=${video.id}`;
 
-  const media = (
-    <div className="absolute inset-0 bg-shell">
-      {loaded ? (
-        <iframe
-          src={embed}
-          title={title}
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
-          allowFullScreen
-          referrerPolicy="strict-origin-when-cross-origin"
-          className="absolute inset-0 h-full w-full border-0"
-        />
-      ) : (
-        <button
+  return (
+    <article className="glass overflow-hidden">
+      <div className="relative w-full overflow-hidden bg-neutral-300" style={{ aspectRatio: "16 / 9" }}>
+        {loaded ? (
+          <iframe
+            src={embed}
+            title={title}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        ) : (
+          <button
             type="button"
             onClick={() => setLoaded(true)}
             aria-label={`${t("load")} — ${title}`}
-            className={`group absolute inset-0 flex flex-col items-center justify-center gap-4 transition-colors ${
-              video.cover ? "text-shell-ink" : "text-shell-dim hover:text-shell-ink"
-            }`}
-            style={
-              video.cover
-                ? undefined
-                : {
-                    // 无封面时回退画板里的深色渐变占位（PLAN.md §5）
-                    backgroundImage:
-                      "radial-gradient(72% 60% at 50% 40%, #202020 0%, #121212 52%, #0A0A0A 100%)",
-                  }
-            }
+            className="group absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-5"
           >
-            {video.cover && (
-              <>
-                {/* 封面图 + 压暗层：封面是彩色内容图片（内容图片不受黑白 UI 约束），
-                    压暗保证播放按钮和文字在浅色封面上也可读 */}
-                <Image
-                  src={video.cover}
-                  alt=""
-                  fill
-                  sizes="(min-width: 640px) 720px, 100vw"
-                  className="object-cover"
-                  aria-hidden
-                />
-                <span
-                  className="absolute inset-0 transition-opacity group-hover:opacity-80"
-                  style={{
-                    background:
-                      "radial-gradient(85% 70% at 50% 45%, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.42) 100%)",
-                  }}
-                  aria-hidden
-                />
-              </>
+            {video.cover ? (
+              <Image
+                src={video.cover}
+                alt=""
+                fill
+                sizes="(min-width: 900px) 880px, 100vw"
+                className="object-cover saturate-[0.72] brightness-[1.06]"
+                aria-hidden
+              />
+            ) : (
+              <span
+                className="absolute inset-0"
+                aria-hidden
+                style={{
+                  backgroundImage:
+                    "radial-gradient(72% 60% at 50% 40%, var(--color-accent-200) 0%, var(--color-accent-300) 55%, var(--color-accent-400) 100%)",
+                }}
+              />
             )}
-            <span
-              className={`relative flex size-14 items-center justify-center rounded-full border transition-colors ${
-                video.cover
-                  ? "border-white/55 bg-black/35 backdrop-blur-[2px] group-hover:border-white group-hover:bg-black/55"
-                  : "border-shell-line-3 group-hover:border-shell-dim"
-              }`}
-            >
-              <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden>
+
+            <span className="relative flex size-[74px] items-center justify-center rounded-full bg-accent text-neutral-100 shadow-lg transition-transform duration-300 group-hover:scale-[1.08]">
+              <svg width="20" height="22" viewBox="0 0 16 18" fill="currentColor" aria-hidden>
                 <path d="M15 9 0 18V0z" />
               </svg>
             </span>
-            <span
-              className={`relative text-[10.5px] tracking-(--tracking-label) ${
-                video.cover ? "[text-shadow:0_1px_6px_rgba(0,0,0,0.6)]" : ""
-              }`}
-            >
+
+            <span className="relative rounded-full bg-neutral-900/80 px-[14px] py-[6px] text-[11.5px] text-neutral-200 backdrop-blur-sm">
               {t("load")}
             </span>
           </button>
         )}
-    </div>
-  );
+      </div>
 
-  return (
-    <article>
-      <MediaCard
-        aspect="16 / 9"
-        media={media}
-        title={title}
-        meta={shortDate(video.date, locale)}
-        desc={desc}
-        footer={
-          <a
-            href={pageUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="self-start text-[12.5px] text-faint transition-colors hover:text-ink"
-          >
-            {video.platform === "bilibili" ? t("onBilibili") : t("onYoutube")} ↗
-          </a>
-        }
-      />
+      <div className="flex flex-col gap-3 px-7 py-7 sm:px-9">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h3 className="font-hand text-[24px] leading-[1.3] font-normal text-ink">{title}</h3>
+          <span className="text-[12.5px] text-faint">{shortDate(video.date, locale)}</span>
+        </div>
+
+        <p className="text-[14.5px] leading-[1.85] text-body">{desc}</p>
+
+        <a
+          href={pageUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="glass-soft mt-2 w-fit rounded-full px-[22px] py-2.5 text-[13px] text-ink transition-colors hover:text-accent-700"
+        >
+          {video.platform === "bilibili" ? t("onBilibili") : t("onYoutube")} ↗
+        </a>
+      </div>
     </article>
   );
 }

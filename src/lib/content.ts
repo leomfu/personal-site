@@ -3,13 +3,11 @@ import path from "node:path";
 import matter from "gray-matter";
 import { excerpt, readingMinutes } from "./format";
 import type {
-  LibraryItem,
   MusicLibrary,
   Post,
   PostType,
   Project,
   RecordItem,
-  TimelineEntry,
   Tool,
   Track,
   UsedRepo,
@@ -45,10 +43,6 @@ function readDoc(dir: string, base: string, locale: string) {
 }
 
 export const getAbout = (locale: string) => readDoc("about", "about", locale);
-
-/** 关于页那条履历。json 里怎么排页面就怎么显示，这里不排序 */
-export const getTimeline = () =>
-  readJson<TimelineEntry[]>("about/timeline.json", []);
 export const getHomeIntro = (locale: string) => readDoc("home", "intro", locale);
 
 export function getNow(locale: string) {
@@ -126,16 +120,6 @@ export function getPosts(): Post[] {
 }
 
 export const getPost = (slug: string) => getPosts().find((p) => p.slug === slug);
-
-/* ------------------------------------------------------------------ 书影音 */
-
-
-
-export function getLibrary(): LibraryItem[] {
-  return readJson<LibraryItem[]>("library/library.json", []).sort((a, b) =>
-    b.date.localeCompare(a.date),
-  );
-}
 
 /**
  * 站内曲库，两块：
@@ -227,7 +211,3 @@ export function getMusic(): MusicLibrary {
 export function getRecords(): RecordItem[] {
   return readJson<{ items: RecordItem[] }>("music/records.json", { items: [] }).items;
 }
-
-/* getNews() 2026-09-09 退场：新闻不再服务端渲染，改由 scripts/build-news-data.mjs
-   在构建时把 content/news/ 翻成 public/data/news.json，页面按需 fetch
-   （理由见 components/news/NewsPanel 顶部）。类型仍在 lib/types.ts 里，客户端在用。 */

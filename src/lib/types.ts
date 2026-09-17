@@ -16,7 +16,7 @@ export type Project = {
   repo?: string;
   featured?: boolean;
   year?: string;
-  /** 首页「在做的」清单右侧的状态小标签（"在用"/"在线"/"进行中"），design-v2/Home.dc.html 新增字段 */
+  /** 首页「在做的」那三张卡上的状态小标签（"在用"/"在线"/"进行中"） */
   status?: string;
   status_en?: string;
 };
@@ -72,21 +72,6 @@ export type Post = {
   summary_en?: string;
   body: string;
   minutes: number;
-};
-
-export type LibraryType = "book" | "movie" | "album";
-
-export type LibraryItem = {
-  type: LibraryType;
-  title: string;
-  title_en?: string;
-  creator: string;
-  creator_en?: string;
-  rating?: number;
-  note?: string;
-  note_en?: string;
-  date: string;
-  link?: string;
 };
 
 /**
@@ -154,44 +139,6 @@ export type MusicLibrary = {
   residentCredit: string;
 };
 
-/** 新闻页（content/news/）—— 两个板块：世界新闻、AI 更新 */
-export type NewsItem = {
-  title: string;
-  url: string;
-  source: string;
-  sourceEn: string;
-  at: string | null;
-  /** 北京时间 YYYY-MM-DD，页面按它分组 */
-  date: string;
-};
-
-export type Outlet = { name: string; url: string; note: string };
-
-export type NewsBoard = {
-  key: "world" | "ai";
-  outlets: Outlet[];
-  items: NewsItem[];
-};
-
-/** 一条 AI 更新的中文解读（content/news/digests.json） */
-export type Digest = {
-  date: string;
-  title: string;
-  titleEn: string;
-  source: string;
-  url: string;
-  /** 段落之间用空行分隔 */
-  body: string;
-  bodyEn: string;
-};
-
-export type NewsData = {
-  generatedAt: string;
-  world: NewsBoard;
-  ai: NewsBoard;
-  digests: Digest[];
-};
-
 /**
  * 唱片页「我听的」那面墙的一条（content/music/records.json）。
  *
@@ -217,17 +164,4 @@ export type RecordItem = {
   url?: string;
   note?: string;
   noteEn?: string;
-};
-
-/**
- * 关于页那条履历上的一格（content/about/timeline.json）。
- * year 是 `YYYY.MM`，按时间**正序**写在 json 里，页面照原样渲染，不排序 ——
- * 顺序是内容的一部分，站主想调换就直接改文件。
- */
-export type TimelineEntry = {
-  year: string;
-  title: string;
-  titleEn?: string;
-  detail: string;
-  detailEn?: string;
 };

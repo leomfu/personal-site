@@ -12,8 +12,10 @@ import type { Photo } from "@/lib/photoTypes";
  * 网格是接触印相式的方阵（缩略图裁成正方，整齐是这一页的主要秩序感来源），
  * 点开之后看到的才是整帧未裁的照片。
  *
- * 照片是内容图片，**不受全站黑白 UI 的约束，原色显示**（见 CLAUDE.md 的黑白规则）；
- * 包着它的界面仍然只有黑白灰。
+ * 2026-09-17 改版（handoff §6.7）：缩略图从正方接触印相改成 4/3 的 figure，
+ * 28px 圆角、底下挂一行说明、hover 上浮 6px。图片统一走「washed」（去饱和 + 抬亮），
+ * 让它沉进雾蓝底里而不是浮在上面；鼠标移上去恢复原色。
+ * **放大态里的整帧照片不做任何处理** —— 那一刻看的就是作品本身。
  */
 export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string }) {
   const t = useTranslations("photos");
@@ -56,26 +58,36 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 sm:gap-2">
-        {photos.map((photo, i) => (
-          <button
-            key={photo.file}
-            type="button"
-            onClick={() => setOpenIndex(i)}
-            aria-label={t("photoAlt", { title, index: i + 1 })}
-            className="group relative aspect-square cursor-pointer overflow-hidden bg-line"
-          >
-            <Image
-              src={photo.thumb}
-              alt={captionOf(photo) || t("photoAlt", { title, index: i + 1 })}
-              width={600}
-              height={Math.max(1, Math.round((600 * photo.height) / photo.width))}
-              loading="lazy"
-              sizes="(max-width: 640px) 50vw, 240px"
-              className="size-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.04]"
-            />
-          </button>
-        ))}
+      <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
+        {photos.map((photo, i) => {
+          const caption = captionOf(photo);
+          return (
+            <figure key={photo.file} className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={() => setOpenIndex(i)}
+                aria-label={t("photoAlt", { title, index: i + 1 })}
+                className="group relative w-full cursor-pointer overflow-hidden rounded-[28px] bg-neutral-300 transition-transform duration-300 hover:-translate-y-1.5"
+                style={{ aspectRatio: "4 / 3" }}
+              >
+                <Image
+                  src={photo.thumb}
+                  alt={caption || t("photoAlt", { title, index: i + 1 })}
+                  width={600}
+                  height={Math.max(1, Math.round((600 * photo.height) / photo.width))}
+                  loading="lazy"
+                  sizes="(max-width: 640px) 100vw, 320px"
+                  className="size-full object-cover saturate-[0.78] brightness-[1.05] transition-[transform,filter] duration-[600ms] ease-out group-hover:scale-[1.04] group-hover:saturate-100 group-hover:brightness-100"
+                />
+              </button>
+              {caption && (
+                <figcaption className="px-1 text-[12.5px] leading-[1.6] text-muted opacity-70">
+                  {caption}
+                </figcaption>
+              )}
+            </figure>
+          );
+        })}
       </div>
 
       <AnimatePresence>

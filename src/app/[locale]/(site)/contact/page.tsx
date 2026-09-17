@@ -23,14 +23,15 @@ export async function generateMetadata({
 }
 
 /**
- * 联系页 —— 对照 docs/design/BlogContact.dc.html 下半「说点什么」。
+ * 联系页 —— 2026-09-17 改版重做（handoff §6.9）。左右两栏：
  *
- * 2026-09-08 改成**左右两栏**（左：衬线大字邮箱 + 写邮件/复制；右：社交清单竖排）。
- * 原来是上下两块、各限 860px 左对齐，一个邮箱加六个链接摊在 1240px 版心里，
- * 右边空掉一大片，整页很空（站主原话「排版很不舒服」）。
- * 两栏之后宽度是被用掉的，不是被避开的，和关于页「正文 | 履历」同一个语法。
+ *   左  一张**主色实底**的大卡（32px 圆角）：EMAIL 眉题 + 手写大字邮箱 +
+ *       白底胶囊按钮。整页真正要人做的那件事，所以它是页面上唯一一块实色主色。
+ *   右  一列 999px 的社交行：44px 圆形图标 + 两行文字 + 右侧主色 ↗，
+ *       hover 整行往右挪 8px。
  *
- * 社交清单从原来的双列改成**单列竖排**：右栏只有 320px，双列会把 @handle 挤断行。
+ * 图标底色只有哔哩哔哩用品牌色（--color-brand-bilibili），其余是 neutral-900 ——
+ * 一排彩色圆点会把这一栏变成贴纸墙，留一个就够认。
  */
 export default async function ContactPage({
   params,
@@ -40,46 +41,56 @@ export default async function ContactPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("contact");
-  const tHome = await getTranslations("home");
 
-  const name = locale === "en" ? siteConfig.nameEn : siteConfig.name;
   const socials = siteConfig.socials;
 
   return (
     <div className="mx-auto w-full max-w-page-narrow">
-      <PageHeader title={t("title")} lead={t("lead")} />
+      <PageHeader tag="CONTACT" title={t("title")} lead={t("lead")} />
 
-      <div className="mt-14 grid gap-14 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
-        {/* 左：邮箱 —— 这一页真正要人做的那件事，所以字最大 */}
-        <Reveal delay={120}>
-          <div className="text-[11px] tracking-[0.18em] text-faint">
-            {t("emailLabel")}
+      <div className="grid gap-8 [grid-template-columns:repeat(auto-fit,minmax(290px,1fr))]">
+        {/* 左：主色实底大卡 */}
+        <Reveal index={0}>
+          <div className="btn-primary-glow flex h-full flex-col rounded-[32px] bg-accent p-8 sm:p-10">
+            <span className="text-[12px] tracking-(--tracking-label) text-neutral-100/70">
+              {t("emailLabel")}
+            </span>
+            <p className="mt-5 font-hand text-[clamp(28px,3.4vw,44px)] leading-[1.2] break-all text-neutral-100">
+              {siteConfig.email}
+            </p>
+            <EmailActions email={siteConfig.email} />
           </div>
-          <div className="mt-5 font-serif text-[26px] leading-tight font-light tracking-[0.01em] break-all text-ink sm:text-[34px]">
-            {siteConfig.email}
-          </div>
-          <EmailActions email={siteConfig.email} />
         </Reveal>
 
-        {/* 右：在别处 —— 320px 窄栏，所以单列竖排 */}
-        <Reveal delay={260} className="lg:pt-0.5">
-          <div className="text-[11px] tracking-[0.18em] text-faint">
+        {/* 右：社交行 */}
+        <Reveal index={1}>
+          <span className="text-[12px] tracking-(--tracking-label) text-muted">
             {t("elsewhere")}
-          </div>
-          <div className="mt-3.5 grid grid-cols-1">
+          </span>
+          <div className="mt-4 flex flex-col gap-2.5">
             {socials.map((social) => {
               const label = locale === "en" ? social.labelEn : social.label;
-              const row = (
+              const badge =
+                social.key === "bilibili"
+                  ? "bg-brand-bilibili text-neutral-100"
+                  : "bg-neutral-900 text-neutral-100";
+
+              const inner = (
                 <>
-                  <span className="flex shrink-0 items-center gap-[11px] text-[14.5px] text-ink">
-                    <SocialIcon name={social.key} />
-                    {label}
+                  <span
+                    className={`flex size-[44px] shrink-0 items-center justify-center rounded-full ${badge}`}
+                  >
+                    <SocialIcon name={social.key} size={18} />
                   </span>
-                  {/* 右栏只有 320px，@handle 有的很长（@WeiliangF27854），
-                      压小一档 + truncate，宁可截断也不让它把行挤成两行 */}
-                  <span className="min-w-0 truncate text-[12px] text-faint">
-                    {social.handle} {social.href ? "↗" : ""}
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-[15px] text-ink">{label}</span>
+                    <span className="truncate text-[12px] text-faint">{social.handle}</span>
                   </span>
+                  {social.href && (
+                    <span className="ml-auto shrink-0 text-[16px] text-accent" aria-hidden>
+                      ↗
+                    </span>
+                  )}
                 </>
               );
 
@@ -89,16 +100,16 @@ export default async function ContactPage({
                   href={social.href}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="flex items-center justify-between gap-3 border-b border-line py-[13px] transition-colors hover:border-ink"
+                  className="glass flex items-center gap-4 rounded-full py-2.5 pr-6 pl-2.5 transition-transform duration-300 hover:translate-x-2"
                 >
-                  {row}
+                  {inner}
                 </a>
               ) : (
                 <div
                   key={social.key}
-                  className="flex items-center justify-between gap-3 border-b border-line py-[13px]"
+                  className="glass flex items-center gap-4 rounded-full py-2.5 pr-6 pl-2.5 opacity-45"
                 >
-                  {row}
+                  {inner}
                 </div>
               );
             })}
@@ -106,7 +117,7 @@ export default async function ContactPage({
         </Reveal>
       </div>
 
-      <Reveal delay={420}>
+      <Reveal index={2}>
         <ContentFooter
           note={t.rich("footerNote", {
             link: (chunks) => (
@@ -115,7 +126,6 @@ export default async function ContactPage({
               </Link>
             ),
           })}
-          copyright={tHome("copyright", { year: siteConfig.since, name })}
         />
       </Reveal>
     </div>

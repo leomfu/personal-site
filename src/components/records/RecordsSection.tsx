@@ -26,16 +26,16 @@ export async function RecordsSection({ locale }: { locale: string }) {
 
   return (
     <>
-      <PageHeader title={t("title")} lead={t("lead")} />
+      <PageHeader tag="RECORDS" title={t("title")} lead={t("lead")} />
 
       {hasMusic && (
-        <Reveal delay={120} className="mt-10">
+        <Reveal index={0} className="mt-10">
           <Turntable />
         </Reveal>
       )}
 
       {sceneTrackCount > 0 && (
-        <Reveal delay={160} className="mt-[72px]">
+        <Reveal index={1} className="mt-[72px]">
           <Chart scenes={music.scenes} />
         </Reveal>
       )}

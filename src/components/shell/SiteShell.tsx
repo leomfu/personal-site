@@ -1,39 +1,55 @@
 import type { ReactNode } from "react";
-import { Grain } from "@/components/ui/Grain";
+import { ScrollProgress } from "./ScrollProgress";
+import { SiteFooter } from "./SiteFooter";
 import { TopNav } from "./TopNav";
 
 /**
- * 主站骨架：顶部暗色导航条 + 下面 1240px 居中版心的浅色内容区。
+ * 主站骨架 —— 2026-09-17 改版重做。
  *
- * 2026-09-08 改版：原来是「左侧 264px 暗色侧栏 + 右侧 700px 窄内容列」
- * （对照 docs/design/Main.dc.html）。站主要求导航像常规网站一样横在最上面，
- * 所以侧栏 → components/shell/TopNav（那块暗色从一竖条变成一横条，灰阶没变）。
+ * 背景是**三层叠起来的**，改版的体感全靠它们（handoff §5.2）：
  *
- * 版心宽度这一轮反复了一次，**现在这版是定稿**：先做成了完全铺满整幅，
- * 站主看过之后说「内容区域看着有些分散太靠左边了」，于是收成
- * **1240px 居中版心**（`--spacing-page`）。列表不再拉成一长条，
- * 摄影网格在大屏上仍能铺三到四列。
+ *   ① body 的雾蓝底 --color-bg（globals.css 的 @layer base）
+ *   ② .bg-texture   30px 细网格，position:fixed，顶部清晰、底部被遮罩淡出
+ *   ③ 两颗漂移光斑   蓝的在右上、橙的在左中，26s / 32s 各自缓慢漂
  *
- * 版心之内还有一层：**文章正文**自己收成 700px 阅读列
- * （`.prose-bw` 在 globals.css 里带 `max-width: var(--spacing-column)`）。
+ * ⚠️ **卡面是半透明的，这三层必须从卡背后透出来**，所以内容层只能是
+ * `relative z-1`，不能给它任何实色底。哪一处把卡改成实色白，那块就会
+ * 像贴上去的一张纸。
  *
- * 背景三层里的「纹」层挂在这一处，全站内容区通用一份。
- * 注意：这里只加 `relative`，不加 `overflow-hidden`——博客详情页的 sticky 目录
- * 探出正文列，main 一旦裁剪就会把它切没。
+ * 光斑那一层单独包了一个 `fixed inset-0 overflow-hidden`：光斑直径 680px、
+ * 定位是负值，不裁的话会把文档撑出横向滚动条。裁在 fixed 容器里而不是
+ * 裁在 main 上 —— **main 绝对不能 overflow-hidden**，博客详情页的 sticky
+ * 目录探出正文列，一裁就没了。
+ *
+ * 原来那层 Grain（SVG 噪点纸纹）已经撤掉：新设计的质感来源是网格和光斑，
+ * 再叠一层 multiply 噪点只会把雾蓝底搅浑。
  */
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({
+  locale,
+  children,
+}: {
+  locale: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="min-h-dvh bg-shell">
-      <TopNav />
-      {/* pt 要让开 fixed 顶栏的高度，再加页面自己的上留白。
-          桌面档从 --spacing-topnav 算出来，改顶栏高度这里会跟着走；
-          移动端顶栏是 h-14(56px)，56+36=92 */}
-      <main className="bg-content relative min-h-dvh px-5 pt-[92px] pb-20 sm:px-10 lg:pt-[calc(var(--spacing-topnav)+64px)] lg:pb-[88px]">
-        <Grain id="site-paper-grain" opacity={0.035} baseFrequency={0.8} numOctaves={4} blend="multiply" />
-        {/* min-w-0：文章里一行很长的代码块会按最大内容宽度把容器撑开，
-            反而让 <pre> 自己的 overflow-x:auto 失效，窄屏整页横向溢出 */}
-        <div className="relative mx-auto w-full max-w-page min-w-0">{children}</div>
-      </main>
+    <div className="min-h-dvh">
+      <ScrollProgress />
+
+      <div className="bg-texture" aria-hidden />
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
+        <span className="bg-blob bg-blob-a" />
+        <span className="bg-blob bg-blob-b" />
+      </div>
+
+      <div className="relative z-1 flex min-h-dvh flex-col">
+        <TopNav />
+        <main className="w-full flex-1 pb-16 sm:pb-24">
+          {/* min-w-0：文章里一行很长的代码块会按最大内容宽度把容器撑开，
+              反而让 <pre> 自己的 overflow-x:auto 失效，窄屏整页横向溢出 */}
+          <div className="mx-auto w-full max-w-page min-w-0 px-6">{children}</div>
+        </main>
+        <SiteFooter locale={locale} />
+      </div>
     </div>
   );
 }

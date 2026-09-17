@@ -10,7 +10,7 @@
     },
     "projects": {
       "title": "Projects",
-      "description": "Things I've made, two gadgets you can use right here, and the open source this site runs on."
+      "description": "Things I've made, and the open source this site runs on."
     },
     "videos": {
       "title": "Videos",
@@ -22,7 +22,7 @@
     },
     "blog": {
       "title": "Blog",
-      "description": "Essays, posts and thoughts of mine, plus world headlines and AI updates fetched daily."
+      "description": "Essays, posts and thoughts of mine."
     },
     "about": {
       "title": "About",
@@ -39,10 +39,6 @@
     "records": {
       "title": "Records",
       "description": "A turntable that really spins and really plays, and what I listen to by mood."
-    },
-    "library": {
-      "title": "Library",
-      "description": "Books, films and albums I've been through lately."
     }
   },
   "intro": {
@@ -63,20 +59,16 @@
     "about": "About",
     "tools": "Tools",
     "contact": "Contact",
-    "library": "Library",
     "connect": "连接 / CONNECT",
     "menu": "Open menu",
     "close": "Close menu",
     "toHome": "Back to the home page",
-    "news": "News",
-    "records": "Records",
-    "gadgets": "Gadgets"
+    "records": "Records"
   },
   "common": {
     "language": "Language",
     "zh": "中",
     "en": "EN",
-    "search": "Search",
     "copy": "Copy address",
     "copied": "Copied ✓",
     "empty": "Nothing here yet.",
@@ -95,7 +87,16 @@
     "footerNote": "If you want to say something, just <link>send an email</link>. I usually reply within a few days.",
     "copyright": "© {year} {name}",
     "quote": "Everything I learn has to end up as something that runs.",
-    "noProjects": "Nothing flagged as in progress right now — everything is on the projects page."
+    "noProjects": "Nothing flagged as in progress right now — everything is on the projects page.",
+    "heroTag": "Making · Writing · Shooting",
+    "heroEyebrow": "WELCOME · GLAD YOU'RE HERE",
+    "heroTitle1": "Everything I learn",
+    "heroTitle2": "has to end up running",
+    "ctaPrimary": "See what I've made →",
+    "ctaSecondary": "Get in touch",
+    "avatarBadge": "come on",
+    "photosTitle": "Recently shot",
+    "hobbiesTitle": "Into"
   },
   "projects": {
     "title": "Projects",
@@ -106,8 +107,7 @@
     "tabMine": "Mine",
     "tabUses": "Built on",
     "mineNote": "Things I've made. Where there's a live address, the title takes you there.",
-    "foundByMe": "found it myself",
-    "tabGadgets": "Gadgets"
+    "foundByMe": "found it myself"
   },
   "videos": {
     "title": "Videos",
@@ -149,23 +149,18 @@
   "about": {
     "title": "About",
     "orbit": {
-      "title": "What I'm into",
-      "hint": "Hover to stop the spin",
       "photos": "Photos",
-      "photosCount": "{n, plural, =1 {# album} other {# albums}}",
       "records": "Records",
-      "recordsCount": "{n, plural, =1 {# track} other {# tracks}}",
-      "library": "Library",
-      "libraryCount": "{n, plural, =1 {# entry} other {# entries}}",
-      "idle": "Three things I keep coming back to, all growing out of the same person. Stop on one and this line tells you about it.",
       "photosNote": "Places I passed through, light I kept. Filed by series and by year — open one to see the whole set.",
-      "recordsNote": "A turntable that really spins and really plays, plus a chart sorted by mood.",
-      "libraryNote": "Books, films and albums I've been through lately — noted right after, or they evaporate."
+      "recordsNote": "A turntable that really spins and really plays, plus a chart sorted by mood."
     },
-    "timeline": {
-      "title": "How I got here",
-      "note": "From school to shipped"
-    }
+    "nowLabel": "Now",
+    "cardTitle": "Making, and noting it down",
+    "cardBody": "The things I built, the light I caught, the songs I played — written down while I still remember them. This site is that notebook.",
+    "cardTag1": "Self-taught",
+    "cardTag2": "Photography",
+    "cardTag3": "Writing",
+    "cardCta": "Message me →"
   },
   "contact": {
     "title": "Say something",
@@ -177,7 +172,7 @@
   },
   "blog": {
     "title": "Blog",
-    "lead": "Essays, posts and loose thoughts — <em>{count}</em> of mine so far. The other two tabs are world headlines and AI updates, fetched every morning.",
+    "lead": "Essays, posts and loose thoughts — <em>{count}</em> of mine so far.",
     "filterAll": "All",
     "order": "Newest first",
     "minutes": "{minutes} min",
@@ -189,27 +184,12 @@
     "originalLang": "Written in {lang}; no {target} version yet",
     "langZh": "Chinese",
     "langEn": "English",
-    "comments": "Comments",
     "types": {
       "blog": "Post",
       "essay": "Essay",
       "thought": "Thought"
     },
-    "tabPosts": "Writing",
-    "tabWorld": "World news",
-    "tabAi": "AI updates",
     "footerNote": "Want to keep talking? <link>Send an email</link>."
-  },
-  "library": {
-    "title": "Library",
-    "lead": "What I've been reading, watching and listening to lately.",
-    "filterAll": "All",
-    "types": {
-      "book": "Books",
-      "movie": "Films",
-      "album": "Albums"
-    },
-    "empty": "Nothing here yet. The list lives in content/library/library.json."
   },
   "records": {
     "title": "Records",
@@ -248,40 +228,6 @@
       "openPlatform": "Open in Apple Music ↗"
     }
   },
-  "giscus": {
-    "notOpenYet": "Comments aren't open yet. Check back later.",
-    "load": "Open the comments",
-    "loadHint": "Nothing reaches GitHub until you open this — commenting signs you in with GitHub, and the text lives in this site's repo Discussions."
-  },
-  "palette": {
-    "placeholder": "Search posts, jump to a page…",
-    "pages": "Pages",
-    "posts": "Posts",
-    "actions": "Actions",
-    "switchToEn": "Switch to English",
-    "switchToZh": "Switch to Chinese",
-    "empty": "No matches.",
-    "hint": "↑↓ to move · ↵ to open · esc to close",
-    "close": "Close"
-  },
-  "news": {
-    "worldTitle": "World",
-    "worldNote": "{n} stories · {outlets} outlets",
-    "outletsLead": "The outlets I go to myself — head in for the full story:",
-    "aiTitle": "AI updates, explained",
-    "aiNote": "what shipped, and what it is good for",
-    "noDigest": "No write-ups yet.",
-    "readOriginal": "Read the original",
-    "restLead": "Updates without a write-up yet:",
-    "outletsLeadAi": "First-hand sources — check these first when something breaks:",
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "empty": "Nothing pulled yet today.",
-    "updated": "Last pulled {time}",
-    "neverUpdated": "Not pulled yet.",
-    "loading": "Fetching today's news…",
-    "loadFailed": "Couldn't load the news — try refreshing."
-  },
   "player": {
     "regionLabel": "Mini player",
     "play": "Play",
@@ -292,66 +238,9 @@
     "toRecords": "Back to Records",
     "fullVersion": "Hear it in full ↗"
   },
-  "gadgets": {
-    "tabPomodoro": "Pomodoro",
-    "pomodoro": {
-      "eyebrow": "FOCUS",
-      "phase": {
-        "focus": "Focus",
-        "short": "Short break",
-        "long": "Long break"
-      },
-      "start": "Start",
-      "pause": "Pause",
-      "reset": "Reset",
-      "chimeOn": "Chime on",
-      "chimeOff": "Chime off",
-      "doneCount": "{n} done",
-      "note": "Click a number to change its length",
-      "clearRound": "Click to clear",
-      "settings": "More settings",
-      "hideSettings": "Hide",
-      "minutes": "min",
-      "cycleLabel": "Long break every",
-      "cycleUnit": "sessions",
-      "restoreDefault": "Restore defaults",
-      "settingsNote": "Takes effect right away. A running session is never cut short — the new length starts with the next one."
-    },
-    "tabNotes": "Notes",
-    "notes": {
-      "stack": "Notes {n}",
-      "new": "New",
-      "blank": "(empty)",
-      "kindMemo": "Memo",
-      "kindDraft": "Draft",
-      "remove": "Delete this note",
-      "focusLeft": "FOCUS LEFT",
-      "emptyLead": "No notes yet. Write whatever comes to mind — formatting can wait.",
-      "newFirst": "Write the first one",
-      "titlePlaceholder": "Title",
-      "titleLabel": "Post title",
-      "bodyPlaceholder": "Just write. Markdown works: ## headings, **bold**, - lists.",
-      "bodyLabel": "Body",
-      "stats": "{n} words · about {min} min read",
-      "statsEmpty": "Nothing yet",
-      "fileLabel": "Filename",
-      "copyMd": "Copy Markdown",
-      "downloadMd": "Download .md",
-      "toGithub": "Send to GitHub ↗",
-      "copyThenGithub": "Copy, then GitHub ↗",
-      "tooLongHint": "This one is longer than a GitHub URL can carry, so it copies to your clipboard and opens a blank new-file page instead — just paste.",
-      "copied": "Copied",
-      "copyAll": "Copy all",
-      "exportAll": "Export all",
-      "localOnly": "Lives only in this browser on this computer — no sync to your phone, gone if you clear browser data, and not encrypted. Export anything that matters."
-    },
-    "note": "Two small things I built that you can use right here: a pomodoro timer and a stack of notes. The notes live only in this browser on this machine."
-  },
-  "moved": {
-    "label": "This moved",
-    "go": "Go to {to} →",
-    "news": "News is now a tab on the blog page",
-    "focus": "The timer and notes now live under “Gadgets” on the projects page",
-    "guestbook": "The guestbook is gone — email me instead"
+  "footer": {
+    "line1": "Got something in mind?",
+    "line2": "Come say it.",
+    "cta": "Write me →"
   }
 }

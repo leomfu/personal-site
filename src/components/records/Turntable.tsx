@@ -17,7 +17,7 @@ import { siteConfig } from "~/site.config";
  *
  * 2026-08-31 再改（用户看了截图，画红箭头标了三处）：
  * ① **撤掉了包着它的深色矩形容器**——原来外面套了一层 `bg-shell` 的深色卡片，
- *    和页面浅灰背景割裂成两块。现在唱片、唱臂直接坐在 `<main>` 的 `bg-content`
+ *    和页面背景割裂成两块。现在唱片、唱臂直接坐在页面的雾蓝底
  *    浅色渐变上（见 globals.css 顶部那段唱片页结构图的说明），靠新增的
  *    `.vinyl-floor-shadow`（扁平地面投影）+ 重新上色的 `.vinyl-shadow`
  *    （原 `.vinyl-pool`，深底时代是白色轮廓光，现在改成真的灰色接触阴影）
@@ -707,7 +707,7 @@ export function Turntable() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: reduced ? 0.01 : 0.4 }}
-              className="font-serif text-[26px] leading-[1.28] font-light text-ink sm:text-[30px]"
+              className="font-hand text-[30px] leading-[1.2] font-normal text-ink sm:text-[34px]"
             >
               {title}
             </motion.h3>
@@ -752,7 +752,7 @@ export function Turntable() {
                 onClick={player.toggle}
                 aria-label={shouldPlay ? t("pause") : t("play")}
                 aria-pressed={shouldPlay}
-                className="flex size-[50px] items-center justify-center rounded-full border border-line-strong text-ink transition-colors hover:border-ink"
+                className="flex size-[50px] cursor-pointer items-center justify-center rounded-full border border-line-strong text-accent-700 transition-colors hover:border-accent"
               >
                 {shouldPlay ? (
                   <svg
@@ -859,11 +859,11 @@ export function Turntable() {
           <div className="relative h-4 w-[132px]">
             <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-line" />
             <div
-              className="absolute top-1/2 left-0 h-px -translate-y-1/2 bg-ink"
+              className="absolute top-1/2 left-0 h-px -translate-y-1/2 bg-accent"
               style={{ width: `${player.volume * 100}%` }}
             />
             <div
-              className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink"
+              className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
               style={{ left: `${player.volume * 100}%` }}
             />
             <input
@@ -894,10 +894,10 @@ export function Turntable() {
                   onClick={() => player.switchGroup(item.key)}
                   aria-pressed={on}
                   className={[
-                    "border px-3 py-1.5 text-[12.5px] tracking-[0.04em] transition-colors",
+                    "cursor-pointer rounded-full px-4 py-1.5 text-[12.5px] transition-colors",
                     on
-                      ? "border-ink bg-ink text-card"
-                      : "border-line-strong text-muted hover:border-ink hover:bg-paper hover:text-ink",
+                      ? "bg-accent font-medium text-neutral-100"
+                      : "glass-soft text-muted hover:text-accent-700",
                   ].join(" ")}
                 >
                   {item.label}

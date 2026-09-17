@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { HobbyOrbit } from "@/components/about/HobbyOrbit";
-import { Timeline } from "@/components/about/Timeline";
 import { PageHeader, ContentFooter } from "@/components/ui/PageHeader";
 import { Reveal } from "@/components/ui/Reveal";
-import { getAbout, getTimeline } from "@/lib/content";
+import { getAbout } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { renderMarkdown } from "@/lib/markdown";
 import { localePath } from "@/lib/nav";
@@ -25,21 +23,15 @@ export async function generateMetadata({
 }
 
 /**
- * 关于页 —— 三块：
+ * 关于页 —— 2026-09-17 改版重做（handoff §6.3）。
  *
- *   正文 + 履历   左右并排（正文 content/about/about.{locale}.md，
- *                 履历 content/about/timeline.json，右栏 sticky 跟着走）
- *   爱好          「我的爱好」同心轨道图（components/about/HobbyOrbit），整栏居中
+ *   页头（统一模板）
+ *   左：markdown 正文 16px/1.95，收在 62ch
+ *   右：一张 48px 大圆角的玻璃卡（「现在」状态点 + 手写标题 + 说明 + 三枚标签 + 主按钮），
+ *       sticky 跟着正文走
  *
- * ⚠️ 两处布局约束，都别动：
- *
- * ① 这一页套了一层 `max-w-page-narrow mx-auto`，**比全站 1240px 的版心窄**。
- *    站主原话「内容居中一些，看着不别扭观感流畅」——正文列孤零零贴在版心左边、
- *    右边空掉一大块，整页是歪的。收窄居中之后左右才平衡。
- * ② 履历在**右栏**，不是正文下面。站主指定要「一边介绍一边显示经历」
- *    （照隔壁 项目文件存放处/网站设计 那个站的关于页排的）——读到「客服那一年」
- *    的时候，右边正好停着 2025.07 出港客服那一格，两边互相印证。
- *    右栏 sticky 就是为这个：正文滚起来，履历不滚走。
+ * 原来右栏卡片下面的履历和页底「我的爱好」同心轨道图
+ * 2026-09-17 全站改版第一阶段下线；新关于页（正文 + 一张大卡）是第二阶段的事。
  */
 export default async function AboutPage({
   params,
@@ -52,37 +44,84 @@ export default async function AboutPage({
   const tHome = await getTranslations("home");
 
   const html = await renderMarkdown(getAbout(locale).body, locale);
-  const name = locale === "en" ? siteConfig.nameEn : siteConfig.name;
   const tagline = locale === "en" ? siteConfig.taglineEn : siteConfig.tagline;
 
   return (
     <div className="mx-auto w-full max-w-page-narrow">
-      <PageHeader title={t("title")} lead={tagline} />
+      <PageHeader tag="ABOUT" title={t("title")} lead={tagline} />
 
-      {/* 正文 | 履历。窄屏一栏时履历排在正文下面，顺序和阅读顺序一致 */}
-      <div className="mt-12 grid gap-14 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-16">
-        <Reveal delay={120}>
-          <div className="prose-bw" dangerouslySetInnerHTML={{ __html: html }} />
+      <div className="grid gap-10 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))] lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]">
+        <Reveal index={0}>
+          <div
+            className="prose-bw max-w-[62ch] text-[16px] leading-[1.95]"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
         </Reveal>
 
-        {/* top 要让开 fixed 顶栏再留一点空，高度从 token 算，别再写死 */}
-        <aside className="lg:sticky lg:top-[calc(var(--spacing-topnav)+24px)] lg:self-start">
-          <Timeline locale={locale} entries={getTimeline()} />
+        <aside className="flex flex-col gap-10 lg:sticky lg:top-6 lg:self-start">
+          <Reveal index={1}>
+            {/* 两个纯色装饰圆藏在卡的右上/右下，被 overflow-hidden 裁掉一半 */}
+            <div className="glass relative overflow-hidden rounded-[48px] p-8 sm:p-10">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -top-14 -right-12 size-40 rounded-full bg-accent-100"
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -right-16 -bottom-16 size-44 rounded-full bg-accent-2-100"
+              />
+
+              <div className="relative flex flex-col items-start">
+                <span className="flex items-center gap-3 text-[12px] tracking-(--tracking-label) text-muted">
+                  {/* 脉冲光环：wlPulse 在 globals.css 里，reduced-motion 下由全局那条掐停 */}
+                  <span
+                    aria-hidden
+                    className="size-2 rounded-full bg-accent motion-safe:animate-[wlPulse_2.4s_ease-in-out_infinite]"
+                  />
+                  {t("nowLabel")}
+                </span>
+
+                <h2 className="mt-5 font-hand text-[40px] leading-[1.15] font-normal text-ink">
+                  {t("cardTitle")}
+                </h2>
+
+                <p className="mt-4 text-[16.5px] leading-[1.95] text-body">{t("cardBody")}</p>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {[t("cardTag1"), t("cardTag2"), t("cardTag3")].map((tag) => (
+                    <span
+                      key={tag}
+                      className="glass-tag rounded-full px-[14px] py-[5px] text-[12px] text-accent-800"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <Link
+                  href={localePath(locale, "/contact")}
+                  className="btn-primary-glow mt-8 rounded-full bg-accent px-[26px] py-3 text-[14px] font-medium text-neutral-100 transition-colors hover:bg-accent-600"
+                >
+                  {t("cardCta")}
+                </Link>
+              </div>
+            </div>
+          </Reveal>
         </aside>
       </div>
 
-      <HobbyOrbit locale={locale} />
-
-      <Reveal delay={360}>
+      <Reveal index={1}>
         <ContentFooter
           note={tHome.rich("footerNote", {
             link: (chunks) => (
-              <Link href={localePath(locale, "/contact")} className="link-underline">
+              <Link
+                href={localePath(locale, "/contact")}
+                className="text-accent-700 underline decoration-accent-300 underline-offset-4 transition-colors hover:decoration-accent-700"
+              >
                 {chunks}
               </Link>
             ),
           })}
-          copyright={tHome("copyright", { year: siteConfig.since, name })}
         />
       </Reveal>
     </div>

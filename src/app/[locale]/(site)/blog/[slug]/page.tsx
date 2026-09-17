@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArticleToc } from "@/components/blog/ArticleToc";
-import { Giscus } from "@/components/comments/Giscus";
 import { Reveal } from "@/components/ui/Reveal";
 import { getPosts } from "@/lib/content";
 import { localized, longDate } from "@/lib/format";
@@ -39,7 +38,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 }
 
 /**
- * 文章详情页：正文 + 长文侧边目录 + 上一篇/下一篇 + giscus 评论。
+ * 文章详情页：正文 + 长文侧边目录 + 上一篇/下一篇。
+ * （文章底下的评论区 2026-09-17 全站改版第一阶段下线。）
  *
  * **这一页收成 700px 的阅读列并居中**（`mx-auto max-w-column`）——一行文字横穿
  * 一千二百像素读起来累，而且贴着左边看整页是歪的（站主 2026-09-08 的原话：
@@ -70,17 +70,15 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   const langMismatch = post.lang !== locale;
 
   return (
-    <div className="relative mx-auto max-w-column">
-      <Reveal>
+    <div className="relative mx-auto max-w-column pt-6">
+      <Reveal index={0}>
         <div className="flex flex-wrap items-center gap-3 text-[12.5px] text-faint">
           <span>{longDate(post.date, locale)}</span>
-          <span className="border border-line px-1.5 py-0.5 text-[10.5px] tracking-[0.1em]">
-            {tType(post.type)}
-          </span>
+          <span className="tag-framed">{tType(post.type)}</span>
           <span>{t("minutes", { minutes: post.minutes })}</span>
         </div>
 
-        <h1 className="mt-4 font-serif text-[30px] leading-[1.35] font-light tracking-[-0.01em] text-ink sm:text-[38px]">
+        <h1 className="mt-4 font-hand text-[clamp(34px,4.6vw,52px)] leading-[1.2] font-normal text-ink">
           {localized(locale, post.title, post.title_en)}
         </h1>
 
@@ -103,12 +101,12 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         </aside>
       )}
 
-      <Reveal delay={120} className="mt-9">
+      <Reveal index={1} className="mt-9">
         <article className="prose-bw" dangerouslySetInnerHTML={{ __html: html }} />
       </Reveal>
 
       {/* 上一篇 / 下一篇 */}
-      <Reveal delay={200} className="mt-[72px] border-t border-line pt-7">
+      <Reveal index={2} className="mt-[72px] border-t border-line pt-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:justify-between">
           {newer ? (
             <Link
@@ -118,7 +116,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
               <span className="text-[10.5px] tracking-(--tracking-label) text-faint">
                 {t("next")}
               </span>
-              <span className="text-sm text-ink transition-colors group-hover:text-muted">
+              <span className="text-[14.5px] text-ink transition-colors group-hover:text-accent-700">
                 {localized(locale, newer.title, newer.title_en)}
               </span>
             </Link>
@@ -133,7 +131,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
               <span className="text-[10.5px] tracking-(--tracking-label) text-faint">
                 {t("prev")}
               </span>
-              <span className="text-sm text-ink transition-colors group-hover:text-muted">
+              <span className="text-[14.5px] text-ink transition-colors group-hover:text-accent-700">
                 {localized(locale, older.title, older.title_en)}
               </span>
             </Link>
@@ -141,18 +139,10 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         </div>
         <Link
           href={localePath(locale, "/blog")}
-          className="mt-8 inline-block text-[12.5px] text-muted transition-colors hover:text-ink"
+          className="mt-8 inline-block text-[13px] text-muted transition-colors hover:text-accent-700"
         >
           ← {t("backToList")}
         </Link>
-      </Reveal>
-
-      {/* 评论 */}
-      <Reveal delay={280} className="mt-[72px] border-t border-line pt-7">
-        <h2 className="text-lg font-medium text-ink">{t("comments")}</h2>
-        <div className="mt-6">
-          <Giscus term={`blog/${post.slug}`} />
-        </div>
       </Reveal>
     </div>
   );

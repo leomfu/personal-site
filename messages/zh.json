@@ -10,7 +10,7 @@
     },
     "projects": {
       "title": "项目",
-      "description": "做过的东西，两样能直接上手用的小工具，以及这个站用到的开源。"
+      "description": "做过的东西，以及这个站用到的开源。"
     },
     "videos": {
       "title": "视频",
@@ -22,7 +22,7 @@
     },
     "blog": {
       "title": "博客",
-      "description": "自己写的长文、随笔和想法，加上每天抓一次的世界新闻与 AI 更新。"
+      "description": "自己写的长文、随笔和想法。"
     },
     "about": {
       "title": "关于",
@@ -39,10 +39,6 @@
     "records": {
       "title": "唱片",
       "description": "一台真能转、真出声的黑胶唱机，和我按心情听的那些歌。"
-    },
-    "library": {
-      "title": "书影音",
-      "description": "最近在看的书、电影和专辑。"
     }
   },
   "intro": {
@@ -63,20 +59,16 @@
     "about": "关于",
     "tools": "工具",
     "contact": "联系",
-    "library": "书影音",
     "connect": "连接 / CONNECT",
     "menu": "打开菜单",
     "close": "关闭菜单",
     "toHome": "回到首页",
-    "news": "新闻",
-    "records": "唱片",
-    "gadgets": "小工具"
+    "records": "唱片"
   },
   "common": {
     "language": "语言",
     "zh": "中",
     "en": "EN",
-    "search": "搜索",
     "copy": "复制地址",
     "copied": "已复制 ✓",
     "empty": "这里还什么都没有。",
@@ -95,7 +87,16 @@
     "footerNote": "想说点什么就 <link>写封邮件</link>，我一般两三天内回。",
     "copyright": "© {year} {name}",
     "quote": "每学一样，得做出一个真在跑的东西。",
-    "noProjects": "还没有标记为「在做的」项目 —— 都在项目页里。"
+    "noProjects": "还没有标记为「在做的」项目 —— 都在项目页里。",
+    "heroTag": "做东西 · 写笔记 · 拍照",
+    "heroEyebrow": "WELCOME · 欢迎来到我的主页",
+    "heroTitle1": "每学一样，都要做出",
+    "heroTitle2": "真在跑的东西",
+    "ctaPrimary": "看看做了什么 →",
+    "ctaSecondary": "联系我",
+    "avatarBadge": "come on",
+    "photosTitle": "最近拍的",
+    "hobbiesTitle": "爱好"
   },
   "projects": {
     "title": "项目",
@@ -106,8 +107,7 @@
     "tabMine": "我做的",
     "tabUses": "用到的开源",
     "mineNote": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。",
-    "foundByMe": "自己找的",
-    "tabGadgets": "小工具"
+    "foundByMe": "自己找的"
   },
   "videos": {
     "title": "视频",
@@ -149,23 +149,18 @@
   "about": {
     "title": "关于",
     "orbit": {
-      "title": "我的爱好",
-      "hint": "鼠标停住就不转了",
       "photos": "摄影",
-      "photosCount": "{n} 辑",
       "records": "唱片",
-      "recordsCount": "{n} 首",
-      "library": "书影音",
-      "libraryCount": "{n} 条",
-      "idle": "三样一直在做的事，都从同一个人身上长出来。停在哪个圈上，这里就说哪一样。",
       "photosNote": "走过的地方，留下的光。按专题和年份收着，点进去看整辑。",
-      "recordsNote": "一台真能转、真出声的黑胶唱机，和一份按心情排的歌单。",
-      "libraryNote": "最近在看的书、电影和专辑 —— 读完就记，不然读完就忘了。"
+      "recordsNote": "一台真能转、真出声的黑胶唱机，和一份按心情排的歌单。"
     },
-    "timeline": {
-      "title": "走到这儿",
-      "note": "从念书到上线"
-    }
+    "nowLabel": "现在",
+    "cardTitle": "边做边记录",
+    "cardBody": "做过的东西、看过的光、听过的歌，趁还记得的时候写下来。这个站就是那个本子。",
+    "cardTag1": "自学",
+    "cardTag2": "摄影",
+    "cardTag3": "写字",
+    "cardCta": "私信我 →"
   },
   "contact": {
     "title": "说点什么",
@@ -177,7 +172,7 @@
   },
   "blog": {
     "title": "博客",
-    "lead": "自己写的长文、随笔和想法，共 <em>{count}</em> 篇；另外两栏是每天早上抓一次的世界新闻和 AI 更新。",
+    "lead": "自己写的长文、随笔和想法，共 <em>{count}</em> 篇。",
     "filterAll": "全部",
     "order": "按时间倒序",
     "minutes": "{minutes} 分钟",
@@ -189,27 +184,12 @@
     "originalLang": "原文为{lang}，暂无{target}版本",
     "langZh": "中文",
     "langEn": "英文",
-    "comments": "评论",
     "types": {
       "blog": "随笔",
       "essay": "长文",
       "thought": "想法"
     },
-    "tabPosts": "文章",
-    "tabWorld": "世界新闻",
-    "tabAi": "AI 更新",
     "footerNote": "想接着聊，<link>写封邮件</link> 就好。"
-  },
-  "library": {
-    "title": "书影音",
-    "lead": "最近在看的、看过的，和还想再看一遍的。",
-    "filterAll": "全部",
-    "types": {
-      "book": "书",
-      "movie": "影",
-      "album": "音"
-    },
-    "empty": "还没有条目。清单在 content/library/library.json 里。"
   },
   "records": {
     "title": "唱片",
@@ -248,40 +228,6 @@
       "openPlatform": "在 Apple Music 打开 ↗"
     }
   },
-  "giscus": {
-    "notOpenYet": "留言区还没开放，过阵子再来。",
-    "load": "打开留言区",
-    "loadHint": "点开才会连到 GitHub —— 留言用 GitHub 账号登录，内容存在本站仓库的 Discussions 里。"
-  },
-  "palette": {
-    "placeholder": "搜文章、跳页面…",
-    "pages": "页面",
-    "posts": "文章",
-    "actions": "操作",
-    "switchToEn": "切换到英文",
-    "switchToZh": "切换到中文",
-    "empty": "没有匹配的结果。",
-    "hint": "↑↓ 选择 · ↵ 打开 · esc 关闭",
-    "close": "关闭"
-  },
-  "news": {
-    "worldTitle": "世界新闻",
-    "worldNote": "{n} 条 · {outlets} 家报社",
-    "outletsLead": "这些报社我自己常去 —— 想读全的直接进去：",
-    "aiTitle": "AI 更新解读",
-    "aiNote": "官方发了什么，以及它到底有什么用",
-    "noDigest": "还没有写解读。",
-    "readOriginal": "看官方原文",
-    "restLead": "还没写解读的更新：",
-    "outletsLeadAi": "一手源，出了事先看这里：",
-    "today": "今天",
-    "yesterday": "昨天",
-    "empty": "今天还没抓到内容。",
-    "updated": "最后一次抓取：{time}",
-    "neverUpdated": "还没抓过。",
-    "loading": "正在取今天的新闻…",
-    "loadFailed": "新闻没取到 —— 刷新一下试试。"
-  },
   "player": {
     "regionLabel": "迷你播放器",
     "play": "放",
@@ -292,66 +238,9 @@
     "toRecords": "回唱片页",
     "fullVersion": "去平台听完整版 ↗"
   },
-  "gadgets": {
-    "tabPomodoro": "番茄钟",
-    "pomodoro": {
-      "eyebrow": "专注 · FOCUS",
-      "phase": {
-        "focus": "专注",
-        "short": "短休",
-        "long": "长休"
-      },
-      "start": "开始",
-      "pause": "暂停",
-      "reset": "重置",
-      "chimeOn": "响铃 开",
-      "chimeOff": "响铃 关",
-      "doneCount": "已完成 {n}",
-      "note": "点数字可以自己改时长",
-      "clearRound": "点一下清零",
-      "settings": "更多设置",
-      "hideSettings": "收起",
-      "minutes": "分钟",
-      "cycleLabel": "长休间隔",
-      "cycleUnit": "个专注",
-      "restoreDefault": "恢复默认",
-      "settingsNote": "改完立刻生效。正在跑的这一段不打断 —— 新时长从下一段开始算。"
-    },
-    "tabNotes": "手记",
-    "notes": {
-      "stack": "便签 {n}",
-      "new": "新建",
-      "blank": "（空）",
-      "kindMemo": "备忘",
-      "kindDraft": "草稿",
-      "remove": "删掉这条",
-      "focusLeft": "专注剩余",
-      "emptyLead": "还没有便签。想到什么先记下来，不用管格式。",
-      "newFirst": "写第一条",
-      "titlePlaceholder": "标题",
-      "titleLabel": "文章标题",
-      "bodyPlaceholder": "直接写。markdown 可以用：## 小标题、**加粗**、- 列表。",
-      "bodyLabel": "正文",
-      "stats": "{n} 字 · 约 {min} 分钟读完",
-      "statsEmpty": "还没写",
-      "fileLabel": "文件名",
-      "copyMd": "复制 Markdown",
-      "downloadMd": "下载 .md",
-      "toGithub": "发到 GitHub ↗",
-      "copyThenGithub": "复制后去 GitHub ↗",
-      "tooLongHint": "这篇超过了 GitHub 网址能带的长度，所以改成先复制、再打开空白的新建文件页，粘进去就行。",
-      "copied": "已复制",
-      "copyAll": "复制全部",
-      "exportAll": "导出全部",
-      "localOnly": "只存在这台电脑的这个浏览器里 —— 不同步到手机，清浏览器数据就没了，也不加密。要紧的东西记得导出一份。"
-    },
-    "note": "两样自己做的、就在这一页能直接用的小东西：一个番茄钟，一叠手记。手记只存在你这台电脑的浏览器里，换台机器就没有了。"
-  },
-  "moved": {
-    "label": "这里搬走了",
-    "go": "去 {to} →",
-    "news": "「新闻」现在是博客页里的一栏",
-    "focus": "番茄钟和手记现在在项目页的「小工具」里",
-    "guestbook": "留言板下线了，直接写邮件吧"
+  "footer": {
+    "line1": "有想法？",
+    "line2": "随时来找我聊。",
+    "cta": "写封邮件 →"
   }
 }

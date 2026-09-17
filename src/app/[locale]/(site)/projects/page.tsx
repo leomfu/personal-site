@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Gadgets } from "@/components/gadgets/Gadgets";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ListRow, ListRowGroup } from "@/components/ui/ListRow";
 import { ContentFooter, PageHeader } from "@/components/ui/PageHeader";
@@ -10,7 +9,6 @@ import { getProjects, getUsedRepos, localized } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
 import { routing } from "@/i18n/routing";
-import { siteConfig } from "~/site.config";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,13 +31,11 @@ export async function generateMetadata({
  * 根子是内容量配不上 1240：三个项目 + 十二条清单摊那么宽，一行只有一句话。
  * 三个筛选共用同一个左右边界，切换时页面不会跳。
  *
- * 顶部**三个筛选**（和博客页、爱好页同一个 ui/SegmentedTabs）：
+ * 顶部**两个筛选**（ui/SegmentedTabs）：
  *   我做的      content/projects/projects.json —— **两列编号大卡**（components/projects/ProjectCard）
- *   小工具      番茄钟 + 手记，就在页面里能用的两样（见 components/gadgets/Gadgets）
  *   用到的开源  content/projects/repos.json    —— 别人的仓库，左列是它在这个站里干什么
  *
- * 「小工具」是 2026-09-08 从下线的 /focus 页搬过来的：这两样也是站主自己做的东西，
- * 摆在「我做的」旁边比单开一个整屏页面更对。
+ * 原来中间还有一栏「小工具」（番茄钟 + 手记），2026-09-17 全站改版第一阶段随专注区一起下线。
  *
  * ⚠️ **两块必须分开。** 混在一张清单里会让人以为这些开源项目都是他写的。
  * 类型也是分开的（Project / UsedRepo），别为了省事合并。
@@ -47,7 +43,7 @@ export async function generateMetadata({
  * 主角和配角排成一样大，等于没有主角。
  *
  * 两块内容都在服务端渲染好，作为 props 交给筛选组件；没选中的那块只是挂了 hidden，
- * 仍在 DOM 里 —— ⌘K 搜索、页内查找和爬虫都拿得到。
+ * 仍在 DOM 里 —— 页内查找和爬虫都拿得到。
  */
 export default async function ProjectsPage({
   params,
@@ -57,33 +53,32 @@ export default async function ProjectsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("projects");
-  const tHome = await getTranslations("home");
 
   const projects = getProjects();
   const repos = getUsedRepos();
-  const name = locale === "en" ? siteConfig.nameEn : siteConfig.name;
 
   const mineBlock = (
-    <div className="mt-7">
-      <p className="mb-7 max-w-note text-[13.5px] leading-[1.9] text-muted">{t("mineNote")}</p>
-      <div className="grid gap-5 sm:grid-cols-2">
+    <div className="mt-8">
+      {/* 单列堆叠、卡间距 26.4px（handoff §6.4）。每张卡各自滑进来 */}
+      <div className="flex flex-col gap-6">
         {projects.map((project, i) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            index={i}
-            locale={locale}
-            repoLabel={t("repo")}
-            noLinkLabel={t("noLink")}
-          />
+          <Reveal key={project.slug} index={i}>
+            <ProjectCard
+              project={project}
+              index={i}
+              locale={locale}
+              repoLabel={t("repo")}
+              noLinkLabel={t("noLink")}
+            />
+          </Reveal>
         ))}
       </div>
     </div>
   );
 
   const usesBlock = (
-    <div className="mt-7">
-      <p className="mb-6 max-w-note text-[13.5px] leading-[1.9] text-muted">
+    <div className="mt-8">
+      <p className="mb-6 max-w-column text-[14px] leading-[1.9] text-muted">
         {t("usesNote", { n: repos.length })}
       </p>
       <ListRowGroup>
@@ -98,7 +93,7 @@ export default async function ProjectsPage({
                   href={item.repo}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="border-b border-ink pb-0.5 font-mono text-[14.5px] text-ink"
+                  className="link-underline font-mono text-[14.5px]"
                 >
                   {item.name} ↗
                 </a>
@@ -118,22 +113,21 @@ export default async function ProjectsPage({
   );
 
   return (
-    <div className="mx-auto w-full max-w-[1000px]">
-      <PageHeader title={t("title")} />
+    <div className="mx-auto w-full max-w-page-narrow">
+      <PageHeader tag="PROJECTS" title={t("title")} lead={t("mineNote")} />
 
       {/* 两个筛选就摆在原来那句导语的位置 */}
-      <Reveal delay={120} className="mt-8">
+      <Reveal index={0}>
         <SegmentedTabs
           storageKey="projects-tab"
           tabs={[
             { key: "mine", label: t("tabMine"), content: mineBlock },
-            { key: "gadgets", label: t("tabGadgets"), content: <Gadgets /> },
             { key: "uses", label: t("tabUses"), content: usesBlock },
           ]}
         />
       </Reveal>
 
-      <Reveal delay={240}>
+      <Reveal index={1}>
         <ContentFooter
           note={t.rich("footerNote", {
             link: (chunks) => (
@@ -142,7 +136,6 @@ export default async function ProjectsPage({
               </Link>
             ),
           })}
-          copyright={tHome("copyright", { year: siteConfig.since, name })}
         />
       </Reveal>
     </div>

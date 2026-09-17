@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 /**
  * 唱片 —— 内容全在 components/records/RecordsSection（黑胶唱机 + 按心情听的榜单）。
- * 入口在关于页那张轨道图上，不在顶栏。
+ * 不在顶栏，入口是首页「爱好」里的「唱片」胶囊卡。
  */
 export default async function RecordsPage({
   params,

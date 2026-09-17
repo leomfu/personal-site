@@ -1,71 +1,142 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   黑白设计系统 —— tokens 从 docs/design/ 五个画板中提取（见 PLAN.md §5）
-   除工具页图标 hover 亮品牌色外，全站只用黑白灰。
+   设计 token —— 2026-09-17 全站改版「雾蓝底 · 蓝+橙双主色 · 玻璃卡面 · 手写标题」
+   定稿值来自 design_handoff_weiliang_redesign/tokens.css，**不要自行调整比例**。
+
+   原黑白系统那套名字（ink / body / muted / faint / line / shell-* / desk-*）
+   全部**保留同名**，只换值 —— 所以引用这些名字的组件一行都不用改。
+
+   `@theme static` 不是随手写的：Tailwind 4 默认只输出「被某个工具类用到」的 token，
+   没被用到的会被摇掉。这套设计系统里有大量 token 是组件通过 var(--color-accent-700)
+   这样直接引用的（内联 style、arbitrary value、本文件下面的 .bg-blob 等），
+   摇掉之后那些引用会静默失效。static 让整块 token 原样输出。
    ========================================================================== */
-@theme {
-  /* --- 亮侧：内容区 --- */
-  --color-ink: #111111;        /* 标题、主文字 */
-  --color-body: #333333;       /* 正文 */
-  --color-muted: #666666;      /* 次要文字 */
-  --color-faint: #999999;      /* 日期、标签、占位 */
-  --color-line: #e5e5e5;       /* 分割线、描边 */
-  --color-line-soft: #f0f0f0;  /* 白卡面内部的行间分隔线，比 --color-line 更轻一档 */
-  --color-line-strong: #c9c9c9;/* 正文链接下划线 */
+@theme static {
+  /* --- 亮侧：底色与表面 --- */
+  --color-bg: #edf1f7;       /* 全站底色（原 #fafafa 纸白） */
+  --color-surface: #ffffff;  /* 卡面基色；玻璃态下按 42% 透明使用，见下面 .glass */
   --color-card: #ffffff;
-  --color-paper: #fafafa;
+  --color-paper: #f7f9fc;
 
-  /* --- 暗侧：侧边栏 / 开场页 / 放松区 --- */
-  --color-shell: #0a0a0a;
-  --color-void: #070707;       /* 开场页底色，比侧栏再深一档（design-v2/Main.dc.html 定稿值） */
-  --color-shell-ink: #ededed;
-  --color-shell-muted: #a3a3a3;
-  --color-shell-dim: #8a8a8a;
-  --color-shell-faint: #5a5a5a;
-  --color-shell-mute: #4a4a4a;
-  --color-shell-line: #1f1f1f;
-  --color-shell-line-2: #262626;
-  --color-shell-line-3: #333333;
+  /* --- 亮侧：文字层级（和原黑白系统一一对应） --- */
+  --color-ink: #171b22;        /* 标题、主文字 */
+  --color-body: #40464f;       /* 正文 */
+  --color-muted: #5b636f;      /* 次要文字 */
+  --color-faint: #78818f;      /* 日期、标签、占位 */
 
-  /* --- 专注区：书桌上那张纸（浅色），design-v2/Focus.dc.html 定稿值 ---
-     和「暗侧」的 5 级灰阶（ink > muted > dim > faint > mute，离底色越远层级越高）
-     镜像过来，只是底色从近黑的 #0A0A0A 换成近白的纸 #EAEAEA，所以层级顺序反过来。
-     line/line-2/line-3 同理镜像 shell 那三级（离纸色越远、越显眼）。 */
-  --color-desk-paper: #eaeaea;
-  --color-desk-ink: #141414;
-  --color-desk-dim: #555555;
-  --color-desk-faint: #8a8a8a;
-  --color-desk-mute: #999999;
-  --color-desk-placeholder: #b8b8b8;
-  --color-desk-line: #dcdcdc;
-  --color-desk-line-2: #d3d3d3;
-  --color-desk-line-3: #cfcfcf;
+  /* --- 线 --- */
+  --color-line: #d8dde6;       /* 分割线、描边 */
+  --color-line-soft: #eceff5;  /* 卡面内部的行间分隔线，比 --color-line 轻一档 */
+  --color-line-strong: #b8c0cd;/* 正文链接下划线 */
 
-  /* --- 彩色的唯一例外：工具页图标 hover --- */
+  /* --- 主色：蓝 ---
+     ⚠️ 正文里的链接/强调文字用 --color-accent-700，不要用 --color-accent 本体：
+     后者在 #edf1f7 上只有 3:1 出头，只够图标和大标题。 */
+  --color-accent: #4f79cf;
+  --color-accent-100: #eef3fe;
+  --color-accent-200: #dae5fb;
+  --color-accent-300: #b8ccf5;
+  --color-accent-400: #8ba8e9;
+  --color-accent-500: #5b83d6;
+  --color-accent-600: #3a63bd;
+  --color-accent-700: #2a4a95;  /* 正文里的蓝字用这一档，4.5:1 */
+  --color-accent-800: #1d346b;
+  --color-accent-900: #142343;
+
+  /* --- 第二主色：橙。正文里的橙字同理用 --color-accent-2-700 --- */
+  --color-accent-2: #d98341;
+  --color-accent-2-100: #fff3e9;
+  --color-accent-2-200: #ffe2cb;
+  --color-accent-2-300: #fcc79f;
+  --color-accent-2-400: #f0a367;
+  --color-accent-2-500: #d98341;
+  --color-accent-2-600: #b66627;
+  --color-accent-2-700: #8e4d19;
+  --color-accent-2-800: #663512;
+  --color-accent-2-900: #40230f;
+
+  /* --- 中性阶 --- */
+  --color-neutral-100: #f7f9fc;
+  --color-neutral-200: #eceff5;
+  --color-neutral-300: #d8dde6;
+  --color-neutral-400: #b8c0cd;
+  --color-neutral-500: #97a0ae;
+  --color-neutral-600: #78818f;
+  --color-neutral-700: #5b636f;
+  --color-neutral-800: #40464f;
+  --color-neutral-900: #272b31;  /* 页脚底色、深色小面积块 */
+
+  /* --- 暗侧：侧栏 / 开场页 / 放松区 ---
+     不再是近黑的中性灰，改成同一蓝 family 的深色，暗侧和亮侧才是一套色 --- */
+  --color-shell: #121822;
+  --color-void: #0d1218;       /* 开场页底色，比顶栏再深一档 */
+  --color-shell-ink: #e9edf6;
+  --color-shell-muted: #a9b5c9;
+  --color-shell-dim: #8291ab;
+  --color-shell-faint: #5a6883;
+  --color-shell-mute: #3a4863;
+  --color-shell-line: #1f2836;
+  --color-shell-line-2: #26324a;
+  --color-shell-line-3: #2f3c56;
+
+  /* --- 专注区：书桌上那张纸（浅色）--- */
+  --color-desk-paper: #e6ebf3;
+  --color-desk-ink: #171b22;
+  --color-desk-dim: #5b636f;
+  --color-desk-faint: #97a0ae;
+  --color-desk-mute: #b8c0cd;
+  --color-desk-placeholder: #c9d0da;
+  --color-desk-line: #d8dde6;
+  --color-desk-line-2: #cfd6e1;
+  --color-desk-line-3: #c6cedb;
+
+  /* --- 品牌色：全站只在这两处出现 ---
+     brand-claude  工具页图标 hover
+     brand-bilibili 联系页/页脚那枚 B 站圆形图标底（handoff §6.9 指定的唯一一枚彩色） */
   --color-brand-claude: #c15f3c;
+  --color-brand-bilibili: #fb7299;
 
-  /* --- 字体 --- */
-  --font-sans: var(--font-inter), "PingFang SC", "Hiragino Sans GB", system-ui,
-    sans-serif;
-  /* var(--font-noto-serif) 是 next/font 构建时自托管的思源宋体，后面几个是兜底 */
+  /* --- 字体。五个 var() 都由 app/[locale]/layout.tsx 的 next/font/google 喂 ---
+     ⚠️ --font-hand 的栈序不能反：Caveat 没有 CJK 字形，中文手写标题**必须**
+     靠 Ma Shan Zheng 接；反过来写的话拉丁字母也会被 Ma Shan Zheng 接走。
+     手写标题字重恒为 400，不要加粗。 */
+  --font-hand: var(--font-caveat), var(--font-mashanzheng), var(--font-noto-sans-sc),
+    "PingFang SC", cursive;
+  --font-sans: var(--font-figtree), var(--font-noto-sans-sc), "PingFang SC",
+    "Hiragino Sans GB", system-ui, sans-serif;
   --font-serif: var(--font-noto-serif), "Noto Serif SC", "Source Han Serif SC",
     "Songti SC", Georgia, serif;
 
-  /* --- 布局尺寸（画板定稿）--- */
-  --spacing-topnav: 64px;     /* 顶部暗色导航条（移动端 56px，见 TopNav） */
+  /* --- 间距：设计稿的 Organic 1.10× 密度 ---
+     设计稿给的阶是 4.4 / 8.8 / 13.2 / 17.6 / 26.4 / 35.2px，正好是 Tailwind
+     默认 4px 基数的 1.1 倍。所以这里不逐个覆盖 --spacing-1…8（那样只有这六档
+     变了，p-5 / p-10 还留在 4px 基数上，一套尺子两种刻度），而是直接把基数
+     调成 4.4px —— 算出来的六档值和设计稿一字不差，其余档位也跟着等比缩放。
+     ⚠️ 这一行会同时影响全站所有数字型间距/尺寸类（p- m- gap- size- w- h- …）。 */
+  --spacing: 0.275rem;        /* 4.4px ×4 = 17.6 ×6 = 26.4 ×8 = 35.2 */
 
   /* --- 版心：外框那一层。宽度档位的完整说明见 docs/进度.md 末尾那张表 --- */
-  --spacing-page: 1240px;        /* 默认：列表、网格、照片墙铺满它 */
+  --spacing-page: 1180px;        /* 默认：列表、网格、照片墙铺满它（改版从 1240 收到 1180） */
   --spacing-page-narrow: 1080px; /* 首页 / 关于 / 联系 —— 内容量少的那几页 */
 
   /* --- 行宽（文字量度）：版心之内，一行字最多多长 ---
-     2026-09-09 收敛：原来散落着 860/760/720/620/400/340px 和 60ch/46ch/30ch
-     九种写法、三种单位，同一件事没有统一标准。现在只剩下面三档，
-     **新代码不许再写裸值**，挑一档用。 */
-  --spacing-display: 860px;   /* 大字引言那一档（衬线 26–34px） */
+     只有下面三档，**新代码不许再写裸值**，挑一档用。 */
+  --spacing-display: 860px;   /* 大字引言那一档 */
   --spacing-column: 700px;    /* 正文和引导语 —— markdown 正文也用它 */
   --spacing-note: 420px;      /* 小注记、说明、一句话补充 */
+
+  /* --- 圆角。卡片实际用 calc(var(--radius-lg) * 1.15) ≈ 32px；
+         按钮 / 标签 / 输入框 / 胶囊行一律 999px --- */
+  --radius-sm: 8px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  /* --- 阴影 --- */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+  --shadow-glass: 0 10px 36px color-mix(in srgb, #171b22 16%, transparent);
 
   /* --- 小标签字距 --- */
   --tracking-label: 0.2em;
@@ -81,7 +152,7 @@
   }
 
   body {
-    background: var(--color-paper);
+    background: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -95,58 +166,279 @@
 }
 
 /* ==========================================================================
+   改版三层：玻璃卡面 / 背景底纹 / 翻阅动效
+   （design_handoff_weiliang_redesign/README.md §5，值是定稿值）
+
+   放在 @layer components 里、不是裸写在最外层 —— 裸写的规则优先级高过 Tailwind
+   的 utilities 层，`class="glass rounded-lg"` 里的 rounded-lg 就会被 .glass 自己的
+   圆角吃掉。进了 components 层，组件上的 Tailwind 类才压得住它。
+   ========================================================================== */
+@layer components {
+  /* --- 玻璃卡面。卡片 / 输入框都是这一套（顶栏是唯一不玻璃化的容器）---
+     ⚠️ 卡面是半透明的，底纹和光斑必须从它背后透出来：任何一处改成实色白，
+     那块就会显得像贴上去的。 */
+  .glass {
+    background: color-mix(in srgb, var(--color-surface) 42%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+    box-shadow: var(--shadow-glass);
+    border-radius: calc(var(--radius-lg) * 1.15);
+  }
+
+  /* 次要按钮那一档 */
+  .glass-soft {
+    background: color-mix(in srgb, var(--color-surface) 45%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+  }
+
+  /* 标签 */
+  .glass-tag {
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* 主按钮的外发光 */
+  .btn-primary-glow {
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+
+  /* --- 底纹「细网格」：fixed 的独立一层，30px 网格，顶部清晰、底部淡出。
+     用它的容器里，内容那一层必须 position: relative; z-index: 1，否则会被盖住。 */
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px,
+        transparent 1px 30px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-accent) 13%, transparent) 0 1px,
+        transparent 1px 30px
+      );
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
+    mask-image: radial-gradient(120% 90% at 50% 0%, #000 25%, transparent 92%);
+  }
+
+  /* --- 两颗漂移光斑 --- */
+  .bg-blob {
+    position: absolute;
+    width: 680px;
+    height: 680px;
+    border-radius: 50%;
+    filter: blur(46px);
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
+  .bg-blob-a {  /* 右上，蓝，26s */
+    top: -180px;
+    right: -140px;
+    background: radial-gradient(circle at 35% 35%, var(--color-accent-200), transparent 68%);
+    animation: wlDrift 26s ease-in-out infinite;
+  }
+
+  .bg-blob-b {  /* 左中，橙，32s */
+    top: 640px;
+    left: -220px;
+    background: radial-gradient(circle at 60% 40%, var(--color-accent-2-200), transparent 70%);
+    animation: wlDrift2 32s ease-in-out infinite;
+  }
+
+  /* --- 顶部滚动进度条 --- */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    height: 3px;
+    width: 0;
+    background: var(--color-accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+    pointer-events: none;
+    transition: width 0.1s linear;
+  }
+
+  /* --- 翻阅动效「错位滑入」，强度 k = 1.6 ---
+     Reveal 组件给每个块挂 data-wl-rv，奇数序号再挂 data-wl-alt（从右边进），
+     进视口后挂 data-wl-in。错峰延迟 (index % 4) * 110ms 由组件写在 style 上。 */
+  [data-wl-rv] {
+    opacity: 0;
+    transform: translate3d(calc(-96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(0.965);
+    transition:
+      opacity 0.6s ease,
+      transform 0.86s cubic-bezier(0.16, 0.86, 0.22, 1);
+    will-change: opacity, transform;
+  }
+
+  [data-wl-rv][data-wl-alt] {
+    transform: translate3d(calc(96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(0.965);
+  }
+
+  [data-wl-rv][data-wl-in],
+  [data-wl-rv][data-wl-alt][data-wl-in] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* 换页时整块 main 播一次 */
+  .page-enter {
+    animation: wlPgSlide 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  }
+}
+
+:root {
+  --wl-k: 1.6;  /* 错位滑入的强度。改这一个数就能整体收放位移 */
+}
+
+@keyframes wlDrift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(28px, -34px) scale(1.07);
+  }
+}
+
+@keyframes wlDrift2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-36px, 26px);
+  }
+}
+
+@keyframes wlPgSlide {
+  from {
+    opacity: 0;
+    transform: translateX(44px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 小动作：上移淡入 / 弹出 / 下划线拉开 / 状态点脉冲 / 转圈 */
+@keyframes wlUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wlPop {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wlBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes wlPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 5px var(--color-accent-200);
+  }
+  50% {
+    box-shadow: 0 0 0 11px color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+}
+
+@keyframes wlSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 「减少动态效果」下：滑入的块直接就位，光斑和换页动画停掉。
+   下面第二条全局兜底把 duration 压到 0.01ms，但 [data-wl-rv] 的初始态是
+   opacity:0，光压时长它会停在看不见的状态 —— 所以这里必须显式置为可见。 */
+@media (prefers-reduced-motion: reduce) {
+  [data-wl-rv] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .bg-blob,
+  .page-enter {
+    animation: none !important;
+  }
+}
+
+/* 全站统一焦点环（handoff §7）。不要留浏览器默认那圈 —— 各家画得都不一样，
+   而且在雾蓝底上大多看不清。 */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* ==========================================================================
    工具类
    ========================================================================== */
 
-/* 内容区背景：不是纯白，是极缓的浅灰渐变 + 右上角一点柔光（画板定稿） */
-@utility bg-content {
-  background-image:
-    radial-gradient(
-      70% 55% at 76% 6%,
-      #ffffff 0%,
-      rgba(255, 255, 255, 0) 62%
-    ),
-    linear-gradient(158deg, #f1f1f1 0%, #fafafa 34%, #f7f7f7 66%, #ececec 100%);
-}
-
-/* 开场页的细分割线：两端淡出，中间实（画板定稿） */
-@utility bg-rule {
-  background-image: linear-gradient(
-    90deg,
-    rgba(237, 237, 237, 0) 0%,
-    rgba(237, 237, 237, 0.55) 22%,
-    rgba(237, 237, 237, 0.55) 78%,
-    rgba(237, 237, 237, 0) 100%
-  );
-}
-
-/* 内容页「面」层：白卡面容器（对照 design-v2/ContentTemplate.dc.html ①）——
-   列表行、图片卡这些组件的白底，1px 灰边 + 极轻投影，把内容从渐变底上托起来。 */
+/* 内容页「面」层 —— 2026-09-17 改版：从实色白卡换成玻璃卡面，配方和 .glass 一份。
+   列表组、图片卡都套它，所以改这一处 = 全站的面一起换。
+   ⚠️ 半透明是**故意的**：底纹和光斑要从卡背后透出来，换回实色白那块就像贴上去的。 */
 @utility card-face {
-  background: var(--color-card);
-  border: 1px solid var(--color-line);
-  box-shadow: 0 1px 2px rgba(17, 17, 17, 0.03);
+  background: color-mix(in srgb, var(--color-surface) 42%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  box-shadow: var(--shadow-glass);
+  border-radius: calc(var(--radius-lg) * 1.15);
 }
 
-/* 内容页「零件」：小标签 + 1px 灰边 + padding（对照 ContentTemplate ④「带框标签」） */
+/* 内容页「零件」：小标签。改版后是 999px 的胶囊，不再是带框大写小字 */
 @utility tag-framed {
-  border: 1px solid var(--color-line);
-  padding: 4px 9px;
-  font-size: 10.5px;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-faint);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent-800);
 }
 
-/* 正文内联链接：细灰底线，hover 变深 */
+/* 正文内联链接：主色 700 档（不是 --color-accent 本体，那一档在雾蓝底上不够 4.5:1）
+   + 一条浅主色下划线，hover 加深 */
 @utility link-underline {
-  color: var(--color-ink);
-  border-bottom: 1px solid var(--color-line-strong);
-  padding-bottom: 1px;
-  transition: border-color 200ms ease;
+  color: var(--color-accent-700);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-300);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms ease;
 
   &:hover {
-    border-bottom-color: var(--color-ink);
+    text-decoration-color: var(--color-accent-700);
   }
 }
 
@@ -273,7 +565,7 @@
 }
 
 /* 首页块 B「关于」：比默认 .prose-bw（16px/1.9）再收紧一档，
-   密度要明显低于块 A 的大字引言（design-v2/Home.dc.html 定稿值） */
+   密度要明显低于四周（首页那张「关于」玻璃卡在用） */
 .prose-about {
   font-size: 15.5px;
   line-height: 1.85;
@@ -285,23 +577,36 @@
 
 .prose-bw h2 {
   margin-top: 52px;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.5;
+  font-family: var(--font-hand);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
   color: var(--color-ink);
 }
 
 .prose-bw h3 {
   margin-top: 38px;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 500;
+  line-height: 1.4;
   color: var(--color-ink);
 }
 
 .prose-bw h2 + *,
 .prose-bw h3 + * {
   margin-top: 14px;
+}
+
+.prose-bw a {
+  color: var(--color-accent-700);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-300);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms ease;
+}
+
+.prose-bw a:hover {
+  text-decoration-color: var(--color-accent-700);
 }
 
 .prose-bw strong {
@@ -356,20 +661,23 @@
   margin: 44px 0;
 }
 
+/* 2026-09-17 改版：原来这里强制 grayscale(1) —— 那是老黑白系统的规矩，已经取消。
+   现在走设计稿的「washed」：轻微去饱和 + 抬亮，让图沉进雾蓝底里而不是浮在上面；
+   鼠标移上去恢复原色。 */
 .prose-bw img {
   max-width: 100%;
   height: auto;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-line);
-  filter: grayscale(1);
+  filter: saturate(0.82) brightness(1.04);
   transition: filter 400ms ease;
 }
 
 .prose-bw img:hover {
-  filter: grayscale(0.35);
+  filter: none;
 }
 
-/* ![alt](/path "原色")：图本身就是内容（截图、摄影作品），不去色。
-   包着它的界面仍然只有黑白灰 —— 彩色只出现在图片自己那块矩形里。 */
+/* ![alt](/path "原色")：明确要求原色的图，一上来就不做 washed 处理 */
 .prose-bw img.img-color,
 .prose-bw img.img-color:hover {
   filter: none;
@@ -378,7 +686,7 @@
 .prose-bw :not(pre) > code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.88em;
-  background: #f2f2f2;
+  background: var(--color-neutral-200);
   border: 1px solid var(--color-line);
   border-radius: 3px;
   padding: 1px 5px;
@@ -393,7 +701,7 @@
   padding: 18px 20px;
   font-size: 13.5px;
   line-height: 1.75;
-  background: #fbfbfb !important;
+  background: var(--color-neutral-100) !important;
 }
 
 .prose-bw pre code {
@@ -417,57 +725,6 @@
   font-weight: 500;
   color: var(--color-ink);
   letter-spacing: 0.02em;
-}
-
-/* ==========================================================================
-   放松区专用的循环动画（阶段 4）—— 场景背景全部靠渐变 + 噪点生成，不加载大图
-   ========================================================================== */
-
-/* 海浪：横向缓慢漂移 */
-@keyframes dcDriftX {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 900px 0;
-  }
-}
-
-/* 篝火：不规则的明暗跳动 */
-@keyframes dcFlicker {
-  0%,
-  100% {
-    opacity: 0.62;
-    transform: scale(1);
-  }
-  18% {
-    opacity: 0.86;
-    transform: scale(1.015);
-  }
-  37% {
-    opacity: 0.7;
-  }
-  54% {
-    opacity: 0.95;
-    transform: scale(1.03);
-  }
-  71% {
-    opacity: 0.74;
-  }
-  88% {
-    opacity: 0.9;
-    transform: scale(1.01);
-  }
-}
-
-/* 雨夜：斜纹雨丝下落 */
-@keyframes dcRain {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 180px 900px;
-  }
 }
 
 /* ==========================================================================
@@ -540,9 +797,9 @@
   translate: -50% -50%;
   background: radial-gradient(
     closest-side,
-    rgba(17, 17, 17, 0.22),
-    rgba(17, 17, 17, 0.11) 52%,
-    rgba(17, 17, 17, 0) 76%
+    color-mix(in srgb, var(--color-ink) 22%, transparent),
+    color-mix(in srgb, var(--color-ink) 11%, transparent) 52%,
+    transparent 76%
   );
   filter: blur(20px);
   pointer-events: none;
@@ -580,9 +837,9 @@
   width: 108%;
   background: radial-gradient(
     circle closest-side at 44% 62%,
-    rgba(17, 17, 17, 0.3),
-    rgba(17, 17, 17, 0.14) 55%,
-    rgba(17, 17, 17, 0) 78%
+    color-mix(in srgb, var(--color-ink) 30%, transparent),
+    color-mix(in srgb, var(--color-ink) 14%, transparent) 55%,
+    transparent 78%
   );
   filter: blur(16px);
   transform: translateZ(-46px);
@@ -796,322 +1053,4 @@
    分开一条只是因为语义不同：那条属于唱片页那台唱机 */
 .mini-vinyl-spin {
   animation: dcSpin 1.8s linear infinite;
-}
-
-/* ==========================================================================
-   关于页「我的爱好」的同心轨道图（components/about/HobbyOrbit.tsx）
-
-   2026-09-08 站主要求：把爱好并进关于，做成「相互连接的互动感觉」，点了能进各自的页。
-   选的是**同心轨道**——和站里已有的圆形语言（唱片页那张黑胶、番茄钟原来那只表盘）
-   是同一套，不是另起一个视觉。
-
-   结构：
-
-     .orbit-wrap        舞台 + 下面那行随 hover 换的说明，一起被 :has() 选到
-       .orbit           正方形舞台，尺寸和节点直径都写在这一层的 CSS 变量上
-         ::before       一层极淡的白色径向光，把整张图从灰底上托起来
-       .orbit-ticks     内圈 60 道刻度，反着慢慢转（和唱片沟槽、番茄钟表盘同一套刻度语言）
-       .orbit-ring      那一圈细线轨道（半径 --orbit-r，纯装饰）
-       .orbit-hub       圆心：站主的 Logo。**不在转的那一层里**，它是不动的锚
-       .orbit-rotor     唯一在转的一层，60 秒一圈
-         .orbit-arm ×3  一根「辐条 + 节点」，整根绕圆心转到自己的角度 --a
-           .orbit-spoke   从圆心指向外的那道 1px 细线（pointer-events:none，
-                          只有节点圆是点击目标；1px 宽的线没法点）
-           .orbit-node    落在轨道上的那个圆，自己反向转 --a 摆正
-             .orbit-face  再反向转掉**转盘那份**角度，所以字始终是正的
-
-   两处反向旋转别混：`.orbit-node` 上那个 `rotate(calc(-1 * var(--a)))` 抵消的是
-   **静止时**辐条的角度；`.orbit-face` 上那条 orbitCounter 动画抵消的是
-   **转盘正在转的**那份。少一个字就是歪的。
-
-   交互（2026-09-08 第三轮加厚）：
-     鼠标进舞台（或键盘 focus 到任一节点）→ 转盘停住，停在哪儿是哪儿；
-     停在某个节点上 → 它反白+起一圈光晕、它那根辐条变深、另外两根淡下去、
-       轨道线整圈提亮一档、圆心的 Logo 让位（淡下去），
-       **图下面那行说明换成这一样的介绍**（三行叠在一起交叉淡入，靠 :has() 选，
-       所以整块仍然是零 JS 的；高度写死，换行不会把页面顶动）；
-     点一下 → 去那一页。
-
-   「减少动态效果」下：上面第 236 行那条全局兜底会把两条动画都掐成 0.01ms 跑一次，
-   于是转盘停在 0°、字也是正的 —— 三个节点静止地摆在轨道上，功能一点不少。
-   ========================================================================== */
-@keyframes orbitSpin {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 360deg;
-  }
-}
-
-@keyframes orbitCounter {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: -360deg;
-  }
-}
-
-.orbit {
-  --orbit: 300px;      /* 舞台边长 */
-  --orbit-node: 74px;  /* 节点圆直径 */
-  --orbit-hub: 58px;   /* 圆心那个圆的直径 */
-  --orbit-spin: 42s;   /* 转一圈用多久。站主 2026-09-08 要求「再加一点流转的速度」，60s → 42s */
-  --orbit-ticks-spin: 150s; /* 内圈刻度反着转，慢得多，只当质感 */
-  /* 轨道半径：节点圆要整个落在舞台里，所以要减掉半个节点再留 1px 给描边。
-     ⚠️ 辐条真正**露出来**的那一截 = --orbit-r − 半个圆心 − 半个节点（两头都被盖住）。
-     改这三个尺寸时先算一下这个差：小于 40px 左右，「连着」的感觉就没了。
-     现在是手机 46px / 桌面 81px。 */
-  --orbit-r: calc(var(--orbit) / 2 - var(--orbit-node) / 2 - 1px);
-
-  position: relative;
-  width: var(--orbit);
-  height: var(--orbit);
-}
-
-/* 一层极淡的白色径向光。内容区是浅灰渐变，纯放几个白圆上去会「浮」在上面；
-   垫这一层之后中间稍亮、边上化开，整张图像是长在页面上的 */
-.orbit::before {
-  content: "";
-  position: absolute;
-  inset: -14%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgb(255 255 255 / 85%) 0%,
-    rgb(255 255 255 / 45%) 42%,
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-/* 内圈 60 道刻度。conic-gradient 画满一整圈，再用 radial 的遮罩只留下细细一环 ——
-   和唱片的沟槽、番茄钟表盘那 60 道刻度是同一套语言，这里压得很淡，只当质感。
-   反着转，和外面三个节点错开，两层一起看才有「在走」的感觉 */
-.orbit-ticks {
-  /* 半径取轨道的 0.47 —— 大致落在辐条露出来那一段的中点，
-     离圆心和节点都不贴。别用「轨道半径减固定像素」：手机和桌面两套尺寸差得多，
-     减同一个数在小屏上会顶到节点上。 */
-  --orbit-ticks-r: calc(var(--orbit-r) * 0.47);
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--orbit-ticks-r) * 2);
-  height: calc(var(--orbit-ticks-r) * 2);
-  translate: -50% -50%;
-  background: repeating-conic-gradient(
-    from 0deg,
-    var(--color-line-strong) 0deg 0.4deg,
-    transparent 0.4deg 6deg
-  );
-  /* ⚠️ closest-side 不能省：radial-gradient 默认按 farthest-corner 算，
-     正方形里 100% 会变成对角线的一半（≈ 半边长 ×1.414），遮罩环整个跑到方框外，
-     只在四个角露出一点点。写死 closest-side，100% 才是这个圆真正的半径。 */
-  mask: radial-gradient(
-    circle closest-side,
-    transparent calc(100% - 7px),
-    #000 calc(100% - 7px) calc(100% - 1px),
-    transparent calc(100% - 1px)
-  );
-  -webkit-mask: radial-gradient(
-    circle closest-side,
-    transparent calc(100% - 7px),
-    #000 calc(100% - 7px) calc(100% - 1px),
-    transparent calc(100% - 1px)
-  );
-  opacity: 0.5;
-  animation: orbitCounter var(--orbit-ticks-spin) linear infinite;
-  pointer-events: none;
-}
-
-@media (width >= 640px) {
-  .orbit {
-    --orbit: 440px;
-    --orbit-node: 96px;
-    --orbit-hub: 84px;
-  }
-}
-
-/* 停在某个节点上时，整圈轨道提亮一档 —— 「它们都在同一条轨道上」这句话，
-   正是在你注意其中一个的时候最该说出来 */
-.orbit-wrap:has(.orbit-arm:hover) .orbit-ring,
-.orbit-wrap:has(.orbit-arm:focus-visible) .orbit-ring {
-  border-color: var(--color-line-strong);
-}
-
-/* 注意力挪到外圈时，圆心的 Logo 让位 */
-.orbit-wrap:has(.orbit-arm:hover) .orbit-hub-mark,
-.orbit-wrap:has(.orbit-arm:focus-visible) .orbit-hub-mark {
-  opacity: 0.28;
-}
-
-.orbit-hub-mark {
-  transition: opacity 0.32s ease;
-}
-
-.orbit-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--orbit-r) * 2);
-  height: calc(var(--orbit-r) * 2);
-  translate: -50% -50%;
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
-  pointer-events: none;
-  transition: border-color 0.32s ease;
-}
-
-.orbit-hub {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
-  display: flex;
-  width: var(--orbit-hub);
-  height: var(--orbit-hub);
-  align-items: center;
-  justify-content: center;
-  translate: -50% -50%;
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
-  background: var(--color-card);
-  pointer-events: none;
-}
-
-.orbit-rotor {
-  position: absolute;
-  inset: 0;
-  animation: orbitSpin var(--orbit-spin) linear infinite;
-}
-
-/* 鼠标进舞台、或键盘 focus 到某个节点：停住。停在哪儿是哪儿，不回弹 */
-.orbit:hover .orbit-rotor,
-.orbit:focus-within .orbit-rotor,
-.orbit:hover .orbit-face,
-.orbit:focus-within .orbit-face,
-.orbit:hover .orbit-ticks,
-.orbit:focus-within .orbit-ticks {
-  animation-play-state: paused;
-}
-
-/* 零尺寸的一个点：它的孩子（辐条、节点）都是绝对定位，所以撑不开它。
-   这一点很关键 —— transform-origin 默认是自己的正中，0×0 的正中就是圆心本身，
-   `rotate` 才会绕着圆心转而不是绕着某个方框的中心。别给它宽高。 */
-.orbit-arm {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  rotate: var(--a);
-  transition: opacity 0.32s ease;
-}
-
-/* 停在某一根上时，另外两根淡下去 —— 「这条连线正被看着」 */
-.orbit:has(.orbit-arm:hover) .orbit-arm:not(:hover),
-.orbit:has(.orbit-arm:focus-visible) .orbit-arm:not(:focus-visible) {
-  opacity: 0.3;
-}
-
-.orbit-spoke {
-  position: absolute;
-  top: 0;
-  left: -0.5px;
-  width: 1px;
-  height: var(--orbit-r);
-  background: var(--color-line);
-  pointer-events: none;
-  transition: background-color 0.32s ease;
-}
-
-.orbit-arm:hover .orbit-spoke,
-.orbit-arm:focus-visible .orbit-spoke {
-  background: var(--color-ink);
-}
-
-.orbit-node {
-  position: absolute;
-  top: var(--orbit-r);
-  left: 0;
-  display: flex;
-  width: var(--orbit-node);
-  height: var(--orbit-node);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  /* 先摆到轨道上（top/left + 这个 -50%），再把辐条那份角度转回来，字才是正的 */
-  translate: -50% -50%;
-  rotate: calc(-1 * var(--a));
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
-  background: var(--color-card);
-  box-shadow: 0 1px 2px rgb(17 17 17 / 3%);
-  transition:
-    background-color 0.32s ease,
-    border-color 0.32s ease,
-    box-shadow 0.32s ease,
-    color 0.32s ease,
-    scale 0.32s ease;
-}
-
-.orbit-arm:hover .orbit-node,
-.orbit-arm:focus-visible .orbit-node {
-  scale: 1.07;
-  border-color: var(--color-ink);
-  background: var(--color-ink);
-  color: var(--color-paper);
-  /* 一圈化开的光晕 + 一道向下的投影：反白之后这个圆要「浮起来」，
-     不然它只是变黑了，没有被拿到手上的感觉 */
-  box-shadow:
-    0 0 0 6px rgb(17 17 17 / 5%),
-    0 12px 30px rgb(17 17 17 / 16%);
-}
-
-.orbit-face {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  /* 抵消转盘正在转的那一份，和 .orbit-rotor 同一个时长 */
-  animation: orbitCounter var(--orbit-spin) linear infinite;
-}
-
-/* 图下面那行说明：三条 + 一条默认的，叠在同一个格子里交叉淡入。
-   高度写死（grid 让它们占同一格），换哪一条页面都不会被顶动。
-   选中哪一条靠 :has() 看鼠标停在哪根辐条上 —— 所以这一整块还是零 JS。 */
-.orbit-notes {
-  display: grid;
-  min-height: 3.4rem;
-  place-items: center;
-}
-
-.orbit-note {
-  grid-area: 1 / 1;
-  max-width: var(--spacing-note);
-  opacity: 0;
-  text-align: center;
-  transition: opacity 0.34s ease;
-}
-
-/* 没停在任何一根上：显示默认那条 */
-.orbit-note[data-k="idle"] {
-  opacity: 1;
-}
-
-.orbit-wrap:has(.orbit-arm:hover) .orbit-note[data-k="idle"],
-.orbit-wrap:has(.orbit-arm:focus-visible) .orbit-note[data-k="idle"] {
-  opacity: 0;
-}
-
-.orbit-wrap:has(.orbit-arm[data-k="photos"]:hover) .orbit-note[data-k="photos"],
-.orbit-wrap:has(.orbit-arm[data-k="photos"]:focus-visible) .orbit-note[data-k="photos"],
-.orbit-wrap:has(.orbit-arm[data-k="records"]:hover) .orbit-note[data-k="records"],
-.orbit-wrap:has(.orbit-arm[data-k="records"]:focus-visible) .orbit-note[data-k="records"],
-.orbit-wrap:has(.orbit-arm[data-k="library"]:hover) .orbit-note[data-k="library"],
-.orbit-wrap:has(.orbit-arm[data-k="library"]:focus-visible) .orbit-note[data-k="library"] {
-  opacity: 1;
 }

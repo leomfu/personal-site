@@ -87,7 +87,7 @@ export default async function AlbumPage({ params }: { params: Promise<Params> })
         )}
       </Reveal>
 
-      <Reveal delay={120} className="mt-9">
+      <Reveal index={0} className="mt-9">
         {album.photos.length > 0 ? (
           <AlbumGrid photos={album.photos} title={title} />
         ) : (
@@ -96,7 +96,7 @@ export default async function AlbumPage({ params }: { params: Promise<Params> })
       </Reveal>
 
       {/* 上一辑 / 下一辑 */}
-      <Reveal delay={200} className="mt-[72px] border-t border-line pt-7">
+      <Reveal index={1} className="mt-[72px] border-t border-line pt-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:justify-between">
           {newer ? (
             <Link

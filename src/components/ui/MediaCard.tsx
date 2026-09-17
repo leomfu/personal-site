@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 
 /**
  * 内容页「图片卡」模式（对照 design-v2/ContentTemplate.dc.html §③）：
- * 白卡面 + 1px 灰边，图片区在上、信息区在下。摄影、视频、唱片封面这类内容图片
- * 共用这一个外壳——图片保持原色（CLAUDE.md 明确豁免的那条），框、标签、文字仍是黑白。
+ * 内容页「图片卡」模式：玻璃卡面，图片区在上、信息区在下。摄影、视频、唱片封面共用这一个外壳。
+ * 2026-09-17 改版：卡面从实色白换成玻璃（走 card-face），hover 整卡上浮 6px 升到 shadow-lg。
  * `media` 整块由调用方自己画（<Image>、播放按钮遮罩、iframe 都行），
  * 这里只负责外壳的白卡边框、留白和标题/描述这几行的排版。
  */
@@ -32,16 +32,16 @@ export function MediaCard({
   className?: string;
 }) {
   const card = (
-    <div className={`card-face flex flex-col overflow-hidden ${className}`}>
-      <div className="relative w-full overflow-hidden bg-line" style={{ aspectRatio: aspect }}>
+    <div className={`card-face flex flex-col overflow-hidden transition-[transform,box-shadow] duration-300 group-hover:-translate-y-1.5 group-hover:shadow-lg ${className}`}>
+      <div className="relative w-full overflow-hidden bg-neutral-300" style={{ aspectRatio: aspect }}>
         {media}
       </div>
-      <div className="flex flex-col gap-2 px-[18px] py-4">
+      <div className="flex flex-col gap-2 px-6 py-5">
         <div className="flex items-baseline justify-between gap-3">
-          <span className="min-w-0 truncate text-[15.5px] text-ink">{title}</span>
+          <span className="min-w-0 truncate text-[16px] text-ink">{title}</span>
           {meta && <span className="shrink-0 text-xs text-faint">{meta}</span>}
         </div>
-        {desc && <span className="text-[13.5px] leading-[1.7] text-muted">{desc}</span>}
+        {desc && <span className="text-[13.5px] leading-[1.75] text-muted">{desc}</span>}
         {footer}
       </div>
     </div>

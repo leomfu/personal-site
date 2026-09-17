@@ -46,7 +46,7 @@ export function RecordShelf({
           />
         ) : (
           /* 没有封面：一张素唱片套。碟片从套子里露出来一角 */
-          <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-paper">
+          <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-neutral-200">
             <span
               className="absolute -right-[18%] size-[76%] rounded-full border border-line"
               aria-hidden
@@ -55,7 +55,7 @@ export function RecordShelf({
               className="absolute -right-[18%] size-[26%] rounded-full border border-line"
               aria-hidden
             />
-            <span className="relative px-4 text-center font-serif text-[15px] leading-[1.4] font-light text-ink">
+            <span className="relative px-4 text-center font-hand text-[19px] leading-[1.3] text-ink">
               {title}
             </span>
           </div>
@@ -63,7 +63,7 @@ export function RecordShelf({
 
         const card = (
           <>
-            <div className="aspect-square overflow-hidden border border-line bg-card">
+            <div className="card-face aspect-square overflow-hidden">
               {sleeve}
             </div>
             <div className="mt-3">

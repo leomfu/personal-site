@@ -1,7 +1,7 @@
 import type { SocialKey } from "~/site.config";
 
 /**
- * 社交平台图标 —— 路径取自 docs/design/_parts.py 的 BRAND 字典（实底、16×16）。
+ * 社交平台图标 —— 实底、16×16。路径原本取自旧视觉稿的 BRAND 字典（那份稿子 2026-09-17 已删）。
  * 注：小红书和抖音是视觉稿里的近似画法，日后有官方 SVG 可以替换。
  */
 const PATHS: Record<SocialKey, React.ReactNode> = {
