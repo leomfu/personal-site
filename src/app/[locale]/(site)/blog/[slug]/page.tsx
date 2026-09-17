@@ -62,12 +62,17 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   const t = await getTranslations("blog");
   const tType = await getTranslations("blog.types");
 
-  const html = await renderMarkdown(post.body, locale);
-  const headings = extractHeadings(post.body);
+  // 英文路由有译本（content/posts/<slug>.en.md）就读译本，没有就读原文
+  const translated = locale === "en" && post.body_en !== undefined;
+  const body = translated ? (post.body_en as string) : post.body;
+  const minutes = (translated && post.minutes_en) || post.minutes;
+
+  const html = await renderMarkdown(body, locale);
+  const headings = extractHeadings(body);
   const showToc = headings.length >= 3;
 
-  /** 只有单语版本的文章，在另一种语言下也照常显示，顶部标一行说明（PLAN 阶段 3 §4） */
-  const langMismatch = post.lang !== locale;
+  /** 只有单语版本的文章，在另一种语言下也照常显示，顶部标一行说明（PLAN 阶段 3 §4）；有译本就不标 */
+  const langMismatch = post.lang !== locale && !translated;
 
   return (
     <div className="relative mx-auto max-w-column">
@@ -81,7 +86,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
           >
             {tType(post.type)}
           </span>
-          <span>{t("minutes", { minutes: post.minutes })}</span>
+          <span>{t("minutes", { minutes })}</span>
         </div>
 
         <h1 className="mt-4 font-hand text-[clamp(34px,4.6vw,52px)] leading-[1.2] font-normal text-ink">

@@ -1,9 +1,10 @@
 {
   "title": "北京",
+  "titleEn": "Beijing",
   "year": "2023",
   "order": 2,
   "photos": [
-    { "file": "beijing-01.webp", "width": 1438, "height": 1080, "caption": "天安门夜色" },
-    { "file": "beijing-03.webp", "width": 1080, "height": 1438, "caption": "保和殿" }
+    { "file": "beijing-01.webp", "width": 1438, "height": 1080, "caption": "天安门夜色", "captionEn": "Tiananmen at night" },
+    { "file": "beijing-03.webp", "width": 1080, "height": 1438, "caption": "保和殿", "captionEn": "Hall of Preserving Harmony" }
   ]
 }

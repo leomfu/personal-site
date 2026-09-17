@@ -57,5 +57,10 @@ minutes: 6          # 可选：列表上的阅读时长，不写就按字数估
 
 ## 双语
 
-目前 `content/` 只有中文。英文路由直接读中文：markdown 找不到 `.en.md` 就读 `.zh.md`，
-json 里没有 `*_en` / `*En` 字段就显示中文字段。以后补英文，加文件或字段即可，不用改代码。
+中英两份都在 `content/` 里：
+- `home/intro.en.md`、`about/about.en.md`：英文路由优先读它们，没有就读 `.zh.md`；
+- `posts/<slug>.en.md`：文章的英文译本（front-matter 写 `title` / `summary` / `tags`，可选 `minutes`），
+  和原文共用 slug、日期、类型，不算单独一篇；没有译本时英文页显示原文并标注原文语言；
+- json：`*_en` / `*En` 字段（projects、videos 用 `_en`，photos、music 用 `En`），没填就显示中文字段。
+
+⚠️ 改中文内容时对应的英文文件/字段要一起改，否则英文站显示的是旧内容。

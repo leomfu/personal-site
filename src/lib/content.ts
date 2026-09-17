@@ -18,10 +18,12 @@ import type {
  * 字段约定见 content/README.md。类型在 ./types，日期/双语格式化在 ./format
  * （客户端组件从那两个文件拿，因为这里有 node:fs）。
  *
- * ⚠️ 双语回退：content/ 目前只有中文。英文路由的做法是**直接读中文**，不复制一份到 .en 文件 ——
- *   markdown 页：readDoc 找不到 `xxx.en.md` 就读 `xxx.zh.md`；
- *   json 条目：没有 *_en / *En 字段，组件里的 localized() 自动退回中文字段。
- * 以后要补英文，加 `.en.md` 或 `_en` 字段即可，这里不用改。
+ * 双语（2026-09-17 起 content/ 已补齐英文）：
+ *   markdown 页：readDoc 读 `xxx.en.md`，找不到就回退 `xxx.zh.md`；
+ *   文章：`posts/<slug>.md` 是原文，同目录 `posts/<slug>.en.md` 是英文译本（同一个 slug、同一个 URL），
+ *         getPosts() 把译本并进 title_en / summary_en / tags_en / body_en / minutes_en，不单独成篇；
+ *   json 条目：*_en / *En 字段，没填时组件里的 localized() 自动退回中文字段。
+ * ⚠️ 改中文内容时对应的英文文件/字段也要一起改，否则英文站显示的是旧内容。
  */
 
 export type * from "./types";
@@ -81,32 +83,53 @@ export const getTools = () => readJson<Tool[]>("tools.json", []);
 
 
 
+/** 英文译本的文件名后缀：`<slug>.en.md`。它不是独立文章，列表/RSS/sitemap 都不单独算 */
+const EN_SUFFIX = ".en.md";
+
 export function getPosts(): Post[] {
   if (!exists("posts")) return [];
   return fs
     .readdirSync(path.join(CONTENT_DIR, "posts"))
-    .filter((f) => f.endsWith(".md"))
+    .filter((f) => f.endsWith(".md") && !f.endsWith(EN_SUFFIX))
     .map((file) => {
+      const slug = file.replace(/\.md$/, "");
       const parsed = matter(read("posts", file));
       const d = parsed.data as Record<string, unknown>;
       const body = parsed.content.trim();
       const date = toISODate(d.date);
+      // front-matter 里写了 minutes 就用它（文案定稿给的阅读时长），没写就按字数估
+      const minutes = Number(d.minutes) > 0 ? Number(d.minutes) : readingMinutes(body);
+
+      // 英文译本（可选）：front-matter 只认 title / summary / tags / minutes，其余沿用原文
+      const enFile = `${slug}${EN_SUFFIX}`;
+      const en = exists("posts", enFile) ? matter(read("posts", enFile)) : null;
+      const e = (en?.data ?? {}) as Record<string, unknown>;
+      const bodyEn = en ? en.content.trim() : undefined;
 
       return {
-        slug: file.replace(/\.md$/, ""),
+        slug,
         title: String(d.title ?? file),
-        title_en: d.title_en ? String(d.title_en) : undefined,
+        title_en: e.title ? String(e.title) : d.title_en ? String(d.title_en) : undefined,
         date,
         type: (["blog", "essay", "thought"] as const).includes(d.type as PostType)
           ? (d.type as PostType)
           : "blog",
         tags: Array.isArray(d.tags) ? d.tags.map(String) : [],
+        tags_en: Array.isArray(e.tags) ? e.tags.map(String) : undefined,
         lang: d.lang === "en" ? "en" : "zh",
         summary: String(d.summary ?? excerpt(body)),
-        summary_en: d.summary_en ? String(d.summary_en) : undefined,
+        summary_en: e.summary
+          ? String(e.summary)
+          : d.summary_en
+            ? String(d.summary_en)
+            : bodyEn
+              ? excerpt(bodyEn)
+              : undefined,
         body,
-        // front-matter 里写了 minutes 就用它（文案定稿给的阅读时长），没写就按字数估
-        minutes: Number(d.minutes) > 0 ? Number(d.minutes) : readingMinutes(body),
+        body_en: bodyEn,
+        minutes,
+        // 译本没写 minutes 就沿用原文的阅读时长（同一篇文章，列表上不该一种语言一个数）
+        minutes_en: bodyEn ? (Number(e.minutes) > 0 ? Number(e.minutes) : minutes) : undefined,
       } satisfies Post;
     })
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -125,6 +148,7 @@ export const getPost = (slug: string) => getPosts().find((p) => p.slug === slug)
  */
 type ResidentFile = {
   credit: string;
+  creditEn?: string;
   tracks: Array<Omit<Track, "kind">>;
 };
 
@@ -193,6 +217,7 @@ export function getMusic(): MusicLibrary {
         })),
     })),
     residentCredit: resident.credit,
+    residentCreditEn: resident.creditEn,
   };
 }
 

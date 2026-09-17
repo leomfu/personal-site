@@ -1007,7 +1007,9 @@ export function Turntable() {
       {/* 出处 */}
       <p className="mt-4 text-[12px] leading-[1.8] text-ink opacity-55">
         {group === RESIDENT
-          ? t("residentCredit", { credit: library.residentCredit })
+          ? t("residentCredit", {
+              credit: (en && library.residentCreditEn) || library.residentCredit,
+            })
           : t("chartNote")}
       </p>
     </section>

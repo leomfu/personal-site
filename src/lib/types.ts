@@ -60,11 +60,17 @@ export type Post = {
   date: string;
   type: PostType;
   tags: string[];
+  /** 英文版的标签（来自 `<slug>.en.md` 的 front-matter） */
+  tags_en?: string[];
+  /** 原文语言。有没有英文译本看 body_en，不改这个字段 */
   lang: Lang;
   summary: string;
   summary_en?: string;
   body: string;
+  /** 英文译本正文：`content/posts/<slug>.en.md`，没有就是 undefined */
+  body_en?: string;
   minutes: number;
+  minutes_en?: number;
 };
 
 /**
@@ -130,6 +136,7 @@ export type MusicLibrary = {
   scenes: MusicScene[];
   /** 常驻曲库的出处声明 */
   residentCredit: string;
+  residentCreditEn?: string;
 };
 
 /**

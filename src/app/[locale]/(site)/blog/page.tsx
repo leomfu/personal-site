@@ -29,8 +29,10 @@ export default async function BlogPage({
   const t = await getTranslations("blog");
 
   // 正文不进客户端包，只给列表需要的字段
+  // 标签和阅读时长在这里按语言取好（有英文译本就用译本的），BlogList 不用再管
+  const en = locale === "en";
   const posts: PostCard[] = getPosts().map(
-    ({ slug, title, title_en, summary, summary_en, date, type, tags, minutes }) => ({
+    ({ slug, title, title_en, summary, summary_en, date, type, tags, tags_en, minutes, minutes_en }) => ({
       slug,
       title,
       title_en,
@@ -38,8 +40,8 @@ export default async function BlogPage({
       summary_en,
       date,
       type,
-      tags,
-      minutes,
+      tags: (en && tags_en) || tags,
+      minutes: (en && minutes_en) || minutes,
     }),
   );
 
