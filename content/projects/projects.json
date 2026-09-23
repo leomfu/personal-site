@@ -1,5 +1,22 @@
 [
   {
+    "slug": "gmail-classifier",
+    "name": "Gmail 邮件整理台",
+    "name_en": "Gmail Inbox Organizer",
+    "status": "进行中",
+    "status_en": "In progress",
+    "year": "2026",
+    "desc": "用 TypeSafe 的 Jev 模型给 Gmail 自动分类：判断每封邮件属于哪类、要不要我亲自处理、多紧急，先出报告给我过目，确认后再批量写回标签。附带钓鱼检测、退订分析，还有一个 Chrome 侧边栏面板，不用敲命令也能用。只加标签不删邮件，每次写回都能一键撤销。",
+    "desc_en": "Automatically sorts my Gmail with TypeSafe's Jev model: it judges which category each email belongs to, whether I need to handle it myself and how urgent it is, shows me a report first, and only writes labels back in bulk once I confirm. It also does phishing detection and unsubscribe analysis, and comes with a Chrome side panel so I don't have to type commands. It only adds labels and never deletes mail, and every write-back can be undone in one click.",
+    "stack": ["Python", "TypeSafe Jev", "Gmail API", "Chrome Extension"],
+    "link": "",
+    "repo": "https://github.com/leomfu/gmail-classifier",
+    "featured": true,
+    "summary": "Jev 给 Gmail 自动分类、判断急不急，确认后再写回标签；附带钓鱼检测、退订分析和 Chrome 侧边栏面板。",
+    "summary_en": "Jev sorts my Gmail and judges what's urgent, writing labels back only after I confirm; plus phishing detection, unsubscribe analysis and a Chrome side panel.",
+    "featuredStack": ["Python", "TypeSafe Jev"]
+  },
+  {
     "slug": "learn-wuwu",
     "name": "learn·wuwu 英语学习站",
     "name_en": "learn·wuwu English Learning Site",
