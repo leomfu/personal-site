@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FloorPlan } from "@/components/about/FloorPlan";
+import { RailFocus } from "@/components/about/RailFocus";
 import { RecordSleeve } from "@/components/about/RecordSleeve";
 import { CopyEmail } from "@/components/common/CopyEmail";
 import { LangSwitch } from "@/components/common/LangSwitch";
@@ -125,6 +126,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         hereLabel={tPlan("now")}
         gotoLabel={gotoLabel}
       />
+      <RailFocus />
 
       <main>
         {/* ───────────── 1 书桌前 · 我是谁（峰值） ───────────── */}

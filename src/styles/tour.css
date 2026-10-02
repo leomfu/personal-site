@@ -308,7 +308,7 @@
   flex-wrap: wrap;
   gap: 0 1.25rem;
 }
-.exhibit__links a {
+.exhibit__links a:not(.btn) {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
