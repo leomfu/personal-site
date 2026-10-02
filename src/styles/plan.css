@@ -13,7 +13,7 @@
 
 .plan__panel {
   position: relative;
-  width: 15rem;
+  width: 16rem;
   padding: 0.6rem 0.6rem 0.45rem;
   border: 1px solid var(--wl-hair-strong);
   border-radius: var(--sc-r-lg);
@@ -155,7 +155,7 @@
   border: 1px solid var(--wl-hair-strong);
   background: var(--sc-canvas);
   color: var(--sc-ink);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.5;
   white-space: nowrap;
   opacity: 0;
@@ -172,12 +172,12 @@
   align-items: baseline;
   gap: 0.5rem;
   margin: 0.45rem 0.15rem 0;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.4;
   color: var(--sc-ink);
 }
 .plan__now-label {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .plan__now-title {
@@ -199,7 +199,7 @@
 }
 .plan__coords span {
   font-family: var(--sc-font-text);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .plan.is-window .plan__map {
@@ -334,3 +334,93 @@
 }
 
 /* 完整介绍页上，迷你播放器摞在平面图上面（--plan-offset 由平面图写） */
+
+/* ───────────────────────── 纸面段落：彩铅画在纸上的平面图（功能不变） ───────────────────────── */
+/*
+ * <html data-ground="paper">（components/sketch/Ground 写）时，面板变成一张贴在角上的纸片：
+ * 纸色、毛边、胶带；线稿换成彩铅（滤镜 #wl-pencil），墙是深灰铅笔，路线和足迹是暖橙彩铅，「你」是蓝色彩铅。
+ * 颜色 token 已经由 .wl-chrome 换成了纸面那一套（globals.css），这里只管笔触。
+ */
+html[data-ground="paper"] .plan__panel {
+  border: 0;
+  border-radius: 2px;
+  background-color: var(--wl-paper-card);
+  background-image: var(--wl-paper-tex);
+  box-shadow:
+    0 1px 2px hsl(30 40% 20% / 0.3),
+    0 14px 26px -12px hsl(30 40% 18% / 0.45);
+  rotate: -1.2deg;
+}
+html[data-ground="paper"] .plan__panel::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -0.6rem;
+  left: calc(50% - 2.4rem);
+  width: 4.8rem;
+  height: 1.3rem;
+  rotate: 2deg;
+  background: rgba(150, 182, 226, 0.66);
+  clip-path: polygon(0 0, 100% 0, 96% 25%, 100% 50%, 96% 75%, 100% 100%, 0 100%, 4% 75%, 0 50%, 4% 25%);
+}
+html[data-ground="paper"] .plan__svg {
+  filter: url(#wl-pencil);
+}
+html[data-ground="paper"] .plan__walls path {
+  stroke: #3b332a;
+  stroke-opacity: 0.9;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+html[data-ground="paper"] .plan__thin path,
+html[data-ground="paper"] .plan__thin rect,
+html[data-ground="paper"] .plan__thin circle,
+html[data-ground="paper"] .plan__window path {
+  stroke: #4d4337;
+  stroke-width: 1;
+}
+html[data-ground="paper"] .plan__route {
+  stroke: var(--wl-pencil-orange);
+  stroke-opacity: 0.55;
+}
+html[data-ground="paper"] .plan__trail {
+  stroke: var(--wl-pencil-orange);
+  stroke-width: 2;
+}
+html[data-ground="paper"] .plan__station {
+  fill: var(--wl-paper-card);
+  stroke: #4d4337;
+}
+html[data-ground="paper"] .plan__station.is-lit {
+  fill: var(--wl-pencil-orange);
+  stroke: var(--wl-pencil-orange);
+}
+html[data-ground="paper"] .plan__you-core {
+  fill: var(--wl-pencil-blue);
+}
+html[data-ground="paper"] .plan__you-ring {
+  stroke: var(--wl-pencil-blue);
+}
+html[data-ground="paper"] .plan__now-place {
+  font-family: var(--wl-hand);
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+html[data-ground="paper"] .plan__tip {
+  background: var(--wl-paper-card);
+}
+@media (max-width: 860px) {
+  html[data-ground="paper"] .plan__toggle {
+    border: 1.5px solid #3b332a;
+    background-color: var(--wl-paper-card);
+    background-image: var(--wl-paper-tex);
+    color: #3b332a;
+    rotate: -4deg;
+  }
+  html[data-ground="paper"] .plan.is-open .plan__panel {
+    rotate: none;
+  }
+  html[data-ground="paper"] .plan.is-open .plan__backdrop {
+    background: color-mix(in oklab, #3b2a18 40%, transparent);
+  }
+}

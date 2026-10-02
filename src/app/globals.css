@@ -1,9 +1,12 @@
 /* ============================================================================
-   weiliang.dev · 2026-10 改版（scroll-craft）
+   weiliang.dev · 2026-10 改版（scroll-craft）第二版
    ----------------------------------------------------------------------------
-   世界：Low-key cinematic。底色近黑偏冷，正文偏暖的米白，次级文字是带一点暖的灰；
-   界面强调色只有琥珀一种（台灯的光），冷蓝只出现在光线和氛围里（城市、显示器、大气层）。
-   未来感靠「精密仪器」的语气：发丝线、等宽字体的事实标签与坐标、平面图线稿。
+   夜里开场，翻开速写本（BRIEF「第二版修订」R1–R5）：
+     夜景段落（首页、俯冲、第 1 幕书桌前）：暖一些的近黑底，米白正文，琥珀是唯一的交互强调色，
+       冷蓝只在光线里。比第一版整体提亮加暖（图用 CSS 调色，遮罩更轻）。
+     纸面段落（第 1 幕尾巴到第 7 幕、所有子页）：暖白纸 + 深墨正文（对比度 ≥ 7:1），
+       强调色还是同一个暖橙色相，只是换成深一档（纸面上要 ≥ 4.5:1），见 .paper。
+   彩铅批注只用暖橙、蓝两支「彩铅」；手写体只用于批注（Caveat + 马善政，next/font 自托管）。
    不用紫蓝渐变、霓虹发光、渐变文字。
 
    层级（cascade layer）：
@@ -17,9 +20,11 @@
 @import "../vendor/scrollcraft/scrollcraft.css" layer(base);
 
 @import "../styles/scene.css";
+@import "../styles/paper.css";
 @import "../styles/home.css";
 @import "../styles/dive.css";
 @import "../styles/tour.css";
+@import "../styles/screen.css";
 @import "../styles/plan.css";
 @import "../styles/pages.css";
 @import "../styles/prose.css";
@@ -27,39 +32,99 @@
 
 /* ---------------------------------------------------------------- tokens -- */
 :root {
-  /* 引擎的六个颜色角色 */
-  --sc-canvas: #0a0c0f;
-  --sc-surface: #12151a;
-  --sc-ink: #ece5d8;
-  --sc-ink-soft: #a39c90;
-  --sc-accent: #e8a23a;
-  --sc-accent-ink: #140e05;
+  /* 引擎的六个颜色角色（夜景） */
+  --sc-canvas: #13110f;
+  --sc-surface: #1c1915;
+  --sc-ink: #f4ede1;
+  --sc-ink-soft: #c9bfae;
+  --sc-accent: #f0a640;
+  --sc-accent-ink: #1a1006;
 
   /* 只用于光线和氛围的冷蓝，不用在界面元素上 */
-  --wl-cold: #7f9cc6;
-  /* 暗房底色慢慢变暖的终点 */
-  --wl-warm-ground: #1f130b;
+  --wl-cold: #86a3cc;
 
-  --wl-hair: color-mix(in oklab, var(--sc-ink) 13%, transparent);
-  --wl-hair-strong: color-mix(in oklab, var(--sc-ink) 26%, transparent);
+  --wl-hair: color-mix(in oklab, var(--sc-ink) 15%, transparent);
+  --wl-hair-strong: color-mix(in oklab, var(--sc-ink) 30%, transparent);
   --wl-panel: color-mix(in oklab, var(--sc-canvas) 86%, transparent);
-  --wl-accent-hover: #f2b65a;
+  --wl-accent-hover: #f7b85e;
+
+  /* 两支彩铅：线条色 + 写字色（写字色在纸面上 ≥ 4.5:1，夜里换亮一档） */
+  --wl-pencil-orange: #f0a253;
+  --wl-pencil-blue: #9cc0ee;
+  --wl-hand-orange: #f6ad62;
+  --wl-hand-blue: #a9c8f0;
+
+  /* 纸（纸面段落和夜景里的「纸片」共用：名片画纸、票根、事实标签） */
+  --wl-paper: #f5eee1;
+  --wl-paper-card: #fbf7ee;
+  --wl-paper-tag: #efe4cf;
+  --wl-paper-ink: #221c15;
+  --wl-paper-ink-soft: #4d4337;
+  /* 纸纹：很淡的噪点 + 横向纤维，内联 SVG，不引外部图 */
+  --wl-paper-tex: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.27  0 0 0 0 0.16  0 0 0 0.16 0'/></filter><filter id='f' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='0.01 0.11' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.32  0 0 0 0 0.2  0 0 0 0.075 0'/></filter><rect width='240' height='240' filter='url(%23n)'/><rect width='240' height='240' filter='url(%23f)'/></svg>");
 
   /* 字体栈：拉丁字体在前，思源黑体在后，中文字符自然落到思源黑体上（见 [locale]/layout.tsx） */
   --wl-cjk: var(--font-noto-sc), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei";
   --sc-font-display: var(--font-geist), var(--wl-cjk), system-ui, sans-serif;
   --sc-font-text: var(--font-geist), var(--wl-cjk), system-ui, sans-serif;
   --sc-font-mono: var(--font-geist-mono), var(--wl-cjk), ui-monospace, "SF Mono", monospace;
+  /* 手写（只用于彩铅批注）：Caveat 没有中文字形，中文落到马善政上。顺序不能反 */
+  --wl-hand: var(--font-caveat), var(--font-mashan), "Kaiti SC", "STKaiti", cursive;
 
-  /* 一套圆角：小。仪器的面板不是药丸 */
+  /* 一套圆角：小。纸片本来就是方的 */
   --sc-r-sm: 4px;
   --sc-r-md: 6px;
   --sc-r-lg: 10px;
 
-  --sc-shadow-color: 216 30% 2%;
+  --sc-shadow-color: 24 30% 3%;
   --sc-gutter: clamp(1rem, 5vw, 5.5rem);
 
   color-scheme: dark;
+}
+
+/*
+ * 纸面：redefine 引擎的六个角色，并且**同时重写 color**（taste.md：继承的是算好的颜色，
+ * 只改 token 不会重新上色）。强调色同一个暖橙色相，深一档才能在纸上读：
+ * 文字链接 #9a420c 对 #f5eee1 是 5.8:1；实心按钮用它做底、配米白字，6.4:1。
+ * 正文墨色 14.6:1，次级文字 8.4:1（票根底上 7.1:1）。
+ * 迷你播放器、平面图、顶栏这些固定在屏幕上的件，走到纸面段落时也换成这一套（html[data-ground="paper"]）。
+ */
+.paper,
+html[data-ground="paper"] .wl-chrome,
+html:has(.pageframe) .wl-chrome {
+  --sc-canvas: var(--wl-paper);
+  --sc-surface: var(--wl-paper-card);
+  --sc-ink: var(--wl-paper-ink);
+  --sc-ink-soft: var(--wl-paper-ink-soft);
+  --sc-accent: #9a420c;
+  --sc-accent-ink: #fffaf2;
+  --wl-accent-hover: #83380a;
+  --wl-hair: color-mix(in oklab, var(--wl-paper-ink) 16%, transparent);
+  --wl-hair-strong: color-mix(in oklab, var(--wl-paper-ink) 32%, transparent);
+  --wl-panel: color-mix(in oklab, var(--wl-paper-card) 94%, transparent);
+  --wl-pencil-orange: #d2672a;
+  --wl-pencil-blue: #3a6aa8;
+  --wl-hand-orange: #a8470f;
+  --wl-hand-blue: #2b5592;
+  --sc-shadow-color: 30 45% 22%;
+  --sc-edge: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: var(--sc-ink);
+  color-scheme: light;
+}
+.paper {
+  background-color: var(--wl-paper);
+  background-image: var(--wl-paper-tex);
+  /* 字号整体大一档：正文桌面 ≈ 18–19px，手机 16px */
+  font-size: clamp(1rem, 0.94rem + 0.28vw, 1.1875rem);
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+:lang(zh) .paper {
+  letter-spacing: 0.01em;
+}
+html[data-ground="paper"],
+html:has(.pageframe) {
+  background: var(--wl-paper);
 }
 
 /* ------------------------------------------------------------------ base -- */
@@ -124,14 +189,48 @@ img {
   letter-spacing: 0.01em;
 }
 
-/* 事实标签：名称 · 年份 · 用到的 · 状态（Gallery 的展品标签，全站同一个格式） */
+/*
+ * 事实标签：名称 · 年份 · 用到的 · 状态（Gallery 的展品标签，全站同一个格式）。
+ * 第二版做成票根：纸色底、两侧各一个半圆缺口、左边一道虚线撕口。夜里和纸上都是这张纸，
+ * 所以墨色固定用纸面的深墨（不跟着夜景 token 走）。缺口是 mask，不是边框。
+ */
 .placard__label {
+  --notch: 0.45rem;
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.45rem 1.1rem 0.45rem 1.9rem;
   font-family: var(--sc-font-mono);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  letter-spacing: 0.01em;
-  color: var(--sc-ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--wl-paper-ink);
+  background-color: var(--wl-paper-tag);
+  background-image: var(--wl-paper-tex);
   text-wrap: pretty;
+  -webkit-mask:
+    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
+}
+.placard__label::before {
+  content: "";
+  position: absolute;
+  left: 1.05rem;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  border-left: 1.5px dashed color-mix(in oklab, var(--wl-paper-ink) 38%, transparent);
+}
+a.placard__label {
+  transition: transform 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.placard__label:hover {
+    transform: translateY(-2px) rotate(-0.6deg);
+  }
 }
 
 /* ------------------------------------------------------------- 主按钮 -- */
@@ -141,12 +240,12 @@ img {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  min-height: 3.25rem;
-  padding: 0.85rem 1.4rem 0.85rem 1.5rem;
+  min-height: 3.5rem;
+  padding: 0.9rem 1.5rem 0.9rem 1.6rem;
   border-radius: var(--sc-r-md);
   background: var(--sc-accent);
   color: var(--sc-accent-ink);
-  font-size: 1.0625rem;
+  font-size: 1.1875rem;
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.01em;
@@ -309,7 +408,7 @@ img {
   padding: 2px;
   border-radius: var(--sc-r-md);
   font-family: var(--sc-font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 .lang__item {
   display: inline-grid;
@@ -347,7 +446,7 @@ img {
 }
 .email__addr {
   font-family: var(--sc-font-mono);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--sc-ink);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -370,7 +469,7 @@ img {
   border-radius: var(--sc-r-sm);
   border: 1px solid var(--wl-hair-strong);
   color: var(--sc-ink-soft);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   transition:
     color 160ms var(--sc-ease-out),
     border-color 160ms var(--sc-ease-out);
@@ -396,11 +495,11 @@ img {
 .socials--icons .socials__link {
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--sc-r-md);
-  border: 1px solid var(--wl-hair);
-  color: var(--sc-ink-soft);
+  border: 1px solid var(--wl-hair-strong);
+  color: var(--sc-ink);
   transition:
     color 160ms var(--sc-ease-out),
     border-color 160ms var(--sc-ease-out);
@@ -431,11 +530,11 @@ img {
   color: var(--sc-ink);
 }
 .socials__name {
-  font-size: 0.9375rem;
+  font-size: 1rem;
 }
 .socials__handle {
   font-family: var(--sc-font-mono);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
   min-width: 0;
   overflow: hidden;

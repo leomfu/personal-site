@@ -5,6 +5,9 @@
 /** 归一化坐标（0–1），相对于图片本身的宽高 */
 export type Point = { x: number; y: number };
 
+/** 四个角（左上、右上、右下、左下），归一化坐标 */
+export type Quad = [Point, Point, Point, Point];
+
 export type SceneImage = {
   /** public 下的路径，例如 /scene/earth-16x9.webp */
   src: string;
@@ -33,9 +36,12 @@ export type SceneManifest = {
   /** 三千米高空的上海夜景航拍：俯冲后备方案的中间一段（不在时退回两段） */
   aerial: ScenePair;
   room: ScenePair;
-  /** 彩铅画像（暖色素描纸，不透明）：第 1 幕钉在窗边的那张画纸 */
-  portrait: SceneImage;
-  /** 同一张彩铅画像的小尺寸：首页名片那张画纸 */
+  /** 书房图上显示器屏幕的四个角（横版、竖版各一组） */
+  screen: { wide: Quad; tall: Quad };
+  /**
+   * 彩铅画像（暖色素描纸，不透明）：只用在首页名片上，当作一张真实的画纸。
+   * 站主的真人照片全站不出现；第 1 幕也不放人像（2026-10 站主要求）。
+   */
   portraitCard: SceneImage;
   dive: {
     wide: SceneVideo;

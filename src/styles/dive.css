@@ -1,11 +1,12 @@
 /* ============================================================================
    俯冲过渡（components/dive/DiveProvider）。阶段由 .is-<phase> 决定：
-     lock  0.4s 锁定上海：盖住首页，地球朝上海放大一点，准星从四角收拢
+     lock  0.4s 锁定上海（只在有视频时）：盖住首页，地球朝上海放大一点，准星从四角收拢
      video 俯冲视频（有的话），只留「跳过」
-     fall  没视频的后备：地球继续放大（越来越快），书房叠化进来
+     fall  没视频的后备：地球 → 航拍 → 书房三段推进，先快后慢，约 1.7 秒
      land  停在书房 = 第 1 幕远景在 p = 0 时的样子
      out   落地页挂好之后淡出
-   --ox / --oy 是上海光点在屏幕上的位置；--land-shift 是第 1 幕远景层落地时的位移。
+   --ox / --oy 是上海光点在屏幕上的位置（准星用）；--land-shift 是第 1 幕远景层落地时的位移。
+   三张图都套着和首页 / 第 1 幕一样的提亮加暖（.tone-earth / .tone-aerial / .tone-room），接缝处才对得上。
    ========================================================================== */
 
 .dive {
@@ -14,9 +15,9 @@
   z-index: 200;
   overflow: hidden;
   background: var(--sc-canvas);
-}
-.dive.is-lock {
-  animation: dive-in 180ms var(--sc-ease-out) both;
+  /* 挂上来的那一刻淡入一下，盖住首页地球的呼吸和指针视差留下的那一点点位移。
+     阶段切换不会重放它（动画名没变），只有 is-out 换成淡出 */
+  animation: dive-in 160ms var(--sc-ease-out) both;
 }
 .dive.is-out {
   animation: dive-out 520ms var(--sc-ease-out) forwards;
@@ -33,26 +34,41 @@
   }
 }
 
-.dive__earth {
+/*
+ * 三段推进（没有视频时的后备，is-fall 一开始就从点击那一刻起算）。先快后慢：
+ *   0–720ms     地球朝上海推进（放大中心 = 图上的上海，--fx/--fy），400ms 起淡出
+ *   400–1220ms  上海航拍叠化进来，推向陆家嘴，越推越慢；960ms 起淡出
+ *   960–1720ms  书房叠化进来：镜头从窗户（窗外正是陆家嘴）拉回到书桌前，慢慢停稳
+ * 每一段都只放大 .plate__box（transform-origin 是这张图自己的关键点），停下来时回到 scale(1)，
+ * 书房那一层外面还套着 .room-far 的 1.05 和落地位移，所以最后一帧 = 第 1 幕 p = 0 的样子。
+ * 没有航拍（.dive 上没有 has-aerial）时退回两段：地球 → 书房，1.3 秒。
+ */
+.dive__earth,
+.dive__aerial,
+.dive__room {
   position: absolute;
   inset: 0;
-  transform-origin: var(--ox) var(--oy);
 }
-.is-lock .dive__earth {
-  animation: dive-lock 400ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+.dive .plate__box {
+  transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
 }
-.is-video .dive__earth {
+.is-lock .dive__earth .plate__box {
+  animation: dv-lock 400ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.is-video .dive__earth .plate__box {
   transform: scale(1.12);
 }
+.is-fall .dive__earth .plate__box {
+  animation: dv-earth 720ms cubic-bezier(0.33, 0.1, 0.62, 1) both;
+}
 .is-fall .dive__earth {
-  /* 越掉越快：这是镜头在往下掉，不是界面动效 */
-  animation: dive-fall 1100ms cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+  animation: dv-out 260ms linear 400ms both;
 }
 .is-land .dive__earth,
 .is-out .dive__earth {
   opacity: 0;
 }
-@keyframes dive-lock {
+@keyframes dv-lock {
   from {
     transform: scale(1);
   }
@@ -60,12 +76,35 @@
     transform: scale(1.12);
   }
 }
-@keyframes dive-fall {
+@keyframes dv-earth {
   from {
-    transform: scale(1.12);
+    transform: scale(1);
   }
   to {
-    transform: scale(4.4);
+    transform: scale(4.2);
+  }
+}
+
+.dive__aerial {
+  opacity: 0;
+}
+.tone-aerial .plate__media img {
+  filter: brightness(1.18) saturate(1.08) sepia(0.06);
+}
+.is-fall .dive__aerial {
+  animation:
+    dv-in 240ms linear 400ms both,
+    dv-out 240ms linear 960ms forwards;
+}
+.is-fall .dive__aerial .plate__box {
+  animation: dv-aerial 820ms cubic-bezier(0.22, 0.55, 0.36, 1) 400ms both;
+}
+@keyframes dv-aerial {
+  from {
+    transform: scale(1.22);
+  }
+  to {
+    transform: scale(1.95);
   }
 }
 
@@ -74,16 +113,31 @@
   transform: translate3d(0, var(--land-shift), 0);
 }
 .is-fall .dive__room {
-  animation: dive-fade 640ms var(--sc-ease-out) 470ms both;
+  animation: dv-in 270ms linear 960ms both;
 }
-.is-fall .dive__room .plate {
-  animation: dive-settle 900ms var(--sc-ease-out) 470ms both;
+.is-fall .dive__room .plate__box {
+  animation: dv-room 760ms cubic-bezier(0.16, 0.84, 0.3, 1) 960ms both;
+}
+/* 两段的后备（没有航拍） */
+.is-fall:not(.has-aerial) .dive__room {
+  animation: dv-in 260ms linear 380ms both;
+}
+.is-fall:not(.has-aerial) .dive__room .plate__box {
+  animation: dv-room 940ms cubic-bezier(0.16, 0.84, 0.3, 1) 380ms both;
 }
 .is-land .dive__room,
 .is-out .dive__room {
   opacity: 1;
 }
-@keyframes dive-fade {
+@keyframes dv-room {
+  from {
+    transform: scale(1.62);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes dv-in {
   from {
     opacity: 0;
   }
@@ -91,12 +145,12 @@
     opacity: 1;
   }
 }
-@keyframes dive-settle {
+@keyframes dv-out {
   from {
-    transform: scale(1.22);
+    opacity: 1;
   }
   to {
-    transform: scale(1.05);
+    opacity: 0;
   }
 }
 
@@ -126,6 +180,10 @@
 }
 .is-lock .dive__reticle {
   opacity: 1;
+}
+/* 没有视频时准星收拢和地球推进同时开始，0.4 秒后随地球一起淡掉 */
+.is-fall .dive__reticle {
+  animation: dv-out 200ms linear 360ms both;
 }
 .dive__reticle span {
   position: absolute;

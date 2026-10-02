@@ -42,10 +42,16 @@ export function HomeStage({ children }: { children: ReactNode }) {
       let ex: number;
       let ey: number;
       if (dx > a.right + 32) {
-        // 光点在名片右边（桌面）：从名片右缘出发，先水平走一段再斜着连过去
+        // 光点在名片右边：从名片右缘出发，先水平走一段再斜着连过去
         ax = a.right;
         ay = a.top + Math.min(a.height * 0.5, 64);
         ex = ax + (dx - ax) * 0.38;
+        ey = ay;
+      } else if (dx < a.left - 32) {
+        // 光点在名片左边（桌面，第二版名片在右边的海面上）：从画纸的左缘中间出发，先往左平走一段
+        ax = a.left;
+        ay = a.top + Math.min(a.height * 0.42, 150);
+        ex = ax - (ax - dx) * 0.38;
         ey = ay;
       } else {
         // 光点在名片上下方（手机）：从名片的上缘或下缘出发，先竖着走一段

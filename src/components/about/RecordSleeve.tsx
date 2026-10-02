@@ -5,7 +5,8 @@ import { usePlayer, type Group } from "@/components/player/PlayerProvider";
 
 /**
  * 唱片架上的一张唱片封套（第 6 幕）。点一下 = 放进全站那台唱机里放（右下角会出迷你播放器），
- * 不跳页。鼠标移上去的微微翻动是引擎的 data-sc-tilt（只在精确指针、没开减少动态效果时生效）。
+ * 不跳页。鼠标移上去：封套微微翻动（引擎的 data-sc-tilt），里面那张圆的黑胶探出来一点、转起来；
+ * 正在放的那张一直转着。只动 transform，减少动态效果时不转。
  */
 export function RecordSleeve({
   group,
@@ -37,6 +38,9 @@ export function RecordSleeve({
         aria-label={current ? t("pauseSleeve", { title }) : t("playSleeve", { title, artist })}
       >
         <span className="sleeve__art">
+          <span className="sleeve__disc" aria-hidden>
+            <span className="sleeve__vinyl" />
+          </span>
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element -- 封面是作品，原图原色，尺寸固定
             <img src={cover} alt="" width={300} height={300} loading="lazy" decoding="async" />

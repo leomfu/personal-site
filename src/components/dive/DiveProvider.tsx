@@ -12,18 +12,21 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { DeskScreen } from "@/components/about/DeskScreen";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import type { SceneManifest } from "@/lib/sceneTypes";
 import { DESK_LANDING_SHIFT } from "@/lib/tour";
 
 /**
- * 峰值的前半段：「从太空俯冲到你桌前」（BRIEF §3）。
+ * 峰值的前半段：「从太空俯冲到你桌前」（BRIEF §3 及其修订）。
  *
  * 首页点上海的光点或主按钮 → 这里接管：
- *   lock   0.4 秒「锁定上海」：盖住首页的界面，地球朝上海放大一点，准星收拢
+ *   lock   （只在有俯冲视频时）0.4 秒「锁定上海」：盖住首页，地球朝上海放大一点，准星收拢，同时给视频缓冲
  *   video  有俯冲视频（public/scene/dive-16x9.mp4）就全屏放，静音，最长 6 秒，只留一个「跳过」
- *   fall   没有视频时的后备：地球继续朝上海放大，叠化成书房，约 1.5 秒
- *   land   画面停在书房（= 第 1 幕的远景），这时才跳到 /about/
+ *   fall   没有视频时的后备，点下去立刻开始，先快后慢，一共约 1.7 秒，三段：
+ *            地球朝上海推进 → 叠化成上海航拍、推向陆家嘴 → 叠化成书房：从窗户拉回到书桌前，停稳
+ *          航拍图（public/scene/aerial-*.webp）不在时退回两段：地球 → 书房，约 1.3 秒
+ *   land   画面停在书房（= 第 1 幕的远景，连显示器里那块屏幕都一样），这时才跳到 /about/
  *   out    等落地页的引擎挂好（`wl:engine` 事件），盖层淡出，露出第 1 幕
  *
  * 随时能跳过：点击、按键、滚轮、手指滑动都直接落地。减少动态效果时什么都不放，直接跳转。
@@ -45,7 +48,8 @@ export function useDive() {
 /** 6 秒封顶：视频再长也在这里落地 */
 const VIDEO_CAP = 6000;
 const LOCK = 400;
-const FALL = 1100;
+/** 后备推进的总长（和 dive.css 里的关键帧时间对齐）：三段 / 两段 */
+const FALL = { three: 1720, two: 1320 } as const;
 
 export function DiveProvider({ scene, children }: { scene: SceneManifest; children: ReactNode }) {
   const router = useRouter();
@@ -90,7 +94,8 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
       const tall = window.matchMedia("(max-aspect-ratio: 4/5)").matches;
       const clip = tall && scene.dive.tall.exists ? scene.dive.tall : scene.dive.wide.exists ? scene.dive.wide : null;
       setVideoSrc(clip ? clip.src : null);
-      go("lock");
+      // 有视频才需要那 0.4 秒去缓冲；没有视频，点下去立刻开始往下冲
+      go(clip ? "lock" : "fall");
     },
     [go, router, scene.dive.tall, scene.dive.wide],
   );
@@ -135,12 +140,13 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
     return () => window.clearTimeout(id);
   }, [phase, land]);
 
-  /** fall（没有视频的后备）：地球放大叠化成书房，约 1.1 秒后落地 */
+  /** fall（没有视频的后备）：三段（或两段）推进放完就落地 */
+  const threeStage = scene.aerial.wide.exists || scene.aerial.tall.exists;
   useEffect(() => {
     if (phase !== "fall") return;
-    const id = window.setTimeout(land, FALL + 120);
+    const id = window.setTimeout(land, (threeStage ? FALL.three : FALL.two) + 40);
     return () => window.clearTimeout(id);
-  }, [phase, land]);
+  }, [phase, land, threeStage]);
 
   /** 随时能跳过：点、按键、滚轮、手指滑动 */
   useEffect(() => {
@@ -210,12 +216,19 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
     <DiveContext.Provider value={{ dive }}>
       {children}
       {phase !== "idle" && (
-        <div className={`dive is-${phase}`} style={style} data-dive={phase}>
+        <div className={`dive is-${phase}${threeStage ? " has-aerial" : ""}`} style={style} data-dive={phase}>
           <div className="dive__earth">
-            <ScenePlate pair={scene.earth} eager />
+            <ScenePlate pair={scene.earth} eager className="tone-earth" />
           </div>
+          {threeStage && (
+            <div className="dive__aerial">
+              <ScenePlate pair={scene.aerial} eager className="tone-aerial" />
+            </div>
+          )}
           <div className="dive__room room-far">
-            <ScenePlate pair={scene.room} eager />
+            <ScenePlate pair={scene.room} eager className="tone-room">
+              <DeskScreen quads={scene.screen} still />
+            </ScenePlate>
           </div>
           {videoSrc && (
             <video

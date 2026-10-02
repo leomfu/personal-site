@@ -1,8 +1,9 @@
 /* ============================================================================
    首页 · 轨道（单屏）
-   层：地球(1) → 大气冷光(2) → 文字侧暗面(3) → 地球上的标记(4) → 发丝线刻度(5)
+   层：地球(1) → 大气光(2) → 文字侧很轻的暗面(3) → 地球上的标记(4) → 发丝线刻度(5)
        → 引线(6) → 文字(7) → 顶栏(8)
    --mx / --my（指针，-1..1）和 --drift（远景的慢呼吸）由 components/home/HomeStage 写。
+   第二版：整体提亮加暖（地球 CSS 调色、暗面更轻），名片换成一张真实的彩铅画纸，放在右边的海面上。
    ========================================================================== */
 
 .home {
@@ -15,6 +16,11 @@
   overflow: hidden;
   isolation: isolate;
   background: var(--sc-canvas);
+}
+
+/* 夜景提亮加暖：只动图本身的显示（亮度、暖色），不重新生成素材。俯冲用同一个类，两边一致 */
+.tone-earth .plate__media img {
+  filter: brightness(1.3) contrast(1.06) saturate(1.12) sepia(0.1);
 }
 
 /* 远景：地球。指针视差最小，外加极慢的呼吸 */
@@ -32,37 +38,39 @@
   pointer-events: none;
 }
 
-/* 氛围：大气层边缘一道很淡的冷光（光，不是霓虹） */
+/* 氛围：大气层边缘一道很淡的光，冷里带一点暖（光，不是霓虹） */
 .home__limb {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: radial-gradient(130% 55% at 50% -6%, color-mix(in oklab, var(--wl-cold) 18%, transparent), transparent 62%);
+  background:
+    radial-gradient(120% 50% at 50% -4%, color-mix(in oklab, var(--wl-cold) 16%, transparent), transparent 60%),
+    radial-gradient(70% 45% at 42% 64%, color-mix(in oklab, var(--sc-accent) 12%, transparent), transparent 70%);
   mix-blend-mode: screen;
   animation: limb 14s ease-in-out infinite alternate;
 }
 @keyframes limb {
   from {
-    opacity: 0.55;
+    opacity: 0.6;
   }
   to {
-    opacity: 0.95;
+    opacity: 1;
   }
 }
 
-/* 文字那一列的暗面（只压左边这一列；上海和海面不压） */
+/* 文字那一列很轻的暗面：只压右边这一列的海面，只压到字能读清为止 */
 .home__scrim {
   position: absolute;
   inset: 0;
   z-index: 3;
   pointer-events: none;
   background: linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-    color-mix(in oklab, var(--sc-canvas) 90%, transparent) 30%,
-    color-mix(in oklab, var(--sc-canvas) 52%, transparent) 44%,
-    transparent 58%
+    270deg,
+    color-mix(in oklab, var(--sc-canvas) 80%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 74%, transparent) 30%,
+    color-mix(in oklab, var(--sc-canvas) 40%, transparent) 42%,
+    transparent 52%
   );
 }
 
@@ -107,7 +115,7 @@
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 0 solid color-mix(in oklab, var(--sc-ink) 40%, transparent);
+  border: 0 solid color-mix(in oklab, var(--sc-ink) 45%, transparent);
 }
 .hud__corner--tl {
   left: 0;
@@ -147,8 +155,8 @@
   background: linear-gradient(90deg, transparent, var(--wl-hair-strong) 30%, transparent 46%, transparent 54%, var(--wl-hair-strong) 70%, transparent);
 }
 .sh__cross--v {
-  top: -16svh;
-  height: 32svh;
+  top: -14svh;
+  height: 28svh;
   left: 0;
   width: 1px;
   background: linear-gradient(180deg, transparent, var(--wl-hair-strong) 30%, transparent 45%, transparent 55%, var(--wl-hair-strong) 70%, transparent);
@@ -156,22 +164,22 @@
 .sh__lat,
 .sh__lng {
   position: absolute;
-  padding: 0 0.25rem;
+  padding: 0.05rem 0.35rem;
   border-radius: 2px;
-  background: color-mix(in oklab, var(--sc-canvas) 88%, transparent);
-  font-size: 0.6875rem;
-  color: var(--sc-ink-soft);
+  background: color-mix(in oklab, var(--sc-canvas) 80%, transparent);
+  font-size: 0.8125rem;
+  color: var(--sc-ink);
   white-space: nowrap;
   pointer-events: none;
 }
-/* 纬度挂在水平线下方、「上海」标签下面；经度挂在竖线旁边。两个都不出屏 */
+/* 桌面：标签都挂在光点左边（右边是名片和引线）。纬度在「上海」下面，经度再往下一格 */
 .sh__lat {
-  left: 2.7rem;
-  top: 1.05rem;
+  right: 2.7rem;
+  top: 1.15rem;
 }
 .sh__lng {
-  left: 0.5rem;
-  top: 2.6rem;
+  right: 0.5rem;
+  top: 2.85rem;
 }
 
 .sh__dot {
@@ -188,8 +196,8 @@
 .sh__core,
 .sh__ring {
   grid-area: 1 / 1;
-  width: 0.625rem;
-  height: 0.625rem;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
 }
 .sh__core {
@@ -214,15 +222,15 @@
 }
 .sh__label {
   position: absolute;
-  left: 2.6rem;
+  right: 2.6rem;
   top: 50%;
   translate: 0 -50%;
-  padding: 0.15rem 0.5rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--sc-r-sm);
   border: 1px solid var(--wl-hair-strong);
   background: color-mix(in oklab, var(--sc-canvas) 78%, transparent);
   color: var(--sc-ink);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   white-space: nowrap;
   transition:
     border-color 160ms var(--sc-ease-out),
@@ -259,7 +267,7 @@
 }
 .home__leader polyline {
   fill: none;
-  stroke: color-mix(in oklab, var(--sc-ink) 48%, transparent);
+  stroke: color-mix(in oklab, var(--sc-ink) 55%, transparent);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -283,94 +291,113 @@
 .home__copy {
   position: absolute;
   z-index: 7;
-  left: calc(var(--sc-gutter) + 0.5rem);
+  right: calc(var(--sc-gutter) + 0.5rem);
   top: 50%;
   translate: 0 -50%;
-  width: min(29rem, 40vw);
+  width: min(35rem, 42vw);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.75rem;
 }
 .home__intro {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.4rem;
 }
 .home__actions {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 1.6rem;
 }
 
+/* 名片：左边一张彩铅画纸（真实的纸：毛边、胶带、倾斜、投影），右边名字和票根 */
 .idcard {
   display: grid;
-  grid-template-columns: 6.5rem minmax(0, 1fr);
-  gap: 1.1rem;
+  grid-template-columns: clamp(10.5rem, 14.5vw, 15rem) minmax(0, 1fr);
+  gap: 1.6rem;
   align-items: end;
-  padding: 0.85rem;
-  border: 1px solid var(--wl-hair-strong);
-  border-radius: var(--sc-r-md);
-  background: color-mix(in oklab, var(--sc-canvas) 72%, transparent);
-  box-shadow: var(--sc-edge), var(--sc-e2);
 }
-.idcard__photo {
+.idcard__sheet {
+  --tilt: -3.5deg;
+  margin: 0;
+}
+.idcard__drawing {
+  display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: var(--sc-r-sm);
 }
 .idcard__body {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.65rem;
   min-width: 0;
+  padding-bottom: 0.4rem;
 }
 .idcard__coords {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
 }
 .idcard__name {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
+  gap: 0.25rem 0.8rem;
   font-family: var(--sc-font-display);
-  font-size: clamp(2.25rem, 3.4vw, 3.1rem);
-  font-weight: 500;
-  line-height: 1.05;
+  font-size: clamp(3.2rem, 1.9rem + 3.4vw, 5rem);
+  font-weight: 600;
+  line-height: 1;
   color: var(--sc-ink);
 }
-.idcard__name:lang(en),
 :lang(en) .idcard__name {
   letter-spacing: var(--sc-track-tight);
 }
 .idcard__alt {
-  font-size: 0.9375rem;
+  font-size: 1.125rem;
   font-weight: 400;
   letter-spacing: 0.02em;
   color: var(--sc-ink-soft);
 }
 .idcard__facts {
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--sc-ink);
-  text-wrap: balance;
+  font-size: 0.9375rem;
 }
 
 .home__tagline {
-  max-width: 26em;
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  max-width: 25em;
+  font-size: 1.25rem;
+  line-height: 1.65;
   color: var(--sc-ink);
   text-wrap: balance;
 }
 
 .home__contact {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem 1.25rem;
+}
+
+.home__go {
+  position: relative;
+}
+.home__cta {
+  min-height: 3.75rem;
+  font-size: 1.25rem;
+}
+/* 彩铅批注：桌面上写在按钮右边，箭头往左指着按钮 */
+.home__note {
+  left: calc(100% + 0.5rem);
+  top: 50%;
+  translate: 0 -62%;
+  white-space: normal;
+  width: max-content;
+}
+.home__note .note__text {
+  max-width: 7.5em;
+  text-align: left;
+}
+.home__note--narrow {
+  display: none;
 }
 
 /* ------------------------------------------------- 窄屏 / 竖屏：上下分开 -- */
@@ -379,15 +406,15 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-        color-mix(in oklab, var(--sc-canvas) 90%, transparent) 32%,
-        transparent 52%
+        color-mix(in oklab, var(--sc-canvas) 88%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 74%, transparent) 30%,
+        transparent 46%
       ),
       linear-gradient(
         0deg,
-        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-        color-mix(in oklab, var(--sc-canvas) 80%, transparent) 24%,
-        transparent 42%
+        color-mix(in oklab, var(--sc-canvas) 90%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 66%, transparent) 26%,
+        transparent 40%
       );
   }
   .home__copy {
@@ -403,40 +430,68 @@
     pointer-events: auto;
   }
   .home__intro {
-    gap: 0.85rem;
+    gap: 0.9rem;
   }
   .idcard {
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    gap: 0.85rem;
-    padding: 0.65rem;
+    grid-template-columns: clamp(7rem, 29vw, 9rem) minmax(0, 1fr);
+    gap: 1.1rem;
+  }
+  .idcard__sheet {
+    --tilt: -3deg;
   }
   .idcard__name {
-    font-size: clamp(1.9rem, 8vw, 2.4rem);
+    font-size: clamp(2.5rem, 11vw, 3.4rem);
+  }
+  .idcard__alt {
+    font-size: 1rem;
   }
   .idcard__facts {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
+    padding-left: 1.7rem;
+  }
+  .idcard__facts::before {
+    left: 0.95rem;
   }
   .home__tagline {
-    font-size: 0.9375rem;
-    line-height: 1.65;
+    font-size: 1.0625rem;
+    line-height: 1.6;
   }
   .home__actions {
     align-items: stretch;
     gap: 0.9rem;
   }
   .home__contact {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
     justify-content: space-between;
     gap: 0.6rem;
   }
   .home__contact .email__addr {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
+  }
+  /* 手机：批注写在按钮上方留出来的那一条里，箭头往下指着按钮 */
+  .home__go {
+    padding-top: 3.3rem;
   }
   .home__cta {
     width: 100%;
-    min-height: 3.5rem;
+    min-height: 3.75rem;
+  }
+  .home__note--wide {
+    display: none;
+  }
+  .home__note--narrow {
+    display: inline-flex;
+    left: auto;
+    right: 0.6rem;
+    top: -0.4rem;
+    translate: none;
+    white-space: nowrap;
+  }
+  .home__note .note__text {
+    max-width: none;
+  }
+  .home__note .note__arrow {
+    width: 3.4rem;
+    height: 2.4rem;
   }
   .home__top {
     top: calc(0.75rem + env(safe-area-inset-top));
@@ -446,31 +501,37 @@
     left: -36vw;
     width: 72vw;
   }
+  .sh__label {
+    right: auto;
+    left: 2.6rem;
+  }
+  .sh__lat {
+    right: auto;
+    left: 2.7rem;
+  }
+  .sh__lng {
+    right: auto;
+    left: 0.5rem;
+  }
   .sh__cross--v {
-    top: -11svh;
-    height: 22svh;
+    top: -9svh;
+    height: 18svh;
   }
   .hud__rule--left {
     display: none;
   }
 }
 
-/* 矮一些的手机（360×640 这类）：名片和一句话占的高度比例更大，上面那片暗面跟着往下延 */
+/* 矮一些的手机（360×640 这类）：一句话收小一点，批注那一条也窄一点 */
 @media (max-width: 860px) and (max-height: 720px) {
-  .home__scrim {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-        color-mix(in oklab, var(--sc-canvas) 92%, transparent) 40%,
-        transparent 60%
-      ),
-      linear-gradient(
-        0deg,
-        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-        color-mix(in oklab, var(--sc-canvas) 82%, transparent) 30%,
-        transparent 46%
-      );
+  .home__tagline {
+    font-size: 1rem;
+  }
+  .idcard {
+    grid-template-columns: clamp(6rem, 24vw, 7.5rem) minmax(0, 1fr);
+  }
+  .home__go {
+    padding-top: 2.9rem;
   }
 }
 
@@ -479,8 +540,11 @@
   .home__tagline {
     display: none;
   }
+  .idcard {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+  }
   .home__copy {
-    gap: 1.25rem;
+    gap: 1.1rem;
   }
 }
 

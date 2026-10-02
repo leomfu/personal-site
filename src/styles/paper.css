@@ -1,0 +1,347 @@
+/* ============================================================================
+   速写本的材料（BRIEF R2）：纸片、胶带、冲印照片、彩铅批注、爱好涂鸦。
+   这些件在夜景里也会出现（首页的画纸、第 1 幕的票根），所以颜色用固定的纸色，
+   不跟着夜景 token 走。
+
+   动效只动 transform / opacity / clip-path / stroke-dashoffset。
+   彩铅「随滚动一笔一笔画出来」：所在幕的 --sc-p（引擎写在幕上，子元素继承）
+   换算成 --draw（0..1），每一笔的 stroke-dashoffset 从它算；减少动态效果时 --draw 恒为 1。
+   ========================================================================== */
+
+/* ------------------------------------------------------------ 手写体 -- */
+.hand {
+  font-family: var(--wl-hand);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+:lang(zh) .hand {
+  font-weight: 400;
+}
+
+/* 彩铅质感：线条抖一点（feDisplacementMap），再被纸的颗粒咬掉一些（feComposite）。
+   滤镜定义在 components/sketch/PencilDefs（layout 里只放一份） */
+.pencil {
+  filter: url(#wl-pencil);
+}
+
+/* ------------------------------------------------------------ 纸片 -- */
+/*
+ * .scrap：一张真实的纸。外层负责倾斜、悬停时抬起摆正、投影；
+ * 内层 .scrap__paper 负责纸色、纸纹和毛边（mask）。投影分两层：
+ * 一层贴着纸的接触阴影（drop-shadow，跟着毛边走），一层离得远的软影（::before，悬停时变深变远）。
+ */
+.scrap {
+  --tilt: 0deg;
+  position: relative;
+  isolation: isolate;
+  transform: rotate(var(--tilt));
+  filter: drop-shadow(0 1px 1.5px hsl(var(--sc-shadow-color) / 0.28));
+  transition: transform 240ms var(--sc-ease-out);
+}
+.scrap::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% 5% 3%;
+  box-shadow: 0 18px 32px -14px hsl(var(--sc-shadow-color) / 0.5);
+  opacity: 0.7;
+  transition:
+    opacity 240ms var(--sc-ease-out),
+    transform 240ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .scrap--lift:hover,
+  .scrap--lift:focus-within {
+    transform: rotate(0deg) translateY(-5px);
+  }
+  .scrap--lift:hover::before,
+  .scrap--lift:focus-within::before {
+    opacity: 1;
+    transform: translateY(8px) scale(1.02);
+  }
+}
+.scrap__paper {
+  position: relative;
+  background-color: var(--wl-paper-card);
+  background-image: var(--wl-paper-tex);
+  color: var(--wl-paper-ink);
+}
+
+/* 毛边：上下（或四边）是撕出来的锯齿，不是直线框 */
+.deckle,
+.deckle-top {
+  --deckle-t: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'><path d='M0 8V3.2L1.6 2.3 3.4 3.7 5 1.7 7.2 3 8.6 1.1 10.8 2.7 12.4 1.5 14.6 3.2 16.2 1.8 18.4 2.9 20 1.3 22.2 2.8 24 3.2V8Z'/></svg>");
+  --deckle-b: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='8' viewBox='0 0 24 8'><path d='M0 0V4.8L1.8 5.9 3.6 4.4 5.4 6.5 7.4 5 9.2 6.9 11 5.2 13 6.6 14.8 4.6 16.8 6.3 18.6 5.1 20.6 6.8 22.4 5.3 24 4.8V0Z'/></svg>");
+  --deckle-l: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='26' viewBox='0 0 8 26'><path d='M8 0H3.4L2.2 2.2 3.6 4.6 1.6 7.4 2.9 9.8 1.2 12.6 2.8 15.4 1.5 18 3.3 20.6 1.8 23.4 3.4 26H8Z'/></svg>");
+  --deckle-r: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='26' viewBox='0 0 8 26'><path d='M0 0H4.6L5.9 2.6 4.3 5 6.6 7.6 5.1 10.4 6.8 13 5.2 15.8 6.5 18.4 4.8 21 6.3 23.6 4.6 26H0Z'/></svg>");
+}
+.deckle {
+  -webkit-mask:
+    var(--deckle-t) top left / 24px 8px repeat-x,
+    var(--deckle-b) bottom left / 24px 8px repeat-x,
+    var(--deckle-l) top left / 8px 26px repeat-y,
+    var(--deckle-r) top right / 8px 26px repeat-y,
+    linear-gradient(#000 0 0) center / calc(100% - 12px) calc(100% - 12px) no-repeat;
+  mask:
+    var(--deckle-t) top left / 24px 8px repeat-x,
+    var(--deckle-b) bottom left / 24px 8px repeat-x,
+    var(--deckle-l) top left / 8px 26px repeat-y,
+    var(--deckle-r) top right / 8px 26px repeat-y,
+    linear-gradient(#000 0 0) center / calc(100% - 12px) calc(100% - 12px) no-repeat;
+}
+/* 从本子上撕下来的那种：只有上边是锯齿 */
+.deckle-top {
+  -webkit-mask:
+    var(--deckle-t) top left / 24px 8px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 6px) no-repeat;
+  mask:
+    var(--deckle-t) top left / 24px 8px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 6px) no-repeat;
+}
+
+/* ------------------------------------------------------------ 胶带 -- */
+.tape {
+  position: absolute;
+  z-index: 3;
+  top: -0.8rem;
+  left: calc(50% - 3.1rem);
+  width: 6.2rem;
+  height: 1.6rem;
+  transform: rotate(var(--tape-tilt, -3deg));
+  background: rgba(228, 206, 150, 0.7);
+  clip-path: polygon(0 0, 100% 0, 96.5% 22%, 100% 44%, 96.5% 66%, 100% 88%, 98% 100%, 0 100%, 3.5% 78%, 0 56%, 3.5% 34%, 0 12%);
+  pointer-events: none;
+}
+.tape--blue {
+  background: rgba(150, 182, 226, 0.66);
+}
+.tape--orange {
+  background: rgba(240, 168, 104, 0.64);
+}
+.tape--corner-l {
+  left: -1.4rem;
+  top: 0.6rem;
+  width: 4.6rem;
+  --tape-tilt: -38deg;
+}
+.tape--corner-r {
+  left: auto;
+  right: -1.4rem;
+  top: 0.6rem;
+  width: 4.6rem;
+  --tape-tilt: 38deg;
+}
+
+/* ------------------------------------------------------- 冲印照片 -- */
+/* 白边冲印：四周等宽的白边，轻微倾斜，偏移的软投影。照片本身原图原色 */
+.print {
+  --tilt: 0deg;
+  position: relative;
+  display: block;
+  padding: 0.55rem;
+  background: #fffdf7;
+  transform: rotate(var(--tilt));
+  box-shadow:
+    0 1px 2px hsl(30 40% 20% / 0.28),
+    0 14px 26px -12px hsl(30 40% 18% / 0.5);
+}
+.print img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ------------------------------------------------------ 彩铅批注 -- */
+/*
+ * <Note>：手写的一句话 + 一支箭头（components/sketch/Note）。
+ * --from / --to 是这条批注在所在幕里「开始画 → 画完」的进度，--draw 从 --sc-p 推出来：
+ * 先写字（clip-path 从左往右擦开），后画箭头（一笔杆、一笔箭头）。
+ */
+.note,
+.doodle,
+.mark {
+  --from: 0;
+  --to: 0.3;
+  --draw: clamp(0, calc((var(--sc-p, 1) - var(--from)) / (var(--to) - var(--from))), 1);
+}
+.note {
+  --rot: -2deg;
+  --note-ink: var(--wl-hand-orange);
+  --note-line: var(--wl-pencil-orange);
+  --tdraw: clamp(0, calc(var(--draw) * 1.7), 1);
+  --adraw: clamp(0, calc((var(--draw) - 0.4) / 0.6), 1);
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  gap: 0.15rem;
+  pointer-events: none;
+  rotate: var(--rot);
+  font-family: var(--wl-hand);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 1.15rem + 0.7vw, 1.8rem);
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--note-ink);
+  white-space: nowrap;
+}
+:lang(zh) .note {
+  font-weight: 400;
+  font-size: clamp(1.3rem, 1.08rem + 0.6vw, 1.65rem);
+}
+.note--blue {
+  --note-ink: var(--wl-hand-blue);
+  --note-line: var(--wl-pencil-blue);
+}
+.note__text {
+  display: block;
+  padding: 0.1em 0.15em;
+  clip-path: inset(-0.4em calc((1 - var(--tdraw)) * 100%) -0.4em -0.3em);
+}
+.note__arrow {
+  display: block;
+  flex: none;
+  width: 5.4rem;
+  height: 3.2rem;
+  overflow: visible;
+  filter: url(#wl-pencil);
+}
+.note__arrow path {
+  fill: none;
+  stroke: var(--note-line);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc(var(--adraw) * var(--n) - var(--i)), 1));
+}
+/* 第二道很淡的复描，彩铅来回描的样子 */
+.note__arrow path.note__ghost {
+  stroke-width: 1.4;
+  opacity: 0.45;
+}
+/* 箭头方向：决定字和箭头怎么排 */
+.note--right {
+  flex-direction: row;
+  align-items: center;
+}
+.note--left {
+  flex-direction: row-reverse;
+  align-items: center;
+}
+.note--down-left {
+  flex-direction: column;
+  align-items: flex-end;
+}
+.note--down-right {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.note--up-left {
+  flex-direction: column-reverse;
+  align-items: flex-end;
+}
+.note--up-right {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+}
+.note--down {
+  flex-direction: column;
+  align-items: center;
+}
+.note--left .note__arrow,
+.note--down-left .note__arrow,
+.note--up-left .note__arrow {
+  scale: -1 1;
+}
+.note--down .note__arrow {
+  width: 2.6rem;
+  height: 3.4rem;
+}
+/* 放在正常排版里的批注（不绝对定位） */
+.note--inline {
+  position: relative;
+}
+
+/* ------------------------------------------------------ 爱好涂鸦 -- */
+/* 一笔接一笔：第 i 笔在 --draw 走到 i/n 之后才开始画 */
+.doodle {
+  --rot: 0deg;
+  position: absolute;
+  z-index: 0;
+  width: var(--size, 6.5rem);
+  height: auto;
+  aspect-ratio: 1;
+  pointer-events: none;
+  rotate: var(--rot);
+  color: var(--wl-pencil-orange);
+  filter: url(#wl-pencil);
+  overflow: visible;
+}
+.doodle--blue {
+  color: var(--wl-pencil-blue);
+}
+.doodle path,
+.mark path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc(var(--draw) * var(--n) - var(--i)), 1));
+}
+
+/* 圈注 / 下划线 / 波浪线 / 星号：盖在文字上的彩铅记号（components/sketch/Mark） */
+.mark {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+  color: var(--wl-pencil-orange);
+  filter: url(#wl-pencil);
+}
+.mark--blue {
+  color: var(--wl-pencil-blue);
+}
+
+/* 首页那支箭头不看滚动（首页不滚），按时间画：打开约 1 秒后先写字、再画杆、最后箭头 */
+.note--timed {
+  --draw: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .note--timed .note__text {
+    animation: note-write 760ms cubic-bezier(0.45, 0.05, 0.4, 1) 1000ms both;
+  }
+  .note--timed .note__arrow path {
+    stroke-dashoffset: 1;
+    animation: note-stroke 520ms cubic-bezier(0.5, 0, 0.3, 1) both;
+    animation-delay: calc(1700ms + var(--i) * 480ms);
+  }
+}
+@keyframes note-write {
+  from {
+    clip-path: inset(-0.4em 100% -0.4em -0.3em);
+  }
+  to {
+    clip-path: inset(-0.4em 0 -0.4em -0.3em);
+  }
+}
+@keyframes note-stroke {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note,
+  .doodle,
+  .mark {
+    --draw: 1 !important;
+  }
+  .scrap {
+    transition: none;
+  }
+}

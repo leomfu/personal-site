@@ -8,6 +8,9 @@
  *   node scripts/scene-placeholders.mjs          只补缺的文件，已有的一个都不碰
  *   node scripts/scene-placeholders.mjs --force  全部重新生成（会覆盖正式素材，慎用）
  *
+ * 只管地球和房间。人像不在这里：彩铅画像（portrait-card.webp）是即梦生成的正式素材，
+ * 站主的真人照片（public/images/hero/poster.webp）不许再拿来裁任何图（2026-10 站主要求）。
+ *
  * 依赖 sharp（Next.js 自带的可选依赖，node_modules 里已有）。
  */
 import fs from "node:fs";
@@ -17,7 +20,6 @@ import sharp from "sharp";
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "public", "scene");
 const EARTH_SRC = path.join(ROOT, "scrollcraft/builds/weiliang/out/B1-earth-16x9-a.png");
-const POSTER = path.join(ROOT, "public/images/hero/poster.webp");
 const SKYLINE = path.join(ROOT, "public/images/photos/shanghai-01.webp");
 
 fs.mkdirSync(OUT, { recursive: true });
@@ -138,61 +140,6 @@ async function room({ w, h, file, win, desk, lamp, monitor }) {
   console.log(file);
 }
 
-/* ------------------------------------------------------------------ 人像 */
-async function portraits() {
-  if (skip("portrait-card.webp", "portrait.webp")) return;
-  // 从拍立得海报里裁脸部附近的 3:4，压暗、去饱和（临时图，不是正式的即梦人像）
-  const crop = { left: 200, top: 100, width: 390, height: 520 };
-
-  // 海报底色是白的，压暗之后四角还会发灰、左上角还有海报字，所以再压一层暗角
-  const vignette = (w, h) =>
-    svg(
-      w,
-      h,
-      `<defs><radialGradient id="v" cx="0.52" cy="0.46" r="0.62">
-        <stop offset="0.38" stop-color="#000" stop-opacity="0"/>
-        <stop offset="1" stop-color="#000" stop-opacity="0.86"/>
-      </radialGradient>
-      <linearGradient id="k" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#000" stop-opacity="0.55"/>
-        <stop offset="0.4" stop-color="#000" stop-opacity="0"/>
-      </linearGradient></defs>
-      <rect width="${w}" height="${h}" fill="url(#v)"/><rect width="${w}" height="${h}" fill="url(#k)"/>`,
-    );
-
-  const graded = async (w, h) => {
-    const base = await sharp(POSTER)
-      .extract(crop)
-      .resize(w, h)
-      .modulate({ saturation: 0.16, brightness: 0.5 })
-      .linear(1.12, -16)
-      .tint({ r: 214, g: 194, b: 168 })
-      .toBuffer();
-    return sharp(base).composite([{ input: vignette(w, h) }]);
-  };
-
-  await (await graded(600, 800)).webp({ quality: 82 }).toFile(path.join(OUT, "portrait-card.webp"));
-
-  // 抠图版占位：同一张图加一个羽化的椭圆 alpha（正式版要真抠图）
-  const W = 900;
-  const H = 1200;
-  const mask = svg(
-    W,
-    H,
-    `<defs><radialGradient id="m" cx="0.5" cy="0.44" rx="0.5" ry="0.5" r="0.5">
-      <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
-      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-    </radialGradient></defs>
-    <ellipse cx="${W * 0.5}" cy="${H * 0.5}" rx="${W * 0.47}" ry="${H * 0.52}" fill="url(#m)"/>`,
-  );
-  const body = await (await graded(W, H)).ensureAlpha().toBuffer();
-  await sharp(body)
-    .composite([{ input: mask, blend: "dest-in" }])
-    .webp({ quality: 82, alphaQuality: 90 })
-    .toFile(path.join(OUT, "portrait.webp"));
-  console.log("portrait-card.webp / portrait.webp");
-}
-
 await earth();
 await room({
   w: 1920,
@@ -212,4 +159,3 @@ await room({
   lamp: { x: 0.08, y: 0.6, r: 0.5 },
   monitor: { x1: 0.66, x2: 0.96, y1: 0.58, y2: 0.7, gx: 0.8, gy: 0.64, gr: 0.4 },
 });
-await portraits();

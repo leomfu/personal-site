@@ -3,13 +3,8 @@
  * 方括号 [] 包起来的都是占位，素材到位后直接替换（见 docs/素材清单.md）。
  */
 
-export type SocialKey =
-  | "x"
-  | "github"
-  | "bilibili"
-  | "youtube"
-  | "xiaohongshu"
-  | "douyin";
+/** 2026-10 站主决定：社交平台只留 X、GitHub、哔哩哔哩三个 */
+export type SocialKey = "x" | "github" | "bilibili";
 
 export type Social = {
   key: SocialKey;
@@ -74,7 +69,7 @@ export const siteConfig = {
   /* --- 资源 --- */
   logo: "/logo/wl-logo.png",
 
-  /* --- 社交平台（链接留空 = 暂未提供，UI 上按占位处理）--- */
+  /* --- 社交平台：只留这三个（2026-10 站主要求，小红书、YouTube、抖音都不再显示）--- */
   socials: [
     {
       key: "x",
@@ -97,23 +92,6 @@ export const siteConfig = {
       href: "https://space.bilibili.com/3546677612907455",
       handle: "主页",
     },
-    {
-      key: "youtube",
-      label: "YouTube",
-      labelEn: "YouTube",
-      href: "https://www.youtube.com/@WEILIANGFU-s7q",
-      handle: "@WEILIANGFU-s7q",
-    },
-    {
-      key: "xiaohongshu",
-      label: "小红书",
-      labelEn: "Xiaohongshu",
-      href: "https://www.xiaohongshu.com/user/profile/63057ac300000000120001cf",
-      handle: "主页",
-    },
-    // 抖音：用户给的 douyin.com/user/self 只对本人生效，不是可分享的主页地址，
-    // 等正确链接（见 docs/素材清单.md）。href 留空时整站都不显示这一项。
-    { key: "douyin", label: "抖音", labelEn: "Douyin", href: "", handle: "[主页]" },
   ] satisfies Social[],
 
   /* --- 访问统计（阶段 5 部署时接）--- */

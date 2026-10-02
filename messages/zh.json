@@ -71,11 +71,25 @@
     "dotAria": "上海的光点：降落，进入完整介绍",
     "cta": "降落，进来看看",
     "ctaAria": "降落，进来看看：进入完整介绍",
-    "portraitAlt": "{name}的照片"
+    "portraitAlt": "{name}的彩铅画像",
+    "note": "点这里，降落到我的书桌前"
   },
   "dive": {
     "skip": "跳过",
     "status": "正在降落到上海"
+  },
+  "desk": {
+    "screenLabel": "显示器",
+    "chatTitle": "新对话",
+    "hello": "Hello Claude",
+    "reply": "你好！很高兴见到你。",
+    "placeholder": "写点什么…"
+  },
+  "crab": {
+    "hi": "hi",
+    "bye": "bye!",
+    "deskLabel": "显示器里的小螃蟹：点一下，它会跟你打招呼",
+    "byeLabel": "挥手告别的小螃蟹：点一下，它会跟你说再见"
   },
   "plan": {
     "label": "房间平面图",
@@ -86,18 +100,38 @@
     "goto": "去{place}：{title}"
   },
   "places": {
-    "desk": { "name": "书桌前", "title": "我是谁" },
-    "screen": { "name": "屏幕", "title": "在做的东西" },
-    "shelf": { "name": "书架", "title": "写下来的" },
-    "projector": { "name": "投影", "title": "录下来的" },
-    "darkroom": { "name": "暗房", "title": "拍下来的" },
-    "records": { "name": "唱片架", "title": "听的和用的" },
-    "window": { "name": "窗边", "title": "联系我" }
+    "desk": {
+      "name": "书桌前",
+      "title": "我是谁"
+    },
+    "screen": {
+      "name": "屏幕",
+      "title": "在做的东西"
+    },
+    "shelf": {
+      "name": "书架",
+      "title": "写下来的"
+    },
+    "projector": {
+      "name": "投影",
+      "title": "录下来的"
+    },
+    "darkroom": {
+      "name": "暗房",
+      "title": "拍下来的"
+    },
+    "records": {
+      "name": "唱片架",
+      "title": "听的和用的"
+    },
+    "window": {
+      "name": "窗边",
+      "title": "写给你"
+    }
   },
   "tour": {
     "backOrbit": "回到首页",
     "landed": "已降落",
-    "portraitAlt": "{name}的人像",
     "selfIntro": "他自己写的介绍",
     "screenLead": "{count} 件，每件都标着现在的状态。",
     "shotAlt": "{name}的真实截图",
@@ -123,7 +157,22 @@
     "playSleeve": "播放：{title} · {artist}",
     "pauseSleeve": "暂停：{title}",
     "windowLabel": "联系 · {year} · 邮件和社交账号 · 一般两三天内回",
-    "windowLead": "想说点什么，写封邮件就好。"
+    "windowLead": "想说点什么，写封邮件就好。",
+    "notes": {
+      "self": "2026 年 7 月毕业",
+      "live": "已上线，点开就能用",
+      "daily": "每天在用",
+      "shelf": "最近写的 {count} 篇",
+      "video": "发在{platform}",
+      "flip": "点照片，翻到背面",
+      "records": "点一张，放进唱机试听",
+      "reply": "一般两三天内回"
+    },
+    "flipAria": "{caption}：翻到背面看地点和年份",
+    "flipBackAria": "{caption}：翻回正面",
+    "postcardTo": "寄到",
+    "postmark": "邮戳：{city} {coords}",
+    "stampAlt": "邮票：窗外的上海夜景"
   },
   "nav": {
     "label": "子页面",

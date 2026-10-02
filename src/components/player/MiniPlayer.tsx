@@ -46,7 +46,7 @@ export function MiniPlayer() {
     <AnimatePresence>
       {show && track && (
         <motion.div
-          className="mini"
+          className="mini wl-chrome"
           role="region"
           aria-label={t("regionLabel")}
           initial={{ opacity: 0, y: 12 }}

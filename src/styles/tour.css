@@ -1,5 +1,6 @@
 /* ============================================================================
    完整介绍页 · 他的房间（7 个地方）
+   第 1 幕是夜里的书房；往下一张速写本的纸盖上来（.sheet），之后全是纸面（BRIEF 第二版 R1–R4）。
    每一幕的 --sc-p（0..1）由引擎写在 section 上，这里的「随滚动变化」都从它算。
    ========================================================================== */
 
@@ -8,7 +9,7 @@
   background: var(--sc-canvas);
 }
 
-/* 左上回首页，右上语言。小，固定，不挡画面 */
+/* 左上回首页，右上语言。小，固定，不挡画面；到了纸面段落换成纸面配色（.wl-chrome） */
 .tour__top {
   position: fixed;
   z-index: 70;
@@ -26,23 +27,23 @@
 .tour__home {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  min-height: 2.25rem;
-  padding: 0 0.8rem 0 0.6rem;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  padding: 0 0.9rem 0 0.7rem;
   border-radius: var(--sc-r-md);
-  border: 1px solid var(--wl-hair);
+  border: 1px solid var(--wl-hair-strong);
   background: var(--wl-panel);
   color: var(--sc-ink);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   transition: border-color 160ms var(--sc-ease-out);
 }
 .tour .tour__top .lang {
-  border: 1px solid var(--wl-hair);
+  border: 1px solid var(--wl-hair-strong);
   background: var(--wl-panel);
 }
 @media (hover: hover) and (pointer: fine) {
   .tour__home:hover {
-    border-color: var(--wl-hair-strong);
+    border-color: var(--sc-ink-soft);
   }
 }
 @media (pointer: coarse) {
@@ -55,10 +56,12 @@
   position: relative;
 }
 .act__title {
+  position: relative;
+  width: fit-content;
   font-family: var(--sc-font-display);
-  font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.6rem);
-  font-weight: 500;
-  line-height: 1.08;
+  font-size: clamp(2.4rem, 1.5rem + 3vw, 4.2rem);
+  font-weight: 600;
+  line-height: 1.06;
   color: var(--sc-ink);
   text-wrap: balance;
 }
@@ -68,10 +71,21 @@
 .act__title:focus {
   outline: none;
 }
+/* 标题下面一道彩铅波浪线 */
+.act__wave {
+  left: -2%;
+  bottom: -0.32em;
+  width: 104%;
+  height: 0.3em;
+}
 
-/* ───────────────────────────── 1 书桌前（峰值） ───────────────────────────── */
+/* ───────────────────────────── 1 书桌前（峰值，夜里） ───────────────────────────── */
 .desk__stage {
   background: var(--sc-canvas);
+}
+/* 夜景提亮加暖：只调图本身的显示，不重新生成素材。俯冲最后一帧用同一个类 */
+.tone-room .plate__media img {
+  filter: brightness(1.34) contrast(1.03) saturate(1.1) sepia(0.08);
 }
 /* 落地之后镜头再往书桌推一点（p = 0 时和俯冲最后一帧一样是 1.05，交接不受影响） */
 .desk__far .plate {
@@ -82,35 +96,21 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(42% 58% at 15% 60%, color-mix(in oklab, var(--sc-accent) 20%, transparent), transparent 70%);
+  background:
+    radial-gradient(44% 60% at 14% 56%, color-mix(in oklab, var(--sc-accent) 26%, transparent), transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, color-mix(in oklab, var(--sc-accent) 10%, transparent), transparent 70%);
   mix-blend-mode: screen;
   animation: haze 11s ease-in-out infinite alternate;
 }
 @keyframes haze {
   from {
-    opacity: 0.6;
+    opacity: 0.65;
     transform: translate3d(0, 0, 0);
   }
   to {
     opacity: 1;
     transform: translate3d(2%, -1.5%, 0);
   }
-}
-.desk__subject {
-  position: absolute;
-  z-index: 2;
-  left: 64%;
-  bottom: 10svh;
-  width: min(42svh, 29vw);
-  translate: -50% 0;
-  pointer-events: none;
-}
-.desk__portrait {
-  display: block;
-  width: 100%;
-  height: auto;
-  transform-origin: 50% 100%;
-  transform: scale(calc(1 + var(--sc-p, 0) * 0.12));
 }
 .desk__fore {
   position: absolute;
@@ -131,7 +131,7 @@
   top: 14%;
 }
 .bokeh--2 {
-  --c: color-mix(in oklab, var(--wl-cold) 45%, transparent);
+  --c: color-mix(in oklab, var(--wl-cold) 40%, transparent);
   width: 4.5rem;
   height: 4.5rem;
   right: 7%;
@@ -141,155 +141,214 @@
   --c: color-mix(in oklab, var(--sc-accent) 40%, transparent);
   width: 3rem;
   height: 3rem;
-  right: 16%;
-  bottom: 30%;
+  right: 12%;
+  bottom: 22%;
 }
 .bokeh--4 {
-  --c: color-mix(in oklab, var(--wl-cold) 30%, transparent);
+  --c: color-mix(in oklab, var(--wl-cold) 26%, transparent);
   width: 10rem;
   height: 10rem;
   left: 36%;
-  top: -3%;
+  top: -4%;
 }
 .bokeh--5 {
   --c: color-mix(in oklab, var(--sc-accent) 45%, transparent);
   width: 2rem;
   height: 2rem;
   right: 30%;
-  top: 12%;
+  top: 10%;
 }
 
+/* 文字那一角很轻的暗面（比第一版轻得多，只压到字能读清） */
 .desk__scrim {
   z-index: 4;
+  background: linear-gradient(
+    to top right,
+    color-mix(in oklab, var(--sc-canvas) 84%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 56%, transparent) 26%,
+    color-mix(in oklab, var(--sc-canvas) 16%, transparent) 46%,
+    transparent 62%
+  );
 }
 .desk__copy {
   z-index: 5;
-  max-width: min(34rem, 44vw);
+  max-width: min(36rem, 44vw);
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
 }
-/* 三条提示叠在同一个格子里：名字淡出的时候，标签已经在那儿了 */
 .desk__hello {
   display: grid;
   gap: 0.6rem;
 }
 .desk__coords {
-  font-size: 0.8125rem;
-  color: var(--sc-ink-soft);
+  font-size: 0.9375rem;
+  color: var(--sc-ink);
 }
 .desk__name {
   font-family: var(--sc-font-display);
-  font-size: clamp(3.4rem, 2rem + 6vw, 7rem);
-  font-weight: 500;
+  font-size: clamp(3.8rem, 2rem + 6.4vw, 8.4rem);
+  font-weight: 600;
   line-height: 0.98;
   color: var(--sc-ink);
 }
 :lang(en) .desk__name {
+  font-size: clamp(3.4rem, 1.6rem + 4.6vw, 6.4rem);
   letter-spacing: var(--sc-track-tight);
 }
 .desk__name:focus {
   outline: none;
 }
 .desk__label {
-  font-size: 0.875rem;
-  color: var(--sc-ink);
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--wl-hair-strong);
+  font-size: 0.9375rem;
 }
 .desk__tagline {
-  font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.3rem);
-  line-height: 1.65;
+  font-size: clamp(1.15rem, 0.98rem + 0.6vw, 1.45rem);
+  line-height: 1.6;
   color: var(--sc-ink);
-  max-width: 26em;
+  max-width: 24em;
   text-wrap: balance;
 }
 
-/* 1 尾：他的自述 */
-.desk-tail {
-  padding: clamp(2.5rem, 6vw, 4.5rem) var(--sc-gutter) clamp(5rem, 10vw, 8rem);
-  background: var(--sc-canvas);
+/* ───────────────────────────── 速写本：盖上来的那张纸 ───────────────────────────── */
+/*
+ * 负的上外边距：第 1 幕还钉在屏幕上的最后 70% 屏，这张纸已经从下面滑进来，盖住房间。
+ * 上沿是一条撕口（.sheet__edge，单独一小条，带向上的投影），纸本身不加滤镜。
+ */
+.sheet {
+  position: relative;
+  z-index: 2;
+  margin-top: -70svh;
 }
-.desk-tail__inner {
-  max-width: 40rem;
-  margin-left: clamp(0rem, 9vw, 10rem);
+.sheet__edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -21px;
+  height: 22px;
+  filter: drop-shadow(0 -5px 8px rgba(8, 6, 4, 0.45));
+  pointer-events: none;
 }
-
-/* ───────────────────────────── 2 屏幕（横向展品） ───────────────────────────── */
-.screen__stage {
-  background: linear-gradient(180deg, #0b0e12 0%, #090b0e 100%);
-  display: flex;
-  align-items: center;
-}
-.screen__light {
+.sheet__edge::before {
+  content: "";
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background: radial-gradient(70% 55% at 55% 45%, color-mix(in oklab, var(--wl-cold) 9%, transparent), transparent 72%);
+  background-color: var(--wl-paper);
+  background-image: var(--wl-paper-tex);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='22' viewBox='0 0 72 22'><path d='M0 22V10L4 8 9 11 13 6 18 9 22 4 27 10 31 7 36 11 40 5 45 9 49 3 54 8 58 6 63 10 67 7 72 10V22Z'/></svg>") bottom left / 72px 22px repeat-x;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='22' viewBox='0 0 72 22'><path d='M0 22V10L4 8 9 11 13 6 18 9 22 4 27 10 31 7 36 11 40 5 45 9 49 3 54 8 58 6 63 10 67 7 72 10V22Z'/></svg>") bottom left / 72px 22px repeat-x;
+}
+
+/* ───────────────────────────── 1 尾：他的自述（速写本第一页） ───────────────────────────── */
+.self {
+  padding: clamp(4.5rem, 9vw, 7.5rem) var(--sc-gutter) clamp(5rem, 9vw, 8rem);
+}
+.self__inner {
+  position: relative;
+  max-width: 76rem;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 44rem) minmax(0, 1fr);
+  gap: 3rem;
+}
+.self__margin {
+  position: relative;
+  min-height: 26rem;
+}
+.self__note {
+  left: 0;
+  top: 0.6rem;
+}
+.self__doodle--glove {
+  --size: 7.5rem;
+  left: 12%;
+  top: 9rem;
+}
+.self__doodle--shoe {
+  --size: 8.5rem;
+  left: 46%;
+  top: 15rem;
+}
+.self__doodle--goggles {
+  --size: 8rem;
+  left: 8%;
+  top: 22rem;
+}
+
+/* ───────────────────────────── 2 屏幕（横向展品，贴在本子上） ───────────────────────────── */
+.screen__stage {
+  display: flex;
+  align-items: center;
 }
 .rail {
   position: relative;
   align-items: center;
-  gap: clamp(1.5rem, 3vw, 3rem);
-  padding: 0 calc(var(--sc-gutter) + 1rem) 5svh;
+  gap: clamp(2rem, 3.5vw, 3.5rem);
+  padding: 0 calc(var(--sc-gutter) + 1rem) 8svh;
   height: 100%;
 }
 .rail > * {
   flex: none;
 }
 .rail__head {
-  width: min(19rem, 70vw);
+  position: relative;
+  width: min(25rem, 76vw);
   display: grid;
-  gap: 1rem;
+  gap: 1.4rem;
 }
 .rail__lead {
   color: var(--sc-ink-soft);
+  font-size: 1.125rem;
   max-width: 18em;
 }
+.rail__doodle {
+  --size: 6.5rem;
+  position: relative;
+  margin-top: 0.5rem;
+}
 .exhibit {
-  width: min(19rem, 74vw);
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  position: relative;
+  width: min(21rem, 78vw);
 }
 .exhibit--shot {
-  width: min(29rem, 82vw);
+  width: min(30rem, 84vw);
 }
-.exhibit--text {
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--wl-hair-strong);
+.exhibit__paper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.6rem 1.5rem 1.3rem;
 }
 .exhibit__screen {
+  margin-bottom: 0.35rem;
+  --tilt: 0.6deg;
   padding: 0.4rem;
-  border: 1px solid var(--wl-hair-strong);
-  border-radius: var(--sc-r-md);
-  background: #06080a;
-  box-shadow: var(--sc-edge), var(--sc-e3);
-}
-.exhibit__screen img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 2px;
 }
 .exhibit__name {
   font-family: var(--sc-font-display);
-  font-size: 1.35rem;
-  font-weight: 500;
+  font-size: clamp(1.5rem, 1.25rem + 0.7vw, 1.85rem);
+  font-weight: 600;
   line-height: 1.2;
   color: var(--sc-ink);
 }
 .exhibit--text .exhibit__name {
-  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
 }
 .exhibit__summary {
   color: var(--sc-ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 .exhibit__metrics {
+  position: relative;
   display: flex;
-  gap: 1.5rem;
-  padding: 0.4rem 0;
+  width: fit-content;
+  gap: 1.75rem;
+  padding: 0.5rem 1rem 0.4rem 0.4rem;
+}
+.exhibit__circle {
+  inset: -0.4rem -0.6rem -0.5rem -0.7rem;
+  width: calc(100% + 1.3rem);
+  height: calc(100% + 0.9rem);
 }
 .metric {
   display: grid;
@@ -297,129 +356,152 @@
 }
 .metric__value {
   font-family: var(--sc-font-mono);
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 500;
   line-height: 1;
   color: var(--sc-ink);
   font-variant-numeric: tabular-nums;
 }
 .metric__label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
 }
 .exhibit__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 1.25rem;
+  gap: 0 1.4rem;
 }
 .exhibit__links a:not(.btn) {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
   color: var(--sc-accent);
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in oklab, var(--sc-accent) 35%, transparent);
 }
 @media (hover: hover) and (pointer: fine) {
   .exhibit__links a:not(.btn):hover {
-    text-decoration: underline;
-    text-underline-offset: 0.3em;
+    text-decoration-color: var(--sc-accent);
   }
 }
 .exhibit__nolink {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--sc-ink-soft);
 }
+/* 展品下面的批注：箭头往左上指着卡片 */
+.exhibit__note {
+  right: -0.5rem;
+  top: calc(100% + 0.6rem);
+}
 .rail__end {
-  width: min(13rem, 60vw);
+  width: min(14rem, 60vw);
 }
 
-/* 展品依次落位：从 --sc-p 推出来，像抽屉一格格拉开。第一格（标题）不参与 */
+/* 展品依次落位：从 --sc-p 推出来，像一张张贴上去。第一格（标题）不参与 */
 @media (prefers-reduced-motion: no-preference) {
   .screen .exhibit {
     --arrive: clamp(0, calc(var(--sc-p, 0) * 6.5 - var(--i) + 1.6), 1);
     opacity: calc(0.55 + 0.45 * var(--arrive));
-    transform: translate3d(0, calc((1 - var(--arrive)) * 1.25rem), 0);
+    transform: translate3d(0, calc((1 - var(--arrive)) * 1.5rem), 0);
   }
 }
 
-/* ───────────────────────────── 3 书架（只有字） ───────────────────────────── */
+/* ───────────────────────────── 3 书架（只有字，最静） ───────────────────────────── */
 .shelf {
-  padding: clamp(6rem, 13vw, 11rem) var(--sc-gutter) clamp(5rem, 10vw, 8rem);
-  background: var(--sc-canvas);
+  padding: clamp(6rem, 12vw, 10rem) var(--sc-gutter) clamp(5rem, 9vw, 8rem);
 }
 .shelf__inner {
-  max-width: 48rem;
+  max-width: 52rem;
   margin-left: auto;
   margin-right: clamp(0rem, 6vw, 8rem);
 }
-.shelf .act__title {
-  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+.shelf__head {
+  position: relative;
+  width: fit-content;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
 }
+.shelf__note {
+  left: calc(100% + 1rem);
+  top: 0.4rem;
+  max-width: 100%;
+}
+/* 横格本的线：每一篇压在一条格线上 */
 .spines {
-  border-top: 1px solid var(--wl-hair);
+  border-top: 1.5px solid var(--wl-hair-strong);
 }
 .spines > li {
-  border-bottom: 1px solid var(--wl-hair);
+  border-bottom: 1px solid var(--wl-hair-strong);
 }
 .spine {
   display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
-  gap: 0.35rem 1.75rem;
-  padding: 1.4rem 0;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  gap: 0.4rem 2rem;
+  padding: 1.5rem 0;
 }
 .spine__date {
   grid-row: 1 / span 3;
   padding-top: 0.45rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
 }
 .spine__title {
-  font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
-  font-weight: 500;
+  width: fit-content;
+  font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.65rem);
+  font-weight: 600;
   line-height: 1.4;
   color: var(--sc-ink);
-  transition: color 160ms var(--sc-ease-out);
+  background: linear-gradient(var(--wl-pencil-orange), var(--wl-pencil-orange)) left bottom / 0 2px no-repeat;
+  transition:
+    color 160ms var(--sc-ease-out),
+    background-size 260ms var(--sc-ease-out);
 }
 .spine__summary {
   color: var(--sc-ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.75;
 }
 .spine__meta {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 @media (hover: hover) and (pointer: fine) {
   .spine:hover .spine__title {
     color: var(--sc-accent);
+    background-size: 100% 2px;
   }
 }
 .shelf .viewall {
-  margin-top: 1.25rem;
+  margin-top: 1.5rem;
 }
 
 /* ───────────────────────────── 4 投影（擦除） ───────────────────────────── */
 .projector {
-  background: #050608;
   padding: clamp(5rem, 10vw, 8rem) var(--sc-gutter);
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
 }
 .projector__inner {
   width: 100%;
-  max-width: 74rem;
+  max-width: 76rem;
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(15rem, 1fr);
-  gap: 2rem 3rem;
+  grid-template-columns: minmax(0, 2.1fr) minmax(16rem, 1fr);
+  gap: 2.5rem 3.5rem;
   align-items: end;
 }
 .projector .act__title {
   grid-column: 1 / -1;
+}
+/* 一块黑卡纸，四角胶带贴在本子上；画面从黑卡纸上擦出来 */
+.projector__film {
+  padding: clamp(0.6rem, 1.4vw, 1rem);
+  background: #1b1714;
+  filter: drop-shadow(0 2px 2px hsl(30 40% 15% / 0.35));
 }
 .projector__frame {
   position: relative;
@@ -429,9 +511,7 @@
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: var(--sc-r-sm);
-  background: #0c0e11;
-  box-shadow: 0 40px 90px -40px color-mix(in oklab, var(--wl-cold) 30%, transparent);
+  background: #0e0c0a;
 }
 .projector__screen img {
   position: absolute;
@@ -448,15 +528,15 @@
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 4.75rem;
+  height: 4.75rem;
   display: grid;
   place-items: center;
   padding-left: 4px;
   border-radius: 50%;
-  border: 1px solid color-mix(in oklab, var(--sc-ink) 60%, transparent);
-  background: color-mix(in oklab, var(--sc-canvas) 55%, transparent);
-  color: var(--sc-ink);
+  background: #f0a640;
+  color: #1a1006;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.6);
   transition: transform 160ms var(--sc-ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -465,146 +545,208 @@
   }
 }
 .projector__placard {
+  position: relative;
   display: grid;
-  gap: 0.75rem;
+  gap: 0.9rem;
   padding-bottom: 0.25rem;
+}
+.projector__note {
+  left: -0.5rem;
+  bottom: calc(100% + 0.8rem);
 }
 .projector__summary {
   color: var(--sc-ink);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
-/* ───────────────────────────── 5 暗房（景深 + 底色变暖） ───────────────────────────── */
+/* ───────────────────────────── 5 暗房（景深 + 底色变暖 + 翻面） ───────────────────────────── */
 .darkroom {
   position: relative;
   overflow: hidden;
   padding: clamp(5rem, 9vw, 8rem) 0;
 }
+/* 纸慢慢变暖：上面叠一层暖色，透明度跟着这一幕的进度走 */
 .darkroom__ground {
   position: absolute;
   inset: 0;
-  background: color-mix(in oklab, var(--sc-canvas), var(--wl-warm-ground) calc(var(--sc-p, 0) * 100%));
-}
-.darkroom__safelight {
-  position: absolute;
-  inset: 0;
   pointer-events: none;
-  background: radial-gradient(48% 42% at 86% 8%, rgba(190, 74, 38, 0.2), transparent 72%);
-  opacity: calc(0.15 + var(--sc-p, 0) * 0.85);
+  background:
+    radial-gradient(60% 50% at 82% 12%, rgba(214, 120, 64, 0.22), transparent 70%),
+    linear-gradient(#ecd3ad, #e8cba3);
+  opacity: calc(var(--sc-p, 0) * 0.85);
 }
 .darkroom__inner {
   position: relative;
   padding: 0 var(--sc-gutter);
-  max-width: 82rem;
+  max-width: 84rem;
   margin-inline: auto;
+}
+.darkroom__head {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 2rem;
+}
+.darkroom__note {
+  position: relative;
+  margin-left: 1rem;
+}
+.darkroom__doodle {
+  --size: 6.5rem;
+  right: 2%;
+  top: -1.5rem;
 }
 .darkroom__stage {
   position: relative;
-  height: clamp(34rem, 92svh, 56rem);
-  margin: 2.5rem 0 3rem;
+  height: clamp(36rem, 96svh, 58rem);
+  margin: 2rem 0 3rem;
 }
 .darkroom__layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-.print {
+
+/* 一张能翻面的冲印照片（components/about/PhotoFlip） */
+.flip {
+  --tilt: 0deg;
   position: absolute;
   display: block;
-  padding: 0.35rem;
-  background: #e8e1d3;
-  border-radius: 1px;
-  box-shadow: 0 2px 4px hsl(var(--sc-shadow-color) / 0.4), 0 18px 40px -12px hsl(var(--sc-shadow-color) / 0.7);
+  padding: 0;
   pointer-events: auto;
-  transition: transform 200ms var(--sc-ease-out);
+  perspective: 1400px;
+  text-align: left;
+  transition: transform 220ms var(--sc-ease-out);
 }
-.print img {
+.flip__card {
+  position: relative;
   display: block;
-  width: 100%;
-  height: auto;
+  transform-style: preserve-3d;
+  transform: rotate(var(--tilt));
+  transition: transform 640ms cubic-bezier(0.3, 0.7, 0.2, 1);
 }
-.print:focus-visible {
-  outline-offset: 4px;
+.flip.is-back .flip__card {
+  transform: rotate(var(--tilt)) rotateY(180deg);
+}
+.flip__face {
+  display: block;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.flip__back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  background-color: #f6eedf;
+  background-image: var(--wl-paper-tex);
+  box-shadow:
+    0 1px 2px hsl(30 40% 20% / 0.28),
+    0 14px 26px -12px hsl(30 40% 18% / 0.5);
+  transform: rotateY(180deg);
+}
+.flip__place {
+  font-size: clamp(1.3rem, 1rem + 1vw, 1.9rem);
+  line-height: 1.15;
+  color: var(--wl-hand-blue);
+}
+.flip__caption {
+  font-size: clamp(1.1rem, 0.9rem + 0.7vw, 1.5rem);
+  line-height: 1.2;
+  color: var(--wl-hand-orange);
+}
+.flip:focus-visible {
+  outline-offset: 6px;
 }
 @media (hover: hover) and (pointer: fine) {
-  .print:hover {
-    transform: translateY(-4px);
+  .flip:hover {
+    transform: translateY(-5px);
   }
 }
 /* 远的小、近的大。照片按原比例，不裁 */
 .print--back-1 {
-  left: 58%;
+  --tilt: 2deg;
+  left: 60%;
   top: 2%;
-  width: 19%;
+  width: 18%;
 }
 .print--back-2 {
+  --tilt: -3deg;
   left: 84%;
-  top: 12%;
+  top: 13%;
   width: 11%;
 }
 .print--mid-1 {
+  --tilt: -2.5deg;
   left: 1%;
-  top: 4%;
+  top: 5%;
   width: 24%;
 }
 .print--mid-2 {
+  --tilt: 3deg;
   left: 30%;
-  top: 20%;
+  top: 18%;
   width: 14%;
 }
 .print--front-1 {
+  --tilt: 1.5deg;
   left: 48%;
   top: 44%;
   width: 34%;
 }
 .print--front-2 {
-  left: 9%;
-  top: 44%;
+  --tilt: -2deg;
+  left: 10%;
+  top: 46%;
   width: 19%;
 }
 .darkroom__albums {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 2rem;
+  gap: 0.9rem 1.25rem;
 }
 .darkroom__albums a {
-  display: inline-flex;
-  align-items: center;
   min-height: 2.75rem;
-  color: var(--sc-ink);
-}
-@media (hover: hover) and (pointer: fine) {
-  .darkroom__albums a:hover {
-    color: var(--sc-accent);
-  }
+  display: flex;
+  align-items: center;
 }
 .darkroom .viewall {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
-/* ───────────────────────────── 6 唱片架（指针翻动） ───────────────────────────── */
+/* ───────────────────────────── 6 唱片架（指针翻动 + 唱片会转） ───────────────────────────── */
 .records {
   padding: clamp(5rem, 9vw, 8rem) var(--sc-gutter);
-  background: var(--sc-canvas);
 }
 .records__inner {
-  max-width: 76rem;
+  max-width: 78rem;
   margin-inline: auto;
 }
 .records__head {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem 2rem;
+  align-items: flex-end;
+  gap: 1rem 2rem;
 }
-.records__hint {
-  color: var(--sc-ink-soft);
+.records__note {
+  position: relative;
+  margin-left: 1rem;
+  translate: 0 1.4rem;
+}
+.records__doodle {
+  --size: 6rem;
+  right: 1%;
+  top: -2.5rem;
 }
 .shelfrow {
   display: flex;
-  gap: clamp(1rem, 2.5vw, 2.25rem);
-  padding: 2.5rem 0 1.5rem;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  padding: 2.75rem 2.5rem 1.5rem 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -630,30 +772,61 @@
   aspect-ratio: 1;
   isolation: isolate;
 }
-/* 封套里探出来的半张黑胶：鼠标移上去再多探出一点 */
-.sleeve__art::before {
-  content: "";
+/* 封套里探出来的那张圆形黑胶：鼠标移上去再多探出一点，并且转起来 */
+.sleeve__disc {
   position: absolute;
   z-index: -1;
   top: 4%;
   right: 4%;
   width: 92%;
   aspect-ratio: 1;
+  transform: translateX(16%);
+  transition: transform 280ms var(--sc-ease-out);
+}
+.sleeve__vinyl {
+  display: block;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background:
-    radial-gradient(circle, #0a0a0a 0 8%, var(--sc-accent) 8.5% 17%, #0b0b0c 17.5% 100%),
-    #0b0b0c;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-  transform: translateX(14%);
-  transition: transform 260ms var(--sc-ease-out);
+    radial-gradient(circle, #1b1410 0 3.2%, #f0a640 3.6% 16%, #120f0d 16.6% 100%),
+    #120f0d;
+  box-shadow: 0 6px 14px -6px rgba(30, 20, 10, 0.55);
 }
-@media (hover: hover) and (pointer: fine) {
-  .sleeve__button:hover .sleeve__art::before {
-    transform: translateX(34%);
+.sleeve__vinyl::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 30deg, transparent 0 8%, rgba(255, 255, 255, 0.16) 12%, transparent 18% 56%, rgba(255, 255, 255, 0.1) 60%, transparent 66%),
+    repeating-radial-gradient(circle, transparent 0 3px, rgba(255, 255, 255, 0.045) 3px 4px);
+  -webkit-mask: radial-gradient(circle, transparent 17%, #000 17.5%);
+  mask: radial-gradient(circle, transparent 17%, #000 17.5%);
+}
+.sleeve__vinyl {
+  position: relative;
+}
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
-.sleeve__button.is-current .sleeve__art::before {
-  transform: translateX(34%);
+@media (hover: hover) and (pointer: fine) {
+  .sleeve__button:hover .sleeve__disc,
+  .sleeve__button:focus-visible .sleeve__disc {
+    transform: translateX(36%);
+  }
+  .sleeve__button:hover .sleeve__vinyl,
+  .sleeve__button:focus-visible .sleeve__vinyl {
+    animation: vinyl-spin 2.2s linear infinite;
+  }
+}
+.sleeve__button.is-current .sleeve__disc {
+  transform: translateX(36%);
+}
+.sleeve__button.is-current .sleeve__vinyl {
+  animation: vinyl-spin 1.8s linear infinite;
 }
 .sleeve__art img,
 .sleeve__blank {
@@ -662,30 +835,32 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  box-shadow: 0 2px 4px hsl(var(--sc-shadow-color) / 0.4), 0 20px 40px -14px hsl(var(--sc-shadow-color) / 0.8);
+  box-shadow:
+    0 1px 2px hsl(30 40% 20% / 0.3),
+    0 16px 28px -14px hsl(30 40% 18% / 0.55);
 }
 .sleeve__blank {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 0.9rem;
-  background: #d9d1c2;
+  background: #e6dac4;
   color: #17130d;
   font-size: 0.9375rem;
   line-height: 1.35;
 }
 .sleeve__blank .mono {
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
 }
 .sleeve__state {
   position: absolute;
   left: 0.5rem;
   bottom: 0.5rem;
-  font-size: 0.6875rem;
-  color: var(--sc-accent-ink);
-  background: var(--sc-accent);
-  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  color: #1a1006;
+  background: #f0a640;
+  padding: 0.1rem 0.45rem;
   border-radius: 2px;
 }
 .sleeve__state:empty {
@@ -694,34 +869,38 @@
 .sleeve__caption {
   display: grid;
   gap: 0.1rem;
-  margin-top: 0.8rem;
+  margin-top: 0.85rem;
 }
 .sleeve__title {
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--sc-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .sleeve__artist {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
 }
 
+/* 常用工具：一张从本子上撕下来的纸，横格线 */
 .toolshelf {
-  margin-top: 3.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--wl-hair);
+  margin-top: 4rem;
+  max-width: 60rem;
+}
+.toolshelf__paper {
+  padding: 2rem clamp(1.25rem, 3vw, 2.25rem) 1.25rem;
 }
 .toolshelf__title {
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 600;
   color: var(--sc-ink);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 .toolshelf__list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
   column-gap: 2.5rem;
 }
 .tool {
@@ -729,9 +908,9 @@
   grid-template-columns: 1.375rem minmax(0, 1fr);
   align-items: center;
   column-gap: 0.9rem;
-  min-height: 3.5rem;
+  min-height: 3.6rem;
   padding: 0.6rem 0;
-  border-bottom: 1px solid var(--wl-hair);
+  border-bottom: 1px solid var(--wl-hair-strong);
   color: var(--sc-ink-soft);
   transition: color 160ms var(--sc-ease-out);
 }
@@ -740,11 +919,12 @@
 }
 .tool__name {
   color: var(--sc-ink);
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  font-weight: 500;
   line-height: 1.3;
 }
 .tool__desc {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.4;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -752,139 +932,281 @@
     color: var(--sc-ink);
   }
 }
+.toolshelf .viewall {
+  margin-top: 0.5rem;
+}
 
-/* ───────────────────────────── 7 窗边（停住） ───────────────────────────── */
+/* ───────────────────────────── 7 写给你（明信片，停住） ───────────────────────────── */
 .window__stage {
-  background: var(--sc-canvas);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4.5rem var(--sc-gutter) 3rem;
 }
-.window__view {
-  position: absolute;
-  inset: 0;
-}
-/* 站到窗边：把房间图放大到窗户上，随这一幕慢慢再往前推一点 */
-.window__view .plate__box {
-  transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
-  transform: scale(calc(1.55 + var(--sc-p, 0) * 0.06));
-}
-.window__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--sc-canvas) 90%, transparent) 0%,
-    color-mix(in oklab, var(--sc-canvas) 74%, transparent) 30%,
-    color-mix(in oklab, var(--sc-canvas) 20%, transparent) 56%,
-    transparent 70%
-  );
-}
-.window__copy {
-  position: absolute;
-  z-index: 2;
-  left: var(--sc-gutter);
-  top: 50%;
-  translate: 0 -50%;
-  width: min(30rem, calc(100vw - 2 * var(--sc-gutter)));
+.window__inner {
+  width: min(62rem, 100%);
   display: grid;
+  justify-items: center;
   gap: 1.25rem;
 }
-.window__coords {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.25rem 1rem;
-  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
-  line-height: 1.1;
-  color: var(--sc-ink);
+.postcard {
+  width: 100%;
 }
-.window__coords span {
-  font-family: var(--sc-font-text);
-  font-size: 0.9375rem;
-  color: var(--sc-ink-soft);
-}
-.nameplate {
+.postcard__paper {
+  position: relative;
   display: grid;
-  gap: 0.85rem;
-  padding: 1.4rem 1.5rem 1.1rem;
-  border: 1px solid var(--wl-hair-strong);
-  border-radius: var(--sc-r-md);
-  background: color-mix(in oklab, var(--sc-canvas) 88%, transparent);
-  box-shadow: var(--sc-edge), var(--sc-e3);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+  min-height: clamp(22rem, 52svh, 30rem);
+  padding: clamp(1.75rem, 3.4vw, 3rem);
+  border-radius: 3px;
 }
-.nameplate__title {
+/* 明信片中间那道竖线（彩铅画的） */
+.postcard__paper::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  bottom: 10%;
+  width: 2px;
+  background: linear-gradient(var(--wl-pencil-blue), var(--wl-pencil-blue)) center / 1.5px 100% no-repeat;
+  opacity: 0.55;
+  filter: url(#wl-pencil);
+}
+.postcard__left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding-bottom: 6rem;
+}
+.postcard__title {
   font-family: var(--sc-font-display);
-  font-size: clamp(1.8rem, 1.4rem + 1.4vw, 2.4rem);
-  font-weight: 500;
-  line-height: 1.1;
+  font-size: clamp(2.6rem, 1.7rem + 2.8vw, 4rem);
+  font-weight: 600;
+  line-height: 1.04;
   color: var(--sc-ink);
 }
-.nameplate__title:focus {
+.postcard__title:focus {
   outline: none;
 }
-.nameplate__lead {
+.postcard__lead {
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  line-height: 1.6;
   color: var(--sc-ink);
+  max-width: 18em;
 }
-.nameplate__email .email__addr {
-  font-size: 1rem;
+.postcard__note {
+  align-self: flex-start;
+  --from: 0;
+  --to: 0.55;
 }
-.nameplate__socials {
-  margin-top: 0.25rem;
-  border-top: 1px solid var(--wl-hair);
+.postcard__crab {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: calc(22 * 6px);
+  height: calc(13 * 6px);
 }
-.nameplate__foot {
+.postcard__crab .crab {
+  --cell: 6px;
+}
+.postcard__right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: clamp(5.5rem, 10vw, 7.5rem);
+}
+/* 邮票：窗外那片夜景，锯齿边（一圈半圆小孔） */
+.postcard__stamp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(5rem, 8vw, 6.5rem);
+  aspect-ratio: 4 / 5;
+  padding: 7px;
+  background: #fffdf7;
+  rotate: 3deg;
+  filter: drop-shadow(0 1px 1.5px hsl(30 40% 20% / 0.35));
+  -webkit-mask:
+    radial-gradient(circle 3px at 5px 5px, transparent 96%, #000) -5px -5px / 10px 10px,
+    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat;
+  mask:
+    radial-gradient(circle 3px at 5px 5px, transparent 96%, #000) -5px -5px / 10px 10px,
+    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat;
+}
+.postcard__stamp {
+  overflow: hidden;
+}
+/* 只取窗外那片：放大到窗户上（和房间图的 FOCUS 对齐） */
+.postcard__stamp img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 51% 20%;
+  transform: scale(2.1);
+  transform-origin: 51% 12%;
+  filter: brightness(1.3) saturate(1.1);
+}
+/* 邮戳：上海的坐标盖在邮票上，蓝色的，有一点没盖实 */
+.postmark {
+  position: absolute;
+  top: 1.4rem;
+  right: clamp(2.2rem, 4.2vw, 3.4rem);
+  width: clamp(8.5rem, 12.5vw, 10rem);
+  height: auto;
+  rotate: -14deg;
+  overflow: visible;
+  color: var(--wl-pencil-blue);
+  opacity: 0.85;
+  filter: url(#wl-pencil);
+  pointer-events: none;
+}
+.postmark circle,
+.postmark .postmark__waves {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.postmark text {
+  fill: currentColor;
+  font-family: var(--sc-font-mono);
+}
+.postmark__ring {
+  font-size: 9.2px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.postmark__city {
+  font-family: var(--sc-font-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+.postcard__to {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--wl-hand-orange);
+}
+.postcard__email .email__addr {
+  font-size: clamp(1.15rem, 0.85rem + 1.1vw, 1.65rem);
+  font-weight: 500;
+  color: var(--sc-ink);
+  text-decoration-color: var(--wl-pencil-orange);
+  text-decoration-thickness: 2px;
+}
+.postcard__socials {
+  margin-top: 0.4rem;
+  border-top: 1px dashed var(--wl-hair-strong);
+}
+.postcard__socials li + li {
+  border-top: 1px dashed var(--wl-hair-strong);
+}
+.window__foot {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
   align-items: center;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--sc-ink-soft);
 }
-.nameplate__foot a {
+.window__foot a {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
   color: var(--sc-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  text-decoration-thickness: 1px;
 }
 
 /* ───────────────────────────── 窄屏：每一幕单独构图 ───────────────────────────── */
-@media (max-width: 860px) {
-  .desk__subject {
-    left: 50%;
-    top: 11svh;
-    bottom: auto;
-    width: min(64vw, 38svh);
+@media (max-width: 1100px) {
+  .self__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
+  .self__margin {
+    order: -1;
+    min-height: 8.5rem;
+    margin-bottom: 1rem;
+  }
+  .self__note {
+    left: auto;
+    right: 0;
+    top: 0.2rem;
+  }
+  .self__note.note--left {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .self__doodle--glove {
+    --size: 5rem;
+    left: 0;
+    top: 0.5rem;
+  }
+  .self__doodle--shoe {
+    --size: 5.5rem;
+    left: 5.5rem;
+    top: 2.4rem;
+  }
+  .self__doodle--goggles {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
   .desk__scrim {
     background: linear-gradient(
       to top,
-      color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
-      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 30%,
-      color-mix(in oklab, var(--sc-canvas) 30%, transparent) 50%,
-      transparent 64%
+      color-mix(in oklab, var(--sc-canvas) 92%, transparent) 0%,
+      color-mix(in oklab, var(--sc-canvas) 74%, transparent) 22%,
+      color-mix(in oklab, var(--sc-canvas) 24%, transparent) 36%,
+      transparent 46%
     );
   }
   .desk__copy {
     max-width: none;
-    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+    gap: 0.75rem;
   }
-  .desk__name {
-    font-size: clamp(3rem, 15vw, 4.2rem);
+  .desk__name,
+  :lang(en) .desk__name {
+    font-size: clamp(2.9rem, 13vw, 4rem);
   }
   .desk__label {
     font-size: 0.8125rem;
   }
+  .desk__tagline {
+    display: none;
+  }
   .bokeh--4 {
     display: none;
   }
-  .desk-tail__inner {
-    margin-left: 0;
-  }
   .rail {
-    padding-bottom: 8svh;
+    padding-bottom: 10svh;
+  }
+  .rail__head {
+    gap: 1rem;
+  }
+  .rail__doodle {
+    --size: 4.5rem;
+  }
+  .exhibit__paper {
+    padding: 1.4rem 1.2rem 1.1rem;
+  }
+  .exhibit__summary {
+    font-size: 0.9375rem;
   }
   .projector__inner {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .projector__note {
+    position: relative;
+    left: 0;
+    bottom: auto;
+    margin-bottom: 0.25rem;
   }
   .spine {
     grid-template-columns: minmax(0, 1fr);
@@ -896,57 +1218,111 @@
   .shelf__inner {
     margin-right: 0;
   }
+  .shelf__note {
+    position: relative;
+    left: 0;
+    top: 0;
+    margin-top: 0.6rem;
+  }
+  .shelf__note.note--left {
+    flex-direction: row;
+  }
+  .shelf__note .note__arrow {
+    display: none;
+  }
+  .darkroom__note {
+    margin-left: 0;
+  }
+  .darkroom__doodle {
+    --size: 4.5rem;
+    top: -3.2rem;
+  }
   .darkroom__stage {
-    height: clamp(40rem, 130svh, 64rem);
+    height: clamp(40rem, 132svh, 64rem);
   }
   .print--back-1 {
-    left: 44%;
+    left: 46%;
     top: 0;
-    width: 50%;
+    width: 48%;
   }
   .print--back-2 {
-    left: 2%;
+    left: 4%;
     top: 3%;
     width: 30%;
   }
   .print--mid-1 {
     left: 34%;
     top: 22%;
-    width: 62%;
+    width: 60%;
   }
   .print--mid-2 {
     left: 4%;
     top: 30%;
-    width: 34%;
+    width: 32%;
   }
   .print--front-1 {
-    left: 2%;
-    top: 62%;
-    width: 80%;
+    left: 3%;
+    top: 61%;
+    width: 78%;
   }
   .print--front-2 {
     left: 58%;
-    top: 50%;
+    top: 47%;
     width: 38%;
   }
-  .window__scrim {
-    background: linear-gradient(
-      to top,
-      color-mix(in oklab, var(--sc-canvas) 95%, transparent) 0%,
-      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 46%,
-      color-mix(in oklab, var(--sc-canvas) 30%, transparent) 70%,
-      transparent 84%
-    );
+  .records__note {
+    margin-left: 0;
+    translate: 0 0.6rem;
   }
-  .window__copy {
-    top: auto;
-    bottom: calc(5rem + env(safe-area-inset-bottom));
-    translate: none;
-    gap: 0.9rem;
+  .records__doodle {
+    --size: 4.5rem;
+    top: -3.4rem;
   }
-  .nameplate {
-    padding: 1.1rem 1.1rem 0.6rem;
-    gap: 0.6rem;
+  .window__stage {
+    align-items: flex-start;
+    padding: 4.25rem var(--sc-gutter) calc(4.5rem + env(safe-area-inset-bottom));
+  }
+  .postcard__paper {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding: 1.4rem 1.2rem 1.2rem;
+  }
+  .postcard__paper::before {
+    display: none;
+  }
+  .postcard__left {
+    gap: 0.7rem;
+    padding-bottom: 0;
+    padding-right: 7rem;
+  }
+  /* 手机：小螃蟹站在批注右边（邮票下面那块空地上） */
+  .postcard__crab {
+    left: auto;
+    right: -0.2rem;
+    bottom: -0.6rem;
+    width: calc(22 * 4px);
+    height: calc(13 * 4px);
+  }
+  .postcard__crab .crab {
+    --cell: 4px;
+  }
+  .postcard__right {
+    position: static;
+    padding-top: 1.2rem;
+    gap: 0.5rem;
+  }
+  .postcard__stamp {
+    top: 1rem;
+    right: 1rem;
+    width: 4.2rem;
+  }
+  .postmark {
+    top: 3.3rem;
+    right: 2.5rem;
+    width: 4.6rem;
+  }
+  .postcard__to {
+    font-size: 1.35rem;
   }
 }
 
@@ -954,14 +1330,25 @@
   .desk__far .plate {
     transform: scale(1.05);
   }
-  .desk__portrait,
-  .window__view .plate__box {
-    transform: none;
-  }
-  .window__view .plate__box {
-    transform: scale(1.55);
-  }
   .desk__haze {
+    animation: none;
+  }
+  .flip__card,
+  .flip.is-back .flip__card {
+    transform: rotate(var(--tilt));
+    transition: none;
+  }
+  .flip__back {
+    transform: none;
+    opacity: 0;
+  }
+  .flip.is-back .flip__back {
+    opacity: 1;
+  }
+  .flip.is-back .flip__front {
+    opacity: 0;
+  }
+  .sleeve__button.is-current .sleeve__vinyl {
     animation: none;
   }
 }

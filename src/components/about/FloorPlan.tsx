@@ -12,6 +12,7 @@ import { PLACES, type PlaceKey } from "@/lib/nav";
  * 3. 点任意一个地方直接跳过去，它就是这一页的导航；
  * 4. 走到「窗边」，平面图缩小，换回首页那组上海坐标，首尾呼应；
  * 5. 手机上收成一个小按钮，点开是抽屉。减少动态效果时小点直接跳到所在的地方，不走路。
+ * 6. 第二版：走进纸面段落之后（<html data-ground="paper">），换成彩铅画在纸上的样子，功能不变（plan.css）。
  *
  * 小点走在哪儿完全由滚动位置算出来（不是动画）：每一幕的顶部进到屏幕 35% 处算「到了」，
  * 底部升到屏幕 85% 处算「离开」，离开和下一处到达之间那半屏的滚动，小点沿路线走过去。
@@ -324,7 +325,7 @@ export function FloorPlan({
   );
 
   return (
-    <nav ref={rootRef} className={`plan${atWindow ? " is-window" : ""}${open ? " is-open" : ""}`} aria-label={navLabel}>
+    <nav ref={rootRef} className={`plan wl-chrome${atWindow ? " is-window" : ""}${open ? " is-open" : ""}`} aria-label={navLabel}>
       {/* 手机：收成一个小按钮 */}
       <button
         ref={toggleRef}

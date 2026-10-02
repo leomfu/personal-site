@@ -71,11 +71,25 @@
     "dotAria": "The light over Shanghai: land and open the full tour",
     "cta": "Land and look around",
     "ctaAria": "Land and look around: open the full tour",
-    "portraitAlt": "Photo of {name}"
+    "portraitAlt": "Colored-pencil portrait of {name}",
+    "note": "Click here to land at my desk"
   },
   "dive": {
     "skip": "Skip",
     "status": "Landing in Shanghai"
+  },
+  "desk": {
+    "screenLabel": "The monitor",
+    "chatTitle": "New chat",
+    "hello": "Hello Claude",
+    "reply": "Hi! Nice to meet you.",
+    "placeholder": "Say something…"
+  },
+  "crab": {
+    "hi": "hi",
+    "bye": "bye!",
+    "deskLabel": "The little crab on the monitor: click it and it says hi",
+    "byeLabel": "The little crab waving goodbye: click it and it says bye"
   },
   "plan": {
     "label": "Floor plan of the room",
@@ -86,18 +100,38 @@
     "goto": "Go to {place}: {title}"
   },
   "places": {
-    "desk": { "name": "The desk", "title": "Who I am" },
-    "screen": { "name": "The screen", "title": "Things I'm building" },
-    "shelf": { "name": "The bookshelf", "title": "Written down" },
-    "projector": { "name": "The projector", "title": "On camera" },
-    "darkroom": { "name": "The darkroom", "title": "Photographed" },
-    "records": { "name": "The record shelf", "title": "What I listen to and use" },
-    "window": { "name": "The window", "title": "Get in touch" }
+    "desk": {
+      "name": "The desk",
+      "title": "Who I am"
+    },
+    "screen": {
+      "name": "The screen",
+      "title": "Things I'm building"
+    },
+    "shelf": {
+      "name": "The bookshelf",
+      "title": "Written down"
+    },
+    "projector": {
+      "name": "The projector",
+      "title": "On camera"
+    },
+    "darkroom": {
+      "name": "The darkroom",
+      "title": "Photographed"
+    },
+    "records": {
+      "name": "The record shelf",
+      "title": "What I listen to and use"
+    },
+    "window": {
+      "name": "The window",
+      "title": "A note to you"
+    }
   },
   "tour": {
     "backOrbit": "Back home",
     "landed": "Landed",
-    "portraitAlt": "Portrait of {name}",
     "selfIntro": "In his own words",
     "screenLead": "{count} things, each labelled with where it stands now.",
     "shotAlt": "Screenshot of {name}",
@@ -123,7 +157,22 @@
     "playSleeve": "Play {title} by {artist}",
     "pauseSleeve": "Pause {title}",
     "windowLabel": "Contact · {year} · Email and social accounts · Usually replies within two or three days",
-    "windowLead": "If you want to say something, just send an email."
+    "windowLead": "If you want to say something, just send an email.",
+    "notes": {
+      "self": "Graduated July 2026",
+      "live": "It's live. Open it and use it",
+      "daily": "I use it every day",
+      "shelf": "My {count} latest pieces",
+      "video": "Posted on {platform}",
+      "flip": "Tap a photo to flip it over",
+      "records": "Pick one to play it on the turntable",
+      "reply": "I usually reply within two or three days"
+    },
+    "flipAria": "{caption}: flip it over to see where and when",
+    "flipBackAria": "{caption}: flip it back",
+    "postcardTo": "Send to",
+    "postmark": "Postmark: {city} {coords}",
+    "stampAlt": "Stamp: Shanghai at night through the window"
   },
   "nav": {
     "label": "Pages",

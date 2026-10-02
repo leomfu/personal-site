@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Point, SceneImage, SceneManifest, SceneVideo } from "./sceneTypes";
+import type { Point, Quad, SceneImage, SceneManifest, SceneVideo } from "./sceneTypes";
 
 /**
  * 场景素材清单（2026-10 改版，scroll-craft）。只在构建时跑（有 node:fs）。
@@ -33,6 +33,26 @@ const FOCUS = {
   /** 房间 9:16：窗户玻璃的中心 */
   roomTall: { x: 0.6, y: 0.22 },
 } satisfies Record<string, Point>;
+
+/**
+ * 书房图上显示器屏幕的四个角（归一化坐标，顺序：左上、右上、右下、左下）。
+ * 第 1 幕把一块真实的网页（Claude 聊天画面 + 小螃蟹）贴在这里，换图之后也要重新量。
+ * 横版基本正对镜头；竖版是透视四边形，页面上用 matrix3d 贴合（components/about/DeskScreen）。
+ */
+const SCREEN = {
+  roomWide: [
+    { x: 0.379, y: 0.369 },
+    { x: 0.639, y: 0.369 },
+    { x: 0.639, y: 0.644 },
+    { x: 0.379, y: 0.644 },
+  ],
+  roomTall: [
+    { x: 0.311, y: 0.445 },
+    { x: 0.719, y: 0.444 },
+    { x: 0.731, y: 0.595 },
+    { x: 0.322, y: 0.622 },
+  ],
+} satisfies Record<string, Quad>;
 
 /** 读 webp 文件头拿宽高（VP8 / VP8L / VP8X 三种都认）。读不出来返回 null */
 function webpSize(file: string): { width: number; height: number } | null {
@@ -90,7 +110,7 @@ export function getScene(): SceneManifest {
       wide: image("scene/room-16x9.webp", { width: 2560, height: 1440 }, FOCUS.roomWide),
       tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }, FOCUS.roomTall),
     },
-    portrait: image("scene/portrait.webp", { width: 1200, height: 1600 }),
+    screen: { wide: SCREEN.roomWide, tall: SCREEN.roomTall },
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),
     dive: {
       wide: video("scene/dive-16x9.mp4"),

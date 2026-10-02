@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { SocialIcon } from "@/components/icons/SocialIcon";
 import { siteConfig } from "~/site.config";
 
-/** 有链接的社交账号（href 为空的不显示，比如还没给分享链接的抖音） */
+/** 有链接的社交账号（href 为空的不显示） */
 export const visibleSocials = () => siteConfig.socials.filter((social) => Boolean(social.href));
 
 /**

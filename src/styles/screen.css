@@ -1,0 +1,405 @@
+/* ============================================================================
+   第 1 幕显示器里的画面（components/about/DeskScreen）和小螃蟹（components/crab/Crab）。
+   屏幕是一块固定设计尺寸的界面，JS 用 matrix3d 贴到书房图的屏幕四角上，
+   所以这里的尺寸都是「设计像素」：横版 640×380，竖版 560×430（竖版在手机上缩得更小，字给得更大）。
+   ========================================================================== */
+
+.dscreen {
+  --pad: 22px;
+  --bar: 40px;
+  --floor: 78px;
+  --fs-bar: 17px;
+  --fs-me: 27px;
+  --fs-ai: 23px;
+  --fs-in: 22px;
+  --cell: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 640px;
+  height: 380px;
+  overflow: hidden;
+  transform-origin: 0 0;
+  border-radius: 3px;
+  background:
+    radial-gradient(120% 90% at 50% 18%, #233047 0%, #18202f 62%, #121824 100%);
+  color: #e8ecf3;
+  font-family: var(--sc-font-text);
+  letter-spacing: 0;
+  /* 还没算好 matrix3d 之前不露出来，免得一帧糊在左上角 */
+  visibility: hidden;
+}
+.dscreen[style*="matrix3d"] {
+  visibility: visible;
+}
+.dscreen.is-tall {
+  --pad: 26px;
+  --bar: 54px;
+  --floor: 110px;
+  --fs-bar: 24px;
+  --fs-me: 38px;
+  --fs-ai: 31px;
+  --fs-in: 30px;
+  --cell: 6px;
+}
+/* 屏幕玻璃：一道很淡的斜向反光和暗角，让它像是在那个房间里亮着，而不是贴上去的 */
+.dscreen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 46%),
+    radial-gradient(130% 100% at 50% 45%, transparent 58%, rgba(4, 6, 10, 0.4) 100%);
+}
+.dscreen__ui {
+  position: absolute;
+  inset: 0;
+}
+.dscreen__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  height: var(--bar);
+  padding: 0 var(--pad);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: var(--fs-bar);
+  color: #a9b6ca;
+}
+.dscreen__dot {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 2px;
+  background: #e0773c;
+}
+.dscreen__log {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  top: calc(var(--bar) + var(--pad) * 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--pad) * 0.6);
+}
+.dscreen__me {
+  align-self: flex-end;
+  padding: 0.3em 0.7em;
+  border-radius: 0.65em 0.65em 0.2em 0.65em;
+  background: #34435e;
+  font-size: var(--fs-me);
+  font-weight: 500;
+  line-height: 1.25;
+  opacity: 0;
+  transform: translateY(0.7em);
+  transition:
+    opacity 260ms var(--sc-ease-out),
+    transform 340ms var(--sc-ease-out);
+}
+.dscreen__me.is-on {
+  opacity: 1;
+  transform: none;
+}
+.dscreen__ai {
+  align-self: flex-start;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  max-width: 92%;
+  font-size: var(--fs-ai);
+  line-height: 1.35;
+}
+.dscreen__mark {
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  margin-top: 0.36em;
+  border-radius: 2px;
+  background: #e0773c;
+  opacity: 0;
+  transition: opacity 200ms var(--sc-ease-out);
+}
+.dscreen__dots {
+  display: none;
+  gap: 0.3em;
+  padding-top: 0.55em;
+}
+.dscreen__dots i {
+  width: 0.36em;
+  height: 0.36em;
+  border-radius: 50%;
+  background: #a9b6ca;
+  animation: dots 900ms ease-in-out infinite;
+}
+.dscreen__dots i:nth-child(2) {
+  animation-delay: 150ms;
+}
+.dscreen__dots i:nth-child(3) {
+  animation-delay: 300ms;
+}
+@keyframes dots {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.dscreen__reply {
+  opacity: 0;
+  transform: translateY(0.4em);
+  transition:
+    opacity 320ms var(--sc-ease-out),
+    transform 380ms var(--sc-ease-out);
+}
+.dscreen__ai.is-thinking .dscreen__mark,
+.dscreen__ai.is-on .dscreen__mark {
+  opacity: 1;
+}
+.dscreen__ai.is-thinking .dscreen__dots {
+  display: flex;
+}
+.dscreen__ai.is-thinking .dscreen__reply {
+  display: none;
+}
+.dscreen__ai.is-on .dscreen__reply {
+  opacity: 1;
+  transform: none;
+}
+.dscreen__input {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: calc(var(--floor) + 2px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  height: calc(var(--fs-in) * 2.2);
+  padding: 0 0.35em 0 0.75em;
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.6em;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: var(--fs-in);
+}
+.dscreen__text {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.dscreen__text.is-empty {
+  color: #8592a8;
+}
+.dscreen__caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: #e8ecf3;
+  animation: caret 900ms steps(1) infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+.dscreen__send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.55em;
+  height: 1.55em;
+  border-radius: 0.42em;
+  background: #3a465b;
+  color: #c9d1de;
+  transition:
+    background-color 200ms var(--sc-ease-out),
+    color 200ms var(--sc-ease-out);
+}
+.dscreen__send svg {
+  width: 0.7em;
+  height: 0.7em;
+}
+.dscreen__send.is-ready {
+  background: #e0773c;
+  color: #1c0f06;
+}
+/* 小螃蟹的地盘：屏幕最下面一条 */
+.dscreen__floor {
+  position: absolute;
+  left: calc(var(--pad) * 0.5);
+  right: calc(var(--pad) * 0.5);
+  bottom: 0;
+  height: var(--floor);
+}
+.dscreen .crab {
+  bottom: calc(var(--floor) * 0.12);
+}
+
+/* ------------------------------------------------------------ 小螃蟹 -- */
+.crab {
+  --cell: 4px;
+  --crab-body: #e0773c;
+  --crab-claw: #eb8b4d;
+  --crab-shade: #b0562a;
+  --crab-eye: #fff6ea;
+  --crab-pupil: #24140a;
+  --crab-mouth: #7a2f10;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: block;
+  width: calc(22 * var(--cell));
+  height: calc(13 * var(--cell));
+  padding: 0;
+  border-radius: 6px;
+  color: inherit;
+}
+button.crab {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+button.crab:focus-visible {
+  outline: 2px solid #f0a640;
+  outline-offset: 5px;
+}
+.crab__body {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.crab__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.crab__legs--b {
+  opacity: 0;
+}
+.crab__body.is-step .crab__legs--a {
+  opacity: 0;
+}
+.crab__body.is-step .crab__legs--b {
+  opacity: 1;
+}
+.crab__body.is-step .crab__art {
+  transform: translateY(calc(var(--cell) * -0.25));
+}
+/* 眼珠：--lx（-1 / 0 / 1）往左或往右挪一格，--ly（-1 / 0）往上一格 */
+.crab__pupil--l {
+  transform: translate(calc(min(var(--lx), 0) * 1px), calc(var(--ly) * 1px));
+}
+.crab__pupil--r {
+  transform: translate(calc(max(var(--lx), 0) * 1px), calc(var(--ly) * 1px));
+}
+.crab__lids {
+  opacity: 0;
+}
+.crab__body.is-blink .crab__lids {
+  opacity: 1;
+}
+/* 挥钳子：绕胳膊根转（SVG 用户坐标，一个格子是 1） */
+.crab__claw {
+  transform-box: view-box;
+}
+.crab__claw--l {
+  transform-origin: 3.5px 7px;
+}
+.crab__claw--r {
+  transform-origin: 18.5px 7px;
+}
+.crab__body.is-waving .crab__claw--r {
+  animation: crab-wave 300ms ease-in-out 4 alternate;
+}
+.crab__body.is-hop .crab__claw--l {
+  animation: crab-wave-l 300ms ease-in-out 2 alternate;
+}
+@keyframes crab-wave {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(26deg);
+  }
+}
+@keyframes crab-wave-l {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-26deg);
+  }
+}
+.crab__body.is-hop {
+  animation: crab-hop 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+@keyframes crab-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  18% {
+    transform: translateY(0) scale(1.08, 0.9);
+  }
+  48% {
+    transform: translateY(-48%) scale(0.96, 1.05);
+  }
+  80% {
+    transform: translateY(0) scale(1.05, 0.94);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+/* 减少动态效果：点一下只换个姿势（举钳子） */
+.crab__body.is-pose .crab__claw--r {
+  transform: rotate(26deg);
+}
+.crab__say {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--cell) * 1.5);
+  z-index: 2;
+  padding: 0.12em 0.5em 0.16em;
+  border-radius: 0.4em;
+  background: #fff7ec;
+  color: #24140a;
+  font-family: var(--sc-font-mono);
+  font-size: calc(var(--cell) * 4.4);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 0.3em) scale(0.92);
+  transition:
+    opacity 160ms var(--sc-ease-out),
+    transform 220ms var(--sc-ease-out);
+}
+.crab__say::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  border: 0.32em solid transparent;
+  border-top-color: #fff7ec;
+  translate: -50% 0;
+}
+.crab__say.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dscreen__me,
+  .dscreen__reply {
+    transition: none;
+  }
+  .dscreen__caret,
+  .dscreen__dots i {
+    animation: none;
+  }
+}
