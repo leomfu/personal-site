@@ -36,7 +36,7 @@ export type SceneManifest = {
   /** 三千米高空的上海夜景航拍：俯冲后备方案的中间一段（不在时退回两段） */
   aerial: ScenePair;
   room: ScenePair;
-  /** 书房图上显示器屏幕的四个角（横版、竖版各一组） */
+  /** 书房图上 MacBook 屏幕的四个角（横版、竖版各一组） */
   screen: { wide: Quad; tall: Quad };
   /**
    * 彩铅画像（暖色素描纸，不透明）：只用在首页名片上，当作一张真实的画纸。

@@ -1,13 +1,13 @@
 import type { CSSProperties } from "react";
 
 /**
- * 爱好涂鸦（BRIEF R2）：站主海报上的拳击手套、跑鞋、泳镜，再加相机、黑胶、小螃蟹。
+ * 爱好涂鸦（BRIEF R2）：站主海报上的拳击手套、跑鞋、泳镜，再加相机、黑胶。
  * 彩铅线条，散在页边，不挡内容；只是装饰，读屏跳过。
  * 每一笔一条 path（pathLength=1），随所在幕的 --sc-p 一笔接一笔画出来（paper.css 的 .doodle）。
- * 这只铅笔小螃蟹只是一幅涂鸦；会动、能点的像素小螃蟹另有其物（components/crab），全站只出现两次。
+ * 小螃蟹不画成涂鸦：它是 Claude Code 里那只像素小螃蟹（components/crab），每个区域住一只（BRIEF R6 / R7）。
  */
 
-export type DoodleKind = "glove" | "shoe" | "goggles" | "camera" | "vinyl" | "crab";
+export type DoodleKind = "glove" | "shoe" | "goggles" | "camera" | "vinyl";
 
 /** 100 × 100 的画布里手画的线 */
 const STROKES: Record<DoodleKind, string[]> = {
@@ -46,14 +46,6 @@ const STROKES: Record<DoodleKind, string[]> = {
     "M62 50A12 12 0 1 1 38 50A12 12 0 1 1 62 50",
     "M52 50A2 2 0 1 1 48 50A2 2 0 1 1 52 50",
     "M28 30C34 22 44 18 54 18",
-  ],
-  crab: [
-    "M24 62C24 48 76 48 76 62C76 74 24 74 24 62Z",
-    "M42 51L39 40M58 51L61 40",
-    "M42 38A3 3 0 1 1 36 38A3 3 0 1 1 42 38M64 38A3 3 0 1 1 58 38A3 3 0 1 1 64 38",
-    "M26 57C17 54 13 47 14 40M14 40C5 37 4 24 13 19L17 28L23 25C25 33 21 39 14 40M74 57C83 54 87 47 86 40M86 40C95 37 96 24 87 19L83 28L77 25C75 33 79 39 86 40",
-    "M28 68L16 76M32 71L23 82M72 68L84 76M68 71L77 82",
-    "M44 64C47 67 53 67 56 64",
   ],
 };
 

@@ -4,6 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { AlbumGrid } from "@/components/photos/AlbumGrid";
 import { PageHead } from "@/components/shell/PageHead";
+import { Crab } from "@/components/crab/Crab";
+import { getAlbumLines, getCrabCopy } from "@/lib/crabLines";
 import { localized } from "@/lib/format";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
@@ -49,12 +51,19 @@ export default async function AlbumPage({ params }: { params: Promise<Params> })
   const next = albums[index + 1];
   const t = await getTranslations("photos");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
+  const albumLines = await getAlbumLines(locale, album, crab);
   const title = localized(locale, album.title, album.titleEn);
 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("darkroom.name")} title={title} lead={t("albumMeta", { year: album.year, count: album.photos.length })} />
+        <PageHead
+          place={tp("darkroom.name")}
+          title={title}
+          lead={t("albumMeta", { year: album.year, count: album.photos.length })}
+          crab={<Crab variant="photographer" label={crab.label.photographer} lines={albumLines} side="up-left" />}
+        />
         <AlbumGrid photos={album.photos} title={title} />
 
         <nav className="article__pager" aria-label={t("pager")}>

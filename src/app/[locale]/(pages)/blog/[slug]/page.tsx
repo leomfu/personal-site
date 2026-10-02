@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArticleToc } from "@/components/blog/ArticleToc";
+import { Crab } from "@/components/crab/Crab";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { getPosts } from "@/lib/content";
+import { getArticleLines, getCrabCopy } from "@/lib/crabLines";
 import { localized, longDate } from "@/lib/format";
 import { extractHeadings, renderMarkdown } from "@/lib/markdown";
 import { pageMetadata } from "@/lib/metadata";
@@ -37,6 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
 /**
  * 文章详情：一列好读的正文（收在 68ch 左右）+ 宽屏右侧目录 + 上一篇 / 下一篇。
+ * 页头右边蹲着书架那只戴圆眼镜的小螃蟹（BRIEF R7），说这一篇多长、哪天发的。
  * 英文路由有译本（content/posts/<slug>.en.md）就读译本，没有就读原文并标一行原文语言。
  */
 export default async function PostPage({ params }: { params: Promise<Params> }) {
@@ -53,6 +56,8 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
 
   const t = await getTranslations("blog");
   const tType = await getTranslations("blog.types");
+  const crab = await getCrabCopy(locale);
+  const crabLines = await getArticleLines(locale, post);
 
   const translated = locale === "en" && post.body_en !== undefined;
   const body = translated ? (post.body_en as string) : post.body;
@@ -65,7 +70,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain article">
-        <header className="article__head" data-sc-in>
+        <header className="article__head has-crab" data-sc-in>
           <p className="article__meta mono">
             <span>{longDate(post.date, locale)}</span>
             <span>{tType(post.type)}</span>
@@ -80,6 +85,9 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
               })}
             </p>
           )}
+          <span className="crab-slot crab-slot--article">
+            <Crab variant="reader" label={crab.label.reader} lines={crabLines} side="up-left" />
+          </span>
         </header>
 
         <div className={showToc ? "article__layout has-toc" : "article__layout"}>

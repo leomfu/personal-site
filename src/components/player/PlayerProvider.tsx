@@ -49,6 +49,11 @@ export function usePlayer() {
   return value;
 }
 
+/** 不在 PlayerProvider 里时返回 null（给只想「看一眼在不在放歌」的小件用，比如戴耳机的小螃蟹） */
+export function usePlayerMaybe() {
+  return useContext(PlayerContext);
+}
+
 export function PlayerProvider({
   library,
   children,

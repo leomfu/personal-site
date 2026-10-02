@@ -1,0 +1,991 @@
+/* ============================================================================
+   Claude 小螃蟹一家（components/crab/Crab.tsx，像素图在 ./art.ts）。
+   这份样式自给自足：404 页不带 globals.css，所以这里不依赖站内 token，
+   颜色、缓动、字体栈都有自己的后备值（站内有 --sc-font-text 时用站内的字）。
+
+   动作只动 transform / opacity。SVG 里的 px 就是 clawd 坐标（一格 = 3.5），
+   所以「抬一格」写 translateY(-3.5px)。像素动作用 step-end：一帧一帧跳，不滑。
+   类名：
+     .is-on / .is-off  在不在视口里（is-off 时一切暂停）
+     .is-act           招牌动作（时长见 Crab.tsx 的 ACT_MS）
+     .is-fidget        待机小动作
+     .is-blink         眨眼（眼睛变短）
+     .is-walk          走路（腿交替上下）
+     .is-groove        迷你播放器在放歌（戴耳机那只点头）
+     .is-pose          减少动态效果时点一下换的姿势
+   ========================================================================== */
+
+.crab {
+  /* 身体（112 那一截）画多宽。各个位置在自己的 CSS 里改它 */
+  --crab-size: 56px;
+  --crab-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --crab-focus: #c4561c;
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  flex: none;
+  box-sizing: content-box;
+  width: calc(var(--crab-w) * var(--crab-size) / 112);
+  height: calc(var(--crab-h) * var(--crab-size) / 112);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  vertical-align: bottom;
+  cursor: pointer;
+  translate: var(--x, 0) 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.crab--still {
+  cursor: default;
+}
+.crab:focus-visible {
+  outline: 2px solid var(--crab-focus);
+  outline-offset: 4px;
+}
+.crab:focus:not(:focus-visible) {
+  outline: none;
+}
+.crab__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+@media (hover: hover) and (pointer: fine) {
+  .crab:active .crab__svg {
+    transform: translateY(1px);
+  }
+}
+
+/* 会动的几块：转动 / 翻转的支点用 clawd 坐标（Part.origin 写在行内） */
+.crab__all,
+.crab__part {
+  transform-box: view-box;
+}
+.crab__all {
+  transform-origin: 56px 78px;
+}
+.crab__eyes {
+  transform: translate(calc(var(--lx, 0) * 3.5px), calc(var(--ly, 0) * 2px));
+}
+.crab__eye {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.crab.is-blink .crab__eye {
+  transform: scaleY(0.2);
+}
+
+/* 平时看不见的特效 */
+.crab__flash,
+.crab__note1,
+.crab__note2 {
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------- 关键帧 -- */
+
+/* 腿：两组交替抬一格 */
+@keyframes crab-leg-a {
+  0% {
+    transform: translateY(-3.5px);
+  }
+  50% {
+    transform: none;
+  }
+}
+@keyframes crab-leg-b {
+  0% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-3.5px);
+  }
+}
+@keyframes crab-bob {
+  0% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-1.75px);
+  }
+}
+/* 挥手：一侧钳子上下 */
+@keyframes crab-wave {
+  0% {
+    transform: none;
+  }
+  12% {
+    transform: translateY(-7px);
+  }
+  25% {
+    transform: translateY(-14px);
+  }
+  38% {
+    transform: translateY(-7px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  62% {
+    transform: translateY(-7px);
+  }
+  75% {
+    transform: translateY(-14px);
+  }
+  88%,
+  100% {
+    transform: none;
+  }
+}
+/* 跳：整体位移 */
+@keyframes crab-hop {
+  0%,
+  100% {
+    transform: none;
+  }
+  14% {
+    transform: translateY(1.75px);
+  }
+  30% {
+    transform: translateY(-12px);
+  }
+  45% {
+    transform: translateY(-17.5px);
+  }
+  60% {
+    transform: translateY(-12px);
+  }
+  76% {
+    transform: none;
+  }
+  84% {
+    transform: translateY(1.75px);
+  }
+}
+@keyframes crab-nod {
+  0% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(2.5px);
+  }
+}
+
+/* ------------------------------------------------------------ 走路（roam） -- */
+.crab.is-walk .crab__legs--a {
+  animation: crab-leg-a 280ms step-end infinite;
+}
+.crab.is-walk .crab__legs--b {
+  animation: crab-leg-b 280ms step-end infinite;
+}
+.crab.is-walk .crab__all {
+  animation: crab-bob 280ms step-end infinite;
+}
+
+/* ------------------------------------------------------- 书桌前：原样的桌宠 -- */
+.crab--desk.is-act .crab__all {
+  animation: crab-hop 620ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.crab--desk.is-act .crab__claw--r {
+  animation: crab-wave 900ms step-end 260ms;
+}
+.crab--desk.is-pose .crab__claw--r {
+  transform: translateY(-14px);
+}
+
+/* ------------------------------------------------------- 首页：宇航员 -- */
+@keyframes crab-float {
+  from {
+    transform: translateY(0) rotate(-2deg);
+  }
+  to {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+@keyframes crab-light {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes crab-lean-l {
+  0%,
+  100% {
+    transform: none;
+  }
+  14%,
+  84% {
+    transform: translateX(-3px) rotate(-8deg);
+  }
+}
+.crab--astronaut.is-on .crab__all {
+  animation: crab-float 3.4s ease-in-out infinite alternate;
+}
+.crab--astronaut.is-on .crab__light {
+  animation: crab-light 1.8s step-end infinite;
+}
+/* 招牌动作：身子朝左下（「降落，进来看看」按钮那边）一歪，左钳子挥三下，眼睛也看过去 */
+.crab--astronaut.is-act .crab__all {
+  animation: crab-lean-l 1500ms var(--crab-ease);
+}
+.crab--astronaut.is-act .crab__claw--l {
+  animation: crab-wave 1100ms step-end 200ms;
+}
+.crab--astronaut.is-act .crab__eyes,
+.crab--astronaut.is-pose .crab__eyes {
+  transform: translate(-3.5px, 2px);
+}
+.crab--astronaut.is-fidget .crab__eyes {
+  animation: crab-glance 900ms step-end;
+}
+.crab--astronaut.is-pose .crab__claw--l {
+  transform: translateY(-14px);
+}
+
+/* ------------------------------------------------- 在做的东西：安全帽 + 扳手 -- */
+@keyframes crab-push {
+  0% {
+    transform: none;
+  }
+  34%,
+  86% {
+    transform: translateX(6px);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-knock {
+  0% {
+    transform: none;
+  }
+  10% {
+    transform: translateY(-10.5px);
+  }
+  20% {
+    transform: translateY(3.5px);
+  }
+  32% {
+    transform: translateY(-10.5px);
+  }
+  42% {
+    transform: translateY(3.5px);
+  }
+  54% {
+    transform: translateY(-10.5px);
+  }
+  64% {
+    transform: translateY(3.5px);
+  }
+  76%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-knock-1 {
+  0% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(-10.5px);
+  }
+  60% {
+    transform: translateY(3.5px);
+  }
+  85%,
+  100% {
+    transform: none;
+  }
+}
+/* 招牌动作：推着往前走几步（展品卡片在它右边），再拿扳手敲三下 */
+.crab--builder.is-act .crab__all {
+  animation: crab-push 1700ms var(--crab-ease);
+}
+.crab--builder.is-act .crab__legs--a {
+  animation: crab-leg-a 200ms step-end 3;
+}
+.crab--builder.is-act .crab__legs--b {
+  animation: crab-leg-b 200ms step-end 3;
+}
+.crab--builder.is-act .crab__claw--r {
+  animation: crab-knock 1000ms step-end 620ms;
+}
+.crab--builder.is-fidget .crab__claw--r {
+  animation: crab-knock-1 700ms step-end;
+}
+.crab--builder.is-pose .crab__claw--r {
+  transform: translateY(-10.5px);
+}
+
+/* ----------------------------------------- 写下来的：圆眼镜 + 铅笔 + 便签本 -- */
+/* 招牌动作：先把写满的那页翻上去，再趴下来在新的一页上写（墨线一截一截长出来） */
+@keyframes crab-flip {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  10% {
+    transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(-0.3);
+  }
+  30% {
+    transform: scaleY(-0.9);
+    opacity: 1;
+  }
+  34% {
+    transform: scaleY(-0.9);
+    opacity: 0;
+  }
+  35%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes crab-ink {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  10% {
+    transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(-0.3);
+  }
+  30% {
+    transform: scaleY(-0.9);
+    opacity: 1;
+  }
+  34% {
+    opacity: 0;
+  }
+  36% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.25);
+  }
+  64% {
+    transform: scaleX(0.5);
+  }
+  78% {
+    transform: scaleX(0.75);
+  }
+  92%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-scribble {
+  0%,
+  34% {
+    transform: none;
+  }
+  38% {
+    transform: translate(-10.5px, 7px);
+  }
+  44% {
+    transform: translate(-7px, 3.5px);
+  }
+  50% {
+    transform: translate(-3.5px, 7px);
+  }
+  56% {
+    transform: translate(-1.75px, 3.5px);
+  }
+  62% {
+    transform: translate(1.75px, 7px);
+  }
+  68% {
+    transform: translate(3.5px, 3.5px);
+  }
+  74% {
+    transform: translate(7px, 7px);
+  }
+  80% {
+    transform: translate(8.75px, 3.5px);
+  }
+  86% {
+    transform: translate(10.5px, 7px);
+  }
+  94%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-lean-r {
+  0%,
+  34% {
+    transform: none;
+  }
+  40%,
+  90% {
+    transform: translateY(1.75px) rotate(3deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-scribble-1 {
+  0% {
+    transform: none;
+  }
+  25% {
+    transform: translate(-3.5px, 3.5px);
+  }
+  50% {
+    transform: translate(0, 7px);
+  }
+  75% {
+    transform: translate(3.5px, 3.5px);
+  }
+  100% {
+    transform: none;
+  }
+}
+.crab--reader.is-act .crab__sheet {
+  animation: crab-flip 1900ms step-end;
+}
+.crab--reader.is-act .crab__ink {
+  animation: crab-ink 1900ms step-end;
+}
+.crab--reader.is-act .crab__claw--r {
+  animation: crab-scribble 1900ms step-end;
+}
+.crab--reader.is-act .crab__all {
+  animation: crab-lean-r 1900ms var(--crab-ease);
+}
+.crab--reader.is-fidget .crab__claw--r {
+  animation: crab-scribble-1 800ms step-end;
+}
+.crab--reader.is-pose .crab__claw--r {
+  transform: translate(3.5px, 7px);
+}
+
+/* --------------------------------------------- 录下来的：导演帽 + 场记板 -- */
+@keyframes crab-raise {
+  0%,
+  100% {
+    transform: none;
+  }
+  10%,
+  90% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes crab-clap {
+  0%,
+  16% {
+    transform: none;
+  }
+  22% {
+    transform: rotate(-16deg);
+  }
+  30%,
+  42% {
+    transform: rotate(-32deg);
+  }
+  46%,
+  56% {
+    transform: none;
+  }
+  62% {
+    transform: rotate(-32deg);
+  }
+  72% {
+    transform: rotate(-32deg);
+  }
+  76%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-clap-bob {
+  0%,
+  46% {
+    transform: none;
+  }
+  48% {
+    transform: translateY(1.75px);
+  }
+  54%,
+  76% {
+    transform: none;
+  }
+  78% {
+    transform: translateY(1.75px);
+  }
+  84%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-clap-1 {
+  0% {
+    transform: none;
+  }
+  30% {
+    transform: rotate(-32deg);
+  }
+  70%,
+  100% {
+    transform: none;
+  }
+}
+.crab--director.is-act .crab__claw--r {
+  animation: crab-raise 1300ms step-end;
+}
+.crab--director.is-act .crab__arm {
+  animation: crab-clap 1300ms step-end;
+}
+.crab--director.is-act .crab__all {
+  animation: crab-clap-bob 1300ms step-end;
+}
+.crab--director.is-fidget .crab__arm {
+  animation: crab-clap-1 650ms step-end;
+}
+.crab--director.is-pose .crab__arm {
+  transform: rotate(-32deg);
+}
+
+/* --------------------------------------------- 拍下来的：贝雷帽 + 胸前相机 -- */
+@keyframes crab-flash {
+  0%,
+  28% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  32% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  44% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  54%,
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+@keyframes crab-dip {
+  0%,
+  26% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(1.75px);
+  }
+  42%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-squint {
+  0%,
+  30% {
+    transform: none;
+  }
+  32% {
+    transform: scaleY(0.2);
+  }
+  48%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-press {
+  0% {
+    transform: none;
+  }
+  14% {
+    transform: translateY(-3.5px);
+  }
+  28% {
+    transform: translateY(1.75px);
+  }
+  44%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-glance {
+  0% {
+    transform: none;
+  }
+  25% {
+    transform: translate(-3.5px, 0);
+  }
+  60% {
+    transform: translate(3.5px, 0);
+  }
+  90%,
+  100% {
+    transform: none;
+  }
+}
+.crab--photographer.is-act .crab__flash {
+  animation: crab-flash 1000ms step-end;
+}
+.crab--photographer.is-act .crab__all {
+  animation: crab-dip 1000ms step-end;
+}
+.crab--photographer.is-act .crab__eye {
+  animation: crab-squint 1000ms step-end;
+}
+.crab--photographer.is-act .crab__claw--r {
+  animation: crab-press 1000ms step-end;
+}
+.crab--photographer.is-fidget .crab__eyes {
+  animation: crab-glance 900ms step-end;
+}
+.crab--photographer.is-pose .crab__flash {
+  opacity: 1;
+}
+
+/* ------------------------------------------------- 听的和用的：大耳机 -- */
+@keyframes crab-sway {
+  0%,
+  100% {
+    transform: none;
+  }
+  12.5% {
+    transform: rotate(-5deg);
+  }
+  25% {
+    transform: none;
+  }
+  37.5% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: none;
+  }
+  62.5% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: none;
+  }
+  87.5% {
+    transform: rotate(5deg);
+  }
+}
+@keyframes crab-note {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-14px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(3.5px, -21px);
+  }
+}
+.crab--dj.is-act .crab__all {
+  animation: crab-sway 2000ms step-end;
+}
+.crab--dj.is-act .crab__note1 {
+  animation: crab-note 1200ms steps(6) 100ms;
+}
+.crab--dj.is-act .crab__note2 {
+  animation: crab-note 1200ms steps(6) 700ms;
+}
+/* 迷你播放器在放歌：一拍一点头，音符慢慢冒 */
+.crab--dj.is-groove.is-on:not(.is-act) .crab__all {
+  animation: crab-nod 640ms step-end infinite;
+}
+.crab--dj.is-groove.is-on:not(.is-act) .crab__note1 {
+  animation: crab-note 2560ms steps(8) infinite;
+}
+.crab--dj.is-groove.is-on:not(.is-act) .crab__note2 {
+  animation: crab-note 2560ms steps(8) 1280ms infinite;
+}
+.crab--dj.is-fidget:not(.is-groove) .crab__all {
+  animation: crab-nod 450ms step-end 2;
+}
+.crab--dj.is-pose .crab__note1,
+.crab--dj.is-pose .crab__note2 {
+  opacity: 1;
+}
+
+/* -------------------------------------------------- 写给你：邮差帽 + 信封 -- */
+@keyframes crab-hand {
+  0%,
+  100% {
+    transform: none;
+  }
+  10% {
+    transform: translateX(3.5px);
+  }
+  20%,
+  86% {
+    transform: translate(7px, -3.5px);
+  }
+}
+@keyframes crab-wiggle {
+  0%,
+  100% {
+    transform: none;
+  }
+  25% {
+    transform: translateY(-1.75px);
+  }
+  50% {
+    transform: none;
+  }
+  75% {
+    transform: translateY(-1.75px);
+  }
+}
+/* 招牌动作：递出信封，另一只钳子挥手告别 */
+.crab--mail.is-act .crab__claw--r {
+  animation: crab-hand 1900ms step-end;
+}
+.crab--mail.is-act .crab__claw--l {
+  animation: crab-wave 1100ms step-end 620ms;
+}
+.crab--mail.is-fidget .crab__claw--r {
+  animation: crab-wiggle 700ms step-end;
+}
+.crab--mail.is-pose .crab__claw--r {
+  transform: translate(7px, -3.5px);
+}
+.crab--mail.is-pose .crab__claw--l {
+  transform: translateY(-14px);
+}
+
+/* ------------------------------------------------------- 404：拳击手套 -- */
+@keyframes crab-jab-r {
+  0%,
+  100% {
+    transform: none;
+  }
+  8% {
+    transform: translateX(7px);
+  }
+  14% {
+    transform: translateX(14px);
+  }
+  22%,
+  60% {
+    transform: none;
+  }
+  66% {
+    transform: translateX(14px);
+  }
+  74% {
+    transform: none;
+  }
+}
+@keyframes crab-jab-l {
+  0%,
+  34% {
+    transform: none;
+  }
+  40% {
+    transform: translateX(-14px);
+  }
+  48%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-bounce {
+  0%,
+  100% {
+    transform: none;
+  }
+  25% {
+    transform: translateY(-3.5px);
+  }
+  50% {
+    transform: none;
+  }
+  75% {
+    transform: translateY(-3.5px);
+  }
+}
+.crab--boxer.is-act .crab__claw--r {
+  animation: crab-jab-r 1250ms step-end;
+}
+.crab--boxer.is-act .crab__claw--l {
+  animation: crab-jab-l 1250ms step-end;
+}
+.crab--boxer.is-act .crab__all {
+  animation: crab-bounce 625ms step-end 2;
+}
+.crab--boxer.is-fidget .crab__all {
+  animation: crab-bounce 700ms step-end;
+}
+.crab--boxer.is-pose .crab__claw--r {
+  transform: translateX(14px);
+}
+
+/* 离开视口 / 页面隐藏：所有循环停在原地 */
+.crab.is-off,
+.crab.is-off * {
+  animation-play-state: paused !important;
+}
+
+/* ---------------------------------------------------------------- 气泡 -- */
+/* 像素风的对话框：2px 墨线方框 + 一截台阶状的小尾巴，和小螃蟹是一套画法。字要清楚，不用手写体 */
+.crab__say {
+  --tail-x: 50%;
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--crab-say-max, 15em);
+  padding: 0.4em 0.72em 0.45em;
+  border: 2px solid var(--crab-say-ink, #2b2420);
+  border-radius: 2px;
+  background: var(--crab-say-bg, #fffaf0);
+  color: var(--crab-say-ink, #2b2420);
+  font-family: var(--sc-font-text, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif);
+  font-size: var(--crab-say-size, 14px);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: pre-line;
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% 0;
+  transition: opacity 200ms ease-out;
+}
+.crab__say.is-on {
+  opacity: 1;
+  animation: crab-say-in 240ms var(--crab-ease);
+}
+@keyframes crab-say-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* 尾巴：两级台阶（墨色外框 + 纸色里子） */
+.crab__say::before,
+.crab__say::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: var(--tail-x);
+  width: 10px;
+  height: 6px;
+  translate: -50% 0;
+  background: var(--crab-say-ink, #2b2420);
+  clip-path: polygon(0 0, 100% 0, 100% 34%, 70% 34%, 70% 67%, 40% 67%, 40% 100%, 20% 100%, 20% 0);
+}
+.crab__say::after {
+  top: calc(100% - 2px);
+  width: 6px;
+  height: 4px;
+  translate: calc(-50% - 1px) 0;
+  background: var(--crab-say-bg, #fffaf0);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 66% 50%, 66% 100%, 33% 100%, 33% 0);
+}
+/* 往左展开：气泡右边对齐小螃蟹，尾巴在右边 */
+.crab--say-up-left .crab__say {
+  --tail-x: calc(100% - 1.6em);
+  left: auto;
+  right: 0;
+  translate: none;
+}
+.crab--say-up-right .crab__say {
+  --tail-x: 1.6em;
+  left: 0;
+  translate: none;
+}
+/* 侧边：竖着居中，尾巴指向小螃蟹 */
+.crab--say-left .crab__say,
+.crab--say-right .crab__say {
+  bottom: auto;
+  top: 30%;
+  translate: 0 -50%;
+}
+.crab--say-left .crab__say {
+  left: auto;
+  right: calc(100% + 10px);
+}
+.crab--say-right .crab__say {
+  left: calc(100% + 10px);
+}
+.crab--say-left .crab__say::before,
+.crab--say-right .crab__say::before {
+  top: 50%;
+  left: 100%;
+  width: 6px;
+  height: 10px;
+  translate: 0 -50%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.crab--say-right .crab__say::before {
+  left: auto;
+  right: 100%;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+.crab--say-left .crab__say::after,
+.crab--say-right .crab__say::after {
+  display: none;
+}
+
+.crab__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 减少动态效果：不跳、不走、不循环；点一下只换姿势（上面的 .is-pose），气泡只淡入淡出 */
+@media (prefers-reduced-motion: reduce) {
+  .crab,
+  .crab * {
+    animation: none !important;
+  }
+  .crab:active .crab__svg {
+    transform: none;
+  }
+  .crab__say.is-on {
+    animation: crab-say-fade 200ms ease-out !important;
+  }
+}
+@keyframes crab-say-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

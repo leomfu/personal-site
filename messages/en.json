@@ -79,17 +79,77 @@
     "status": "Landing in Shanghai"
   },
   "desk": {
-    "screenLabel": "The monitor",
     "chatTitle": "New chat",
     "hello": "Hello Claude",
-    "reply": "Hi! Nice to meet you.",
-    "placeholder": "Say something…"
+    "reply": "Hi! What shall we work on today?",
+    "placeholder": "Reply…",
+    "send": "Send"
   },
   "crab": {
-    "hi": "hi",
-    "bye": "bye!",
-    "deskLabel": "The little crab on the monitor: click it and it says hi",
-    "byeLabel": "The little crab waving goodbye: click it and it says bye"
+    "label": {
+      "desk": "Claude's little crab on the screen: click and it hops and waves",
+      "astronaut": "Little crab in a space helmet: click and it waves toward the “{cta}” button",
+      "builder": "Little crab in a hard hat: click and it gets to work with its wrench",
+      "reader": "Little crab in round glasses: click and it turns the page and writes",
+      "director": "Little crab in a director's cap: click and it snaps the clapperboard",
+      "photographer": "Little crab in a beret: click and it takes a photo",
+      "dj": "Little crab in big headphones: click and it sways to the beat",
+      "mail": "Little crab in a mail carrier's cap: click and it hands over a letter and waves goodbye",
+      "boxer": "Little crab in boxing gloves: click and it throws a punch"
+    },
+    "lines": {
+      "home": {
+        "here": "This is Shanghai. He's right here.",
+        "who": "His name is {name}. He's {age} and studied {major}.",
+        "go": "Tap “{cta}” to land at his desk."
+      },
+      "desk": {
+        "hi": "Hi! This is his desk.",
+        "kb": "He built his knowledge base with Claude Code and Obsidian.",
+        "learn": "He's learning to use AI to do the work faster and better."
+      },
+      "screen": {
+        "daily": "He uses {name} every day.",
+        "live": "{name} is live. Open it and start.",
+        "made": "{name} has made {metrics} so far."
+      },
+      "metricJoin": " and ",
+      "shelf": {
+        "latest": "The latest one is “{title}”.",
+        "count": "{count} pieces here so far.",
+        "notes": "He digests what he reads into notes that link to each other."
+      },
+      "article": {
+        "minutes": "About {minutes} min to read.",
+        "date": "Published {date}."
+      },
+      "projector": {
+        "latest": "Latest video: {title}.",
+        "platform": "His videos go up on {platform}."
+      },
+      "darkroom": {
+        "album": "His photos of {place}, {year}.",
+        "cities": "{count} cities so far: {places}."
+      },
+      "listJoin": ", ",
+      "records": {
+        "play": "Tap a record and it plays in the little player in the corner.",
+        "resident": "The resident record is {artist}. It's self-hosted, so it always plays."
+      },
+      "tools": {
+        "daily": "These are the things he uses every day.",
+        "first": "First on the list: {tool} ({desc})."
+      },
+      "window": {
+        "mail": "Want to say something? Just write him an email.",
+        "reply": "He usually replies within two or three days.",
+        "socials": "You can also find him on {socials}. See you!"
+      },
+      "notFound": {
+        "nothing": "This page doesn't exist.",
+        "home": "Try the home page."
+      }
+    }
   },
   "plan": {
     "label": "Floor plan of the room",

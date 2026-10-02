@@ -106,18 +106,44 @@
   gap: 0.9rem;
 }
 /* 这一页在房间里的哪个地方：彩铅手写的一个小标注 */
-/* 小螃蟹的位置（见 PageHead 的 crab prop）：页头右侧，标题那一行的高度 */
+/* 这一区的小螃蟹（见 PageHead 的 crab prop，BRIEF R7）：页头右侧，标题那一行的高度，站在一条看不见的地平线上 */
+.crab-slot--page,
+.crab-slot--article {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
 .crab-slot--page {
   right: 0;
   top: 1.5rem;
-  width: 4.5rem;
+  width: 6rem;
   height: 4.5rem;
+}
+.crab-slot--page .crab,
+.crab-slot--article .crab {
+  --crab-size: 58px;
+  --crab-focus: var(--sc-accent);
+}
+/* 文章页头：蹲在日期那一行的右端，身子往上长进页面顶上的留白里，不占标题的宽度 */
+.article__head.has-crab {
+  position: relative;
+}
+.crab-slot--article {
+  right: 0;
+  top: 1.4rem;
+  width: 6rem;
+  height: 4.5rem;
+  translate: 0 -100%;
 }
 @media (max-width: 640px) {
   .crab-slot--page {
-    width: 3.5rem;
+    width: 4.5rem;
     height: 3.5rem;
     top: 0.5rem;
+  }
+  .crab-slot--page .crab,
+  .crab-slot--article .crab {
+    --crab-size: 46px;
   }
 }
 .pagehead__place {

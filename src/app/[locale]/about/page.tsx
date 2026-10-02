@@ -11,6 +11,7 @@ import { LangSwitch } from "@/components/common/LangSwitch";
 import { SocialLinks } from "@/components/common/SocialLinks";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { Crab } from "@/components/crab/Crab";
+import { MusicCrab } from "@/components/crab/MusicCrab";
 import { ToolIcon } from "@/components/icons/ToolIcon";
 import { RESIDENT } from "@/components/player/PlayerProvider";
 import { ScenePlate } from "@/components/scene/ScenePlate";
@@ -19,6 +20,7 @@ import { DrawDriver } from "@/components/sketch/DrawDriver";
 import { Ground } from "@/components/sketch/Ground";
 import { Note } from "@/components/sketch/Note";
 import { getAbout, getMusic, getPosts, getProjects, getTools, getVideos, localized, shortDate } from "@/lib/content";
+import { getCrabCopy } from "@/lib/crabLines";
 import { renderMarkdown } from "@/lib/markdown";
 import { pageMetadata } from "@/lib/metadata";
 import { PLACES, localePath, type PlaceKey } from "@/lib/nav";
@@ -41,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * 完整介绍页：他房间里的 7 个地方（BRIEF §6–§9，第二版 R1–R4）。Grammar 是 Gallery / catalog：
  * 每一幕是一个地方，展品配事实标签（名称 · 年份 · 用到的 · 状态），不写推销文案。
  *
- * 第二版：夜里开场，翻开速写本。第 1 幕还是夜里的书房（提亮加暖，不放人像，显示器里是 Claude 和小螃蟹）；
+ * 第二版：夜里开场，翻开速写本。第 1 幕还是夜里的书房（提亮加暖，不放人像，MacBook 屏幕里是 Claude 应用和小螃蟹桌宠）；
  * 往下滚，一张撕下来的速写本纸从下面盖上来，从这里开始整页是暖色纸面，作品像贴在本子上，
  * 彩铅批注和爱好涂鸦随滚动一笔一笔画出来。
  *
@@ -56,6 +58,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  *   7   写给你   pin（短停）                 1.25   笃定：速写本最后一页，停在这里，不淡出
  *
  * 导航是房间平面图（components/about/FloorPlan），没有顶栏。
+ * 每个地方住着一只 Claude 小螃蟹（BRIEF R7，components/crab）：1 屏幕上的桌宠、2 安全帽、3 圆眼镜、4 导演帽、
+ * 5 贝雷帽、6 大耳机、7 邮差帽。气泡第三人称介绍他，句子从 content/ 现取（lib/crabLines）。
  * 文案全部走 messages 的 tour / places / desk / crab 命名空间；内容全部来自 content/。
  */
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -67,7 +71,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const tProfile = await getTranslations("profile");
   const tTypes = await getTranslations("blog.types");
   const tRecords = await getTranslations("records.player");
-  const tCrab = await getTranslations("crab");
+  const crab = await getCrabCopy(locale);
 
   const en = locale === "en";
   const scene = getScene();
@@ -164,10 +168,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           aria-labelledby="desk-title"
         >
           <div data-sc-stage className="sc-stage desk__stage">
-            {/* 远景：深夜的房间（位移最小）。显示器那块屏幕长在图上，跟着视差和推镜一起动 */}
+            {/* 远景：深夜的房间（位移最小）。MacBook 那块屏幕长在图上，跟着视差和推镜一起动 */}
             <div className="desk__far room-far" data-sc-parallax={DESK_FAR_RATE}>
               <ScenePlate pair={scene.room} eager className="tone-room">
-                <DeskScreen quads={scene.screen} />
+                <DeskScreen quads={scene.screen} crabLabel={crab.label.desk} crabLines={crab.lines.desk} />
               </ScenePlate>
             </div>
             {/* 氛围：台灯的一束暖光雾（自己慢慢变，只做分离） */}
@@ -240,7 +244,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     <Mark kind="wave" className="act__wave" from={0.02} to={0.14} />
                   </h2>
                   <p className="rail__lead">{t("screenLead", { count: projects.length })}</p>
-                  <Doodle kind="crab" tone="blue" className="rail__doodle" rot={-6} from={0.04} to={0.2} />
+                  {/* 戴安全帽的小螃蟹：站在纸上，推着右边的展品往前走、拿扳手敲敲打打 */}
+                  <div className="rail__crab">
+                    <Crab variant="builder" label={crab.label.builder} lines={crab.lines.screen} side="up-right" />
+                  </div>
                 </header>
 
                 {projects.map((project, i) => {
@@ -321,6 +328,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 </h2>
                 <Note className="shelf__note" text={t("notes.shelf", { count: posts.length })} arrow="left" tone="blue" rot={-3} auto />
               </div>
+              {/* 戴圆眼镜的小螃蟹：蹲在横格本第一条线上，翻页写字 */}
+              <div className="shelf__crab">
+                <Crab variant="reader" label={crab.label.reader} lines={crab.lines.shelf} side="up-left" />
+              </div>
               <ol className="spines" data-sc-in data-sc-stagger="70">
                 {posts.map((post) => (
                   <li key={post.slug}>
@@ -352,6 +363,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   <div className="projector__film scrap" style={{ "--tilt": "-1deg" } as CSSProperties}>
                     <span className="tape tape--corner-l" aria-hidden />
                     <span className="tape tape--corner-r tape--blue" aria-hidden />
+                    {/* 戴导演帽的小螃蟹：坐在黑卡纸上沿，打板 */}
+                    <div className="projector__crab">
+                      <Crab variant="director" label={crab.label.director} lines={crab.lines.projector} side="up-left" />
+                    </div>
                     <div className="projector__frame" data-sc-reveal="left" data-sc-reveal-at="0.14 0.42">
                       <Link href={localePath(locale, "/videos")} className="projector__screen">
                         {video.cover && (
@@ -398,6 +413,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   {tPlaces("darkroom.title")}
                 </h2>
                 <Note className="darkroom__note" text={t("notes.flip")} arrow="down-right" tone="blue" rot={-2} auto />
+                {/* 戴贝雷帽、胸前挂相机的小螃蟹：按快门，闪一下 */}
+                <div className="darkroom__crab">
+                  <Crab variant="photographer" label={crab.label.photographer} lines={crab.lines.darkroom} side="up-left" />
+                </div>
                 <Doodle kind="camera" className="darkroom__doodle" rot={8} auto />
               </div>
               <div className="darkroom__stage">
@@ -446,6 +465,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   {tPlaces("records.title")}
                 </h2>
                 <Note className="records__note" text={t("notes.records")} arrow="down-left" rot={-2} auto />
+                {/* 戴大耳机的小螃蟹：跟着节奏摇摆；迷你播放器放歌时点头 */}
+                <div className="records__crab">
+                  <MusicCrab label={crab.label.dj} lines={[...crab.lines.records, crab.lines.tools[0]]} side="up-left" />
+                </div>
                 <Doodle kind="vinyl" tone="blue" className="records__doodle" rot={-10} auto />
               </div>
               <div className="shelfrow" data-sc-in data-sc-stagger="60">
@@ -510,8 +533,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                       </h2>
                       <p className="postcard__lead">{t("windowLead")}</p>
                       <Note className="postcard__note note--inline" text={t("notes.reply")} arrow="none" tone="blue" rot={-2} from={0} to={0.01} />
+                      {/* 戴邮差帽的小螃蟹：递出信封、挥手告别 */}
                       <div className="postcard__crab">
-                        <Crab mode="wave" say={tCrab("bye")} label={tCrab("byeLabel")} />
+                        <Crab variant="mail" label={crab.label.mail} lines={crab.lines.window} side="up-right" />
                       </div>
                     </div>
                     <div className="postcard__right">

@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { VideoCard } from "@/components/media/VideoCard";
 import { PageHead } from "@/components/shell/PageHead";
+import { Crab } from "@/components/crab/Crab";
+import { getCrabCopy } from "@/lib/crabLines";
 import { getVideos } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { routing } from "@/i18n/routing";
@@ -21,12 +23,18 @@ export default async function VideosPage({ params }: { params: Promise<{ locale:
   setRequestLocale(locale);
   const t = await getTranslations("videos");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
   const videos = getVideos();
 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("projector.name")} title={t("title")} lead={t("lead")} />
+        <PageHead
+          place={tp("projector.name")}
+          title={t("title")}
+          lead={t("lead")}
+          crab={<Crab variant="director" label={crab.label.director} lines={crab.lines.projector} side="up-left" />}
+        />
         <div className="videos">
           {videos.map((video) => (
             <div key={`${video.platform}-${video.id}`} data-sc-in>

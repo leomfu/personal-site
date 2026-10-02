@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { PageHead } from "@/components/shell/PageHead";
+import { Crab } from "@/components/crab/Crab";
+import { getCrabCopy } from "@/lib/crabLines";
 import { getProjects, localized } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { getProjectShot } from "@/lib/scene";
@@ -28,12 +30,18 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
   setRequestLocale(locale);
   const t = await getTranslations("projects");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
   const projects = getProjects();
 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("screen.name")} title={t("title")} lead={t("lead")} />
+        <PageHead
+          place={tp("screen.name")}
+          title={t("title")}
+          lead={t("lead")}
+          crab={<Crab variant="builder" label={crab.label.builder} lines={crab.lines.screen} side="up-left" />}
+        />
         <ol className="exhibits">
           {projects.map((project, i) => {
             const shot = getProjectShot(project.slug);

@@ -300,10 +300,10 @@
   font-size: 1.125rem;
   max-width: 18em;
 }
-.rail__doodle {
-  --size: 6.5rem;
-  position: relative;
-  margin-top: 0.5rem;
+/* 戴安全帽的小螃蟹：站在说明下面的纸上，朝右边的展品 */
+.rail__crab {
+  justify-self: start;
+  margin-top: 0.4rem;
 }
 .exhibit {
   position: relative;
@@ -743,6 +743,37 @@
   right: 1%;
   top: -2.5rem;
 }
+
+/* ─────────── 小螃蟹们（components/crab，BRIEF R7）：每一幕一只，坐在纸边或卡片角上，不挡内容和按钮 ─────────── */
+.act .crab {
+  --crab-size: 64px;
+  --crab-focus: var(--sc-accent);
+}
+/* 书架：蹲在横格本第一条线上（这一条高度是 0，小螃蟹往上长，占的是标题下面那段空白） */
+.shelf__crab {
+  position: relative;
+  height: 0;
+}
+.shelf__crab .crab {
+  position: absolute;
+  right: clamp(0.5rem, 3vw, 2.5rem);
+  bottom: -1px;
+}
+/* 投影：坐在黑卡纸上沿，右边胶带的里侧 */
+.projector__crab {
+  position: absolute;
+  z-index: 2;
+  right: 16%;
+  bottom: calc(100% - 3px);
+  display: flex;
+}
+/* 暗房、唱片架：标题那一行的末尾，和批注站在一条线上 */
+.darkroom__crab,
+.records__crab {
+  align-self: flex-end;
+  display: flex;
+  margin-left: 0.5rem;
+}
 .shelfrow {
   display: flex;
   gap: clamp(1.5rem, 3vw, 2.75rem);
@@ -1001,15 +1032,12 @@
   --from: 0;
   --to: 0.55;
 }
+/* 戴邮差帽的小螃蟹：站在明信片左下角，递信封、挥手告别 */
 .postcard__crab {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: calc(22 * 6px);
-  height: calc(13 * 6px);
-}
-.postcard__crab .crab {
-  --cell: 6px;
+  display: flex;
 }
 .postcard__right {
   position: relative;
@@ -1190,8 +1218,8 @@
   .rail__head {
     gap: 1rem;
   }
-  .rail__doodle {
-    --size: 4.5rem;
+  .rail__crab {
+    margin-top: 0;
   }
   .exhibit__paper {
     padding: 1.4rem 1.2rem 1.1rem;
@@ -1278,6 +1306,9 @@
     --size: 4.5rem;
     top: -3.4rem;
   }
+  .act .crab {
+    --crab-size: 50px;
+  }
   .window__stage {
     align-items: flex-start;
     padding: 4.25rem var(--sc-gutter) calc(4.5rem + env(safe-area-inset-bottom));
@@ -1299,12 +1330,7 @@
   .postcard__crab {
     left: auto;
     right: -0.2rem;
-    bottom: -0.6rem;
-    width: calc(22 * 4px);
-    height: calc(13 * 4px);
-  }
-  .postcard__crab .crab {
-    --cell: 4px;
+    bottom: -0.4rem;
   }
   .postcard__right {
     position: static;

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { PageHead } from "@/components/shell/PageHead";
+import { Crab } from "@/components/crab/Crab";
+import { getCrabCopy } from "@/lib/crabLines";
 import { localized } from "@/lib/format";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
@@ -26,12 +28,18 @@ export default async function PhotosPage({ params }: { params: Promise<{ locale:
   setRequestLocale(locale);
   const t = await getTranslations("photos");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
   const albums = getAlbums();
 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("darkroom.name")} title={t("title")} lead={t("lead")} />
+        <PageHead
+          place={tp("darkroom.name")}
+          title={t("title")}
+          lead={t("lead")}
+          crab={<Crab variant="photographer" label={crab.label.photographer} lines={crab.lines.darkroom} side="up-left" />}
+        />
         <div className="albums">
           {albums.map((album) => {
             const title = localized(locale, album.title, album.titleEn);

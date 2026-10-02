@@ -79,17 +79,77 @@
     "status": "正在降落到上海"
   },
   "desk": {
-    "screenLabel": "显示器",
     "chatTitle": "新对话",
     "hello": "Hello Claude",
-    "reply": "你好！很高兴见到你。",
-    "placeholder": "写点什么…"
+    "reply": "你好！今天想做点什么？",
+    "placeholder": "回复…",
+    "send": "发送"
   },
   "crab": {
-    "hi": "hi",
-    "bye": "bye!",
-    "deskLabel": "显示器里的小螃蟹：点一下，它会跟你打招呼",
-    "byeLabel": "挥手告别的小螃蟹：点一下，它会跟你说再见"
+    "label": {
+      "desk": "屏幕上的 Claude 小螃蟹：点一下，它会跳起来挥手",
+      "astronaut": "戴宇航员头盔的小螃蟹：点一下，它会朝「{cta}」按钮挥钳子",
+      "builder": "戴安全帽的小螃蟹：点一下，它会拿扳手敲敲打打",
+      "reader": "戴圆眼镜的小螃蟹：点一下，它会翻页写字",
+      "director": "戴导演帽的小螃蟹：点一下，它会打板",
+      "photographer": "戴贝雷帽的小螃蟹：点一下，它会按快门",
+      "dj": "戴大耳机的小螃蟹：点一下，它会跟着节奏摇摆",
+      "mail": "戴邮差帽的小螃蟹：点一下，它会递出信封、挥手告别",
+      "boxer": "戴拳击手套的小螃蟹：点一下，它会出拳"
+    },
+    "lines": {
+      "home": {
+        "here": "这里是上海，他就在这儿。",
+        "who": "他叫{name}，{age} 岁，学的是{major}。",
+        "go": "点「{cta}」，就降落到他的书桌前。"
+      },
+      "desk": {
+        "hi": "hi！这是他的书桌。",
+        "kb": "他的知识库是用 Claude Code 加 Obsidian 搭的。",
+        "learn": "他在学着用 AI 把手上的活干得更快更好。"
+      },
+      "screen": {
+        "daily": "{name} 这个他每天都在用。",
+        "live": "{name}已经上线，点开就能用。",
+        "made": "{name} 已经做出 {metrics}。"
+      },
+      "metricJoin": "、",
+      "shelf": {
+        "latest": "最新一篇是《{title}》。",
+        "count": "这里一共 {count} 篇。",
+        "notes": "他把读到的资料都消化成互相链接的笔记。"
+      },
+      "article": {
+        "minutes": "这篇大约 {minutes} 分钟读完。",
+        "date": "发布于 {date}。"
+      },
+      "projector": {
+        "latest": "最新一条：{title}。",
+        "platform": "他的视频发在{platform}。"
+      },
+      "darkroom": {
+        "album": "他拍的{place}，{year} 年。",
+        "cities": "他拍过 {count} 个城市：{places}。"
+      },
+      "listJoin": "、",
+      "records": {
+        "play": "点一张唱片，就在右下角的小播放器里放。",
+        "resident": "常驻那张碟是{artist}，自己托管，永远能放。"
+      },
+      "tools": {
+        "daily": "这些是他每天在用的东西。",
+        "first": "排第一的是 {tool}：{desc}。"
+      },
+      "window": {
+        "mail": "想说点什么，就给他写封邮件。",
+        "reply": "他一般两三天内回。",
+        "socials": "也能在 {socials}找到他。下次见！"
+      },
+      "notFound": {
+        "nothing": "这一页不存在。",
+        "home": "回首页看看吧。"
+      }
+    }
   },
   "plan": {
     "label": "房间平面图",

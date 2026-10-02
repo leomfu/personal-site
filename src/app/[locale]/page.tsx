@@ -3,10 +3,12 @@ import { CopyEmail } from "@/components/common/CopyEmail";
 import { LangSwitch } from "@/components/common/LangSwitch";
 import { SocialLinks } from "@/components/common/SocialLinks";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
+import { Crab } from "@/components/crab/Crab";
 import { DiveLink } from "@/components/home/DiveLink";
 import { HomeStage } from "@/components/home/HomeStage";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import { Note } from "@/components/sketch/Note";
+import { getCrabCopy } from "@/lib/crabLines";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
 import { getScene } from "@/lib/scene";
@@ -36,12 +38,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * R6（站主修正）：介绍块放回左边，和第一版一样；上海光点在它右侧，引线从名片右缘连过去。
  * 入口有两个，做同一件事（俯冲进完整介绍页）：上海那颗脉冲光点，和全页唯一用强调色填满的主按钮。
  * 手机上主按钮是底部的全宽大按钮。
+ * 上海光点右上方漂着一只戴宇航员头盔的 Claude 小螃蟹（BRIEF R7）：点它会朝主按钮挥钳子，冒一句关于他的事。
  */
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const tProfile = await getTranslations("profile");
+  const crab = await getCrabCopy(locale);
 
   const en = locale === "en";
   const scene = getScene();
@@ -156,8 +160,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <span className="sh__lng mono" aria-hidden>
                 {coords.lng.toFixed(2)}°E
               </span>
-              {/* 给首页小螃蟹（宇航员）预留的位置，见 home.css .crab-slot--home；另一位代理放 <Crab />，这里留空 */}
-              <span className="crab-slot crab-slot--home" data-crab-slot="home" />
+              {/* 戴宇航员头盔的小螃蟹：漂在光点右上方，点它朝「降落，进来看看」挥钳子（位置见 home.css .crab-slot--home） */}
+              <span className="crab-slot crab-slot--home" data-crab-slot="home">
+                <Crab variant="astronaut" label={crab.label.astronaut} lines={crab.lines.home} side="up" />
+              </span>
               <DiveLink href={tour} className="sh__dot" ariaLabel={t("dotAria")} dot>
                 <span className="sh__ring" aria-hidden />
                 <span className="sh__core" aria-hidden />

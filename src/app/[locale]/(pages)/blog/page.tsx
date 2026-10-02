@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogList, type PostCard } from "@/components/blog/BlogList";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { PageHead } from "@/components/shell/PageHead";
+import { Crab } from "@/components/crab/Crab";
+import { getCrabCopy } from "@/lib/crabLines";
 import { getPosts } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { routing } from "@/i18n/routing";
@@ -21,6 +23,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = await getTranslations("blog");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
 
   // 正文不进客户端包，只给列表需要的字段；标签和阅读时长在这里按语言取好
   const en = locale === "en";
@@ -41,7 +44,12 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("shelf.name")} title={t("title")} lead={t("lead", { count: posts.length })} />
+        <PageHead
+          place={tp("shelf.name")}
+          title={t("title")}
+          lead={t("lead", { count: posts.length })}
+          crab={<Crab variant="reader" label={crab.label.reader} lines={crab.lines.shelf} side="up-left" />}
+        />
         <BlogList posts={posts} />
       </main>
     </ScrollCraftRoot>

@@ -182,8 +182,8 @@
   top: 2.85rem;
 }
 
-/* 给首页小螃蟹（宇航员，BRIEF R7）预留的位置：在上海光点右上方，约 80px 见方，坐在海面上，不压标签和名片。
-   另一位代理把 <Crab /> 放进 [data-crab-slot="home"]。默认空着，不占交互 */
+/* 首页小螃蟹（宇航员，BRIEF R7）的位置：在上海光点右上方，约 80px 见方，漂在海面上空，不压标签和名片。
+   这一层（.home__marks）不接鼠标，只有小螃蟹自己接 */
 .crab-slot {
   position: absolute;
   width: 5rem;
@@ -196,6 +196,13 @@
 .crab-slot--home {
   left: 3.4rem;
   top: -6.4rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.crab-slot--home .crab {
+  --crab-size: 62px;
+  --crab-focus: var(--sc-accent);
 }
 
 .sh__dot {

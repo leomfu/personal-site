@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { ToolIcon } from "@/components/icons/ToolIcon";
 import { PageHead } from "@/components/shell/PageHead";
+import { MusicCrab } from "@/components/crab/MusicCrab";
+import { getCrabCopy } from "@/lib/crabLines";
 import { getTools, localized } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 import { routing } from "@/i18n/routing";
@@ -21,12 +23,18 @@ export default async function ToolsPage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
   const t = await getTranslations("tools");
   const tp = await getTranslations("places");
+  const crab = await getCrabCopy(locale);
   const tools = getTools();
 
   return (
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
-        <PageHead place={tp("records.name")} title={t("title")} lead={t("lead")} />
+        <PageHead
+          place={tp("records.name")}
+          title={t("title")}
+          lead={t("lead")}
+          crab={<MusicCrab label={crab.label.dj} lines={crab.lines.tools} side="up-left" />}
+        />
         <div className="toolcard scrap">
           <span className="tape tape--blue" aria-hidden />
           <div className="scrap__paper deckle-top toolcard__paper">

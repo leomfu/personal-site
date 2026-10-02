@@ -1,49 +1,62 @@
 /* ============================================================================
-   第 1 幕显示器里的画面（components/about/DeskScreen）和小螃蟹（components/crab/Crab）。
+   第 1 幕 MacBook 屏幕里的 Claude 应用窗口（components/about/DeskScreen）。
    屏幕是一块固定设计尺寸的界面，JS 用 matrix3d 贴到书房图的屏幕四角上，
-   所以这里的尺寸都是「设计像素」：横版 640×380，竖版 560×430（竖版在手机上缩得更小，字给得更大）。
+   所以这里的尺寸都是「设计像素」：横版 640×408，竖版 560×450（竖版在手机上缩得只剩一百多像素宽，字给得更大）。
+   横竖用和 <picture> 同一个条件（max-aspect-ratio: 4/5）切换，第一帧就是对的尺寸。
+   小螃蟹本身的样式在 components/crab/crab.css。
    ========================================================================== */
 
 .dscreen {
+  --m: 14px;
+  --perch: 74px;
+  --bar: 34px;
   --pad: 22px;
-  --bar: 40px;
-  --floor: 78px;
-  --fs-bar: 17px;
-  --fs-me: 27px;
-  --fs-ai: 23px;
-  --fs-in: 22px;
-  --cell: 4px;
+  --fs-title: 15px;
+  --fs-me: 25px;
+  --fs-ai: 22px;
+  --fs-in: 20px;
+  --spark: 30px;
+  --in-h: 52px;
+  --ink: #2b2420;
+  --ink-soft: #8a7f70;
+  --claude: #d97757;
   position: absolute;
   left: 0;
   top: 0;
   z-index: 2;
   width: 640px;
-  height: 380px;
+  height: 408px;
   overflow: hidden;
   transform-origin: 0 0;
-  border-radius: 3px;
+  /* 桌面壁纸：暖色的浅沙色，窗口浮在上面 */
   background:
-    radial-gradient(120% 90% at 50% 18%, #233047 0%, #18202f 62%, #121824 100%);
-  color: #e8ecf3;
+    radial-gradient(120% 90% at 30% 0%, #efe4d2 0%, #e3d3bb 55%, #d5c0a2 100%);
+  color: var(--ink);
   font-family: var(--sc-font-text);
   letter-spacing: 0;
+  line-height: 1.3;
   /* 还没算好 matrix3d 之前不露出来，免得一帧糊在左上角 */
   visibility: hidden;
 }
 .dscreen[style*="matrix3d"] {
   visibility: visible;
 }
-.dscreen.is-tall {
-  --pad: 26px;
-  --bar: 54px;
-  --floor: 110px;
-  --fs-bar: 24px;
-  --fs-me: 38px;
-  --fs-ai: 31px;
-  --fs-in: 30px;
-  --cell: 6px;
+@media (max-aspect-ratio: 4/5) {
+  .dscreen {
+    --m: 18px;
+    --perch: 104px;
+    --bar: 0px;
+    --pad: 22px;
+    --fs-me: 48px;
+    --fs-ai: 42px;
+    --fs-in: 40px;
+    --spark: 50px;
+    --in-h: 78px;
+    width: 560px;
+    height: 450px;
+  }
 }
-/* 屏幕玻璃：一道很淡的斜向反光和暗角，让它像是在那个房间里亮着，而不是贴上去的 */
+/* 屏幕玻璃：一道很淡的斜向反光和暗角，让它像是在那个夜里的房间里亮着，而不是贴上去的 */
 .dscreen::after {
   content: "";
   position: absolute;
@@ -51,48 +64,113 @@
   z-index: 5;
   pointer-events: none;
   background:
-    linear-gradient(118deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 30%, transparent 46%),
-    radial-gradient(130% 100% at 50% 45%, transparent 58%, rgba(4, 6, 10, 0.4) 100%);
+    linear-gradient(118deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 28%, transparent 44%),
+    radial-gradient(130% 110% at 50% 40%, transparent 62%, rgba(30, 20, 10, 0.22) 100%);
 }
-.dscreen__ui {
+
+/* 窗口顶边上面那一条：桌宠的地盘 */
+.dscreen__perch {
   position: absolute;
-  inset: 0;
+  left: calc(var(--m) + 6px);
+  right: calc(var(--m) + 6px);
+  top: 0;
+  height: var(--perch);
+  z-index: 3;
 }
-.dscreen__bar {
-  display: flex;
-  align-items: center;
-  gap: 0.55em;
-  height: var(--bar);
-  padding: 0 var(--pad);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: var(--fs-bar);
-  color: #a9b6ca;
-}
-.dscreen__dot {
-  width: 0.55em;
-  height: 0.55em;
-  border-radius: 2px;
-  background: #e0773c;
-}
-.dscreen__log {
+.dscreen__perch .crab {
+  --crab-size: 64px;
+  --crab-say-size: 22px;
+  --crab-say-max: 13em;
+  --crab-focus: #b4501f;
   position: absolute;
-  left: var(--pad);
-  right: var(--pad);
-  top: calc(var(--bar) + var(--pad) * 0.75);
+  left: 0;
+  bottom: -1px;
+}
+@media (max-aspect-ratio: 4/5) {
+  .dscreen__perch .crab {
+    --crab-size: 104px;
+    --crab-say-size: 40px;
+    --crab-say-max: 9em;
+  }
+  .dscreen__perch .crab__say {
+    border-width: 4px;
+  }
+}
+
+/* 窗口：暖色浅底、细边、圆角，像一个桌面应用 */
+.dscreen__win {
+  position: absolute;
+  left: var(--m);
+  right: var(--m);
+  top: var(--perch);
+  bottom: var(--m);
   display: flex;
   flex-direction: column;
-  gap: calc(var(--pad) * 0.6);
+  border: 1px solid #d9cdb8;
+  border-radius: 10px;
+  background: #faf7f1;
+  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
+  overflow: hidden;
+}
+.dscreen__bar {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--bar);
+  border-bottom: 1px solid #e6dccb;
+  background: #f1ebe1;
+  font-size: var(--fs-title);
+  color: var(--ink-soft);
+}
+.dscreen__lights {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  display: flex;
+  gap: 7px;
+  translate: 0 -50%;
+}
+.dscreen__lights i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #e0a090;
+}
+.dscreen__lights i:nth-child(2) {
+  background: #e8c98a;
+}
+.dscreen__lights i:nth-child(3) {
+  background: #a9c79a;
+}
+@media (max-aspect-ratio: 4/5) {
+  .dscreen__bar {
+    border-bottom: 0;
+    overflow: hidden;
+  }
+}
+
+.dscreen__log {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--pad) * 0.7);
+  padding: calc(var(--pad) * 0.9) var(--pad) 0;
+  min-height: 0;
 }
 .dscreen__me {
   align-self: flex-end;
-  padding: 0.3em 0.7em;
-  border-radius: 0.65em 0.65em 0.2em 0.65em;
-  background: #34435e;
+  margin: 0;
+  padding: 0.32em 0.7em 0.36em;
+  border-radius: 0.6em;
+  background: #ece4d6;
   font-size: var(--fs-me);
   font-weight: 500;
-  line-height: 1.25;
+  line-height: 1.2;
+  white-space: nowrap;
   opacity: 0;
-  transform: translateY(0.7em);
+  transform: translateY(0.6em);
   transition:
     opacity 260ms var(--sc-ease-out),
     transform 340ms var(--sc-ease-out);
@@ -102,86 +180,63 @@
   transform: none;
 }
 .dscreen__ai {
-  align-self: flex-start;
   display: flex;
   align-items: flex-start;
-  gap: 0.5em;
-  max-width: 92%;
+  gap: 0.45em;
   font-size: var(--fs-ai);
-  line-height: 1.35;
 }
-.dscreen__mark {
+.dscreen__spark {
   flex: none;
-  width: 0.62em;
-  height: 0.62em;
-  margin-top: 0.36em;
-  border-radius: 2px;
-  background: #e0773c;
+  width: var(--spark);
+  height: var(--spark);
+  margin-top: -0.12em;
+  fill: none;
+  stroke: var(--claude);
+  stroke-width: 2.8;
+  stroke-linecap: round;
   opacity: 0;
   transition: opacity 200ms var(--sc-ease-out);
 }
-.dscreen__dots {
-  display: none;
-  gap: 0.3em;
-  padding-top: 0.55em;
+.dscreen__ai.is-thinking .dscreen__spark,
+.dscreen__ai.is-on .dscreen__spark {
+  opacity: 1;
 }
-.dscreen__dots i {
-  width: 0.36em;
-  height: 0.36em;
-  border-radius: 50%;
-  background: #a9b6ca;
-  animation: dots 900ms ease-in-out infinite;
+/* 想的时候星芒慢慢转 */
+.dscreen__ai.is-thinking .dscreen__spark {
+  animation: spark-spin 1.6s linear infinite;
 }
-.dscreen__dots i:nth-child(2) {
-  animation-delay: 150ms;
-}
-.dscreen__dots i:nth-child(3) {
-  animation-delay: 300ms;
-}
-@keyframes dots {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
+@keyframes spark-spin {
+  to {
+    transform: rotate(1turn);
   }
 }
 .dscreen__reply {
+  margin: 0;
+  padding-top: 0.08em;
+  line-height: 1.32;
   opacity: 0;
   transform: translateY(0.4em);
   transition:
     opacity 320ms var(--sc-ease-out),
     transform 380ms var(--sc-ease-out);
 }
-.dscreen__ai.is-thinking .dscreen__mark,
-.dscreen__ai.is-on .dscreen__mark {
-  opacity: 1;
-}
-.dscreen__ai.is-thinking .dscreen__dots {
-  display: flex;
-}
-.dscreen__ai.is-thinking .dscreen__reply {
-  display: none;
-}
 .dscreen__ai.is-on .dscreen__reply {
   opacity: 1;
   transform: none;
 }
+
 .dscreen__input {
-  position: absolute;
-  left: var(--pad);
-  right: var(--pad);
-  bottom: calc(var(--floor) + 2px);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5em;
-  height: calc(var(--fs-in) * 2.2);
+  height: var(--in-h);
+  margin: 0 calc(var(--pad) * 0.7) calc(var(--pad) * 0.7);
   padding: 0 0.35em 0 0.75em;
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  border-radius: 0.6em;
-  background: rgba(255, 255, 255, 0.035);
+  border: 1.5px solid #ddd2c0;
+  border-radius: 0.7em;
+  background: #fff;
   font-size: var(--fs-in);
 }
 .dscreen__text {
@@ -189,15 +244,15 @@
   overflow: hidden;
 }
 .dscreen__text.is-empty {
-  color: #8592a8;
+  color: #a19584;
 }
 .dscreen__caret {
   display: inline-block;
-  width: 2px;
+  width: 0.09em;
   height: 1.05em;
-  margin-left: 2px;
+  margin-left: 0.06em;
   vertical-align: -0.15em;
-  background: #e8ecf3;
+  background: var(--ink);
   animation: caret 900ms steps(1) infinite;
 }
 @keyframes caret {
@@ -209,188 +264,22 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 1.55em;
-  height: 1.55em;
-  border-radius: 0.42em;
-  background: #3a465b;
-  color: #c9d1de;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 0.45em;
+  background: #e8dfd0;
+  color: #9a8e7c;
   transition:
     background-color 200ms var(--sc-ease-out),
     color 200ms var(--sc-ease-out);
 }
 .dscreen__send svg {
-  width: 0.7em;
-  height: 0.7em;
+  width: 0.75em;
+  height: 0.75em;
 }
 .dscreen__send.is-ready {
-  background: #e0773c;
-  color: #1c0f06;
-}
-/* 小螃蟹的地盘：屏幕最下面一条 */
-.dscreen__floor {
-  position: absolute;
-  left: calc(var(--pad) * 0.5);
-  right: calc(var(--pad) * 0.5);
-  bottom: 0;
-  height: var(--floor);
-}
-.dscreen .crab {
-  bottom: calc(var(--floor) * 0.12);
-}
-
-/* ------------------------------------------------------------ 小螃蟹 -- */
-.crab {
-  --cell: 4px;
-  --crab-body: #e0773c;
-  --crab-claw: #eb8b4d;
-  --crab-shade: #b0562a;
-  --crab-eye: #fff6ea;
-  --crab-pupil: #24140a;
-  --crab-mouth: #7a2f10;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  display: block;
-  width: calc(22 * var(--cell));
-  height: calc(13 * var(--cell));
-  padding: 0;
-  border-radius: 6px;
-  color: inherit;
-}
-button.crab {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-button.crab:focus-visible {
-  outline: 2px solid #f0a640;
-  outline-offset: 5px;
-}
-.crab__body {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.crab__art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.crab__legs--b {
-  opacity: 0;
-}
-.crab__body.is-step .crab__legs--a {
-  opacity: 0;
-}
-.crab__body.is-step .crab__legs--b {
-  opacity: 1;
-}
-.crab__body.is-step .crab__art {
-  transform: translateY(calc(var(--cell) * -0.25));
-}
-/* 眼珠：--lx（-1 / 0 / 1）往左或往右挪一格，--ly（-1 / 0）往上一格 */
-.crab__pupil--l {
-  transform: translate(calc(min(var(--lx), 0) * 1px), calc(var(--ly) * 1px));
-}
-.crab__pupil--r {
-  transform: translate(calc(max(var(--lx), 0) * 1px), calc(var(--ly) * 1px));
-}
-.crab__lids {
-  opacity: 0;
-}
-.crab__body.is-blink .crab__lids {
-  opacity: 1;
-}
-/* 挥钳子：绕胳膊根转（SVG 用户坐标，一个格子是 1） */
-.crab__claw {
-  transform-box: view-box;
-}
-.crab__claw--l {
-  transform-origin: 3.5px 7px;
-}
-.crab__claw--r {
-  transform-origin: 18.5px 7px;
-}
-.crab__body.is-waving .crab__claw--r {
-  animation: crab-wave 300ms ease-in-out 4 alternate;
-}
-.crab__body.is-hop .crab__claw--l {
-  animation: crab-wave-l 300ms ease-in-out 2 alternate;
-}
-@keyframes crab-wave {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(26deg);
-  }
-}
-@keyframes crab-wave-l {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-26deg);
-  }
-}
-.crab__body.is-hop {
-  animation: crab-hop 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
-}
-@keyframes crab-hop {
-  0% {
-    transform: translateY(0) scale(1, 1);
-  }
-  18% {
-    transform: translateY(0) scale(1.08, 0.9);
-  }
-  48% {
-    transform: translateY(-48%) scale(0.96, 1.05);
-  }
-  80% {
-    transform: translateY(0) scale(1.05, 0.94);
-  }
-  100% {
-    transform: translateY(0) scale(1, 1);
-  }
-}
-/* 减少动态效果：点一下只换个姿势（举钳子） */
-.crab__body.is-pose .crab__claw--r {
-  transform: rotate(26deg);
-}
-.crab__say {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + var(--cell) * 1.5);
-  z-index: 2;
-  padding: 0.12em 0.5em 0.16em;
-  border-radius: 0.4em;
-  background: #fff7ec;
-  color: #24140a;
-  font-family: var(--sc-font-mono);
-  font-size: calc(var(--cell) * 4.4);
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(-50%, 0.3em) scale(0.92);
-  transition:
-    opacity 160ms var(--sc-ease-out),
-    transform 220ms var(--sc-ease-out);
-}
-.crab__say::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  border: 0.32em solid transparent;
-  border-top-color: #fff7ec;
-  translate: -50% 0;
-}
-.crab__say.is-on {
-  opacity: 1;
-  transform: translate(-50%, 0) scale(1);
+  background: var(--claude);
+  color: #fffaf2;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -399,7 +288,7 @@ button.crab:focus-visible {
     transition: none;
   }
   .dscreen__caret,
-  .dscreen__dots i {
+  .dscreen__ai.is-thinking .dscreen__spark {
     animation: none;
   }
 }

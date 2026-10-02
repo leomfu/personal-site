@@ -1,340 +1,357 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { CLAWD, LOOKS, type Part, type Rect, type Variant } from "./art";
+import "./crab.css";
 
 /**
- * 小螃蟹桌宠（BRIEF R3）：原创的像素风小螃蟹，Claude 式的暖橙色，自己画的。
- * 全站只出现两次：第 1 幕显示器底边来回走（mode="walk"），第 7 幕「写给你」挥手告别（mode="wave"）。
+ * Claude 小螃蟹一家（BRIEF R6 / R7）：身体照 clawd.svg（Claude Code 里那只像素小螃蟹），
+ * 每个区域一只，穿不同的衣服、做不同的招牌动作。像素图在 ./art.ts，动作在 ./crab.css。
  *
- *   空闲     偶尔眨眼；walk 模式横着走，走一会儿停一会儿，到边掉头
- *   鼠标靠近 停下来，眼珠转向鼠标
- *   点它     （它本身是个 button，键盘 Enter / 空格同样）跳一下、挥钳子、冒一个小气泡
- *   减少动态效果  静止站着；点它只换一个姿势（举钳子）+ 气泡
+ *   进入视口      做一次招牌动作（desk 那只例外：等屏幕里的「Hello Claude」发出去，由 actKey 触发）
+ *   之后          偶尔眨眼，隔一阵做个待机小动作；鼠标靠近，眼睛看过去
+ *   点 / 回车 / 轻点   招牌动作 + 冒一个气泡（lines 轮换，第三人称介绍站主，只写事实）
+ *   减少动态效果   静态姿势；点一下只换姿势、出气泡（气泡只淡入淡出，不位移）
+ *   离屏 / 页面隐藏 所有循环暂停（.is-off），计时器也停
  *
- * 位置和姿势只改 transform / opacity（走路是 translateX，跳是 translateY，挥钳子是 rotate）。
- * 离开屏幕或页面隐藏时，动画循环整个停掉（IntersectionObserver + visibilitychange）。
- * `still`：只画一只站着的螃蟹，不能点、不动（俯冲过渡最后一帧里那块屏幕用，和落地后的第一帧对上）。
+ * 只动 transform / opacity。动作只在这个形状上做：腿交替上下、整体位移、眼睛变短（眨眼）、
+ * 一侧钳子上下（挥手）、道具的小动作。组件本身是 <button>，有 aria-label；
+ * 这一页不带 globals.css 也能用（404），样式和颜色都在 crab.css 里自给自足。
  */
 
-/** 左半边 11 列（右半边镜像），13 行。c 钳子 o 身体 s 暗面/腿 w 眼白 m 嘴 */
-const LEFT_ROWS = [
-  ".cc........",
-  "c..c.......",
-  "cc.c.......",
-  ".ccc..ww...",
-  "..c...ww...",
-  "..c....o...",
-  "...c.oooooo",
-  "....ooooooo",
-  "...oooooomm",
-  "...oooooooo",
-  "....sssssss",
-];
-const LEGS_A = ["...s.s..s..", "..s.s..s..."];
-const LEGS_B = ["....s.s..s.", "...s.s..s.."];
-const W = 22;
-const H = 13;
+export type CrabSide = "up" | "up-left" | "up-right" | "left" | "right" | "auto";
 
-type Px = { x: number; y: number; w: number; k: string };
-
-/** 一行字符串 → 合并成横向的一段段矩形（少画几个 rect） */
-function runs(rows: string[], y0: number): Px[] {
-  const out: Px[] = [];
-  rows.forEach((half, r) => {
-    const row = half + half.split("").reverse().join("");
-    let x = 0;
-    while (x < row.length) {
-      const k = row[x];
-      if (k === ".") {
-        x++;
-        continue;
-      }
-      let w = 1;
-      while (x + w < row.length && row[x + w] === k) w++;
-      out.push({ x, y: y0 + r, w, k });
-      x += w;
-    }
-  });
-  return out;
-}
-
-const BODY = runs(LEFT_ROWS, 0);
-/** 钳子（含胳膊）单独成组，挥手时绕胳膊根转 */
-const isClaw = (p: Px) => p.k === "c";
-const CLAW_L = BODY.filter((p) => isClaw(p) && p.x < 11);
-const CLAW_R = BODY.filter((p) => isClaw(p) && p.x >= 11);
-const TORSO = BODY.filter((p) => !isClaw(p));
-const LEGS = { a: runs(LEGS_A, 11), b: runs(LEGS_B, 11) };
-
-const FILL: Record<string, string> = {
-  c: "var(--crab-claw)",
-  o: "var(--crab-body)",
-  s: "var(--crab-shade)",
-  w: "var(--crab-eye)",
-  m: "var(--crab-mouth)",
+/** 招牌动作要多久（和 crab.css 里的关键帧对齐） */
+const ACT_MS: Record<Variant, number> = {
+  desk: 1200,
+  astronaut: 1500,
+  builder: 1700,
+  reader: 1900,
+  director: 1300,
+  photographer: 1000,
+  dj: 2000,
+  mail: 1900,
+  boxer: 1250,
+};
+/** 待机小动作（is-fidget）要多久；desk 那只的待机是「走几步」，另算 */
+const FIDGET_MS: Partial<Record<Variant, number>> = {
+  astronaut: 900,
+  builder: 700,
+  reader: 800,
+  director: 650,
+  photographer: 900,
+  dj: 900,
+  mail: 700,
+  boxer: 700,
 };
 
-function Rects({ px }: { px: Px[] }) {
+const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+function Rects({ rects }: { rects: Rect[] }) {
   return (
     <>
-      {px.map((p) => (
-        <rect key={`${p.x}-${p.y}-${p.k}`} x={p.x} y={p.y} width={p.w} height={1} fill={FILL[p.k]} />
+      {rects.map((r, i) => (
+        <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.f} />
       ))}
     </>
   );
 }
 
-/** 两帧腿都画上，走路时靠 .is-step 切换显示哪一帧（不走 React 重渲染） */
-export function CrabArt() {
+function PartG({ part }: { part: Part }) {
   return (
-    <svg className="crab__art" viewBox={`0 0 ${W} ${H}`} shapeRendering="crispEdges" aria-hidden focusable="false">
-      <g className="crab__legs crab__legs--a">
-        <Rects px={LEGS.a} />
-      </g>
-      <g className="crab__legs crab__legs--b">
-        <Rects px={LEGS.b} />
-      </g>
-      <Rects px={TORSO} />
-      <g className="crab__claw crab__claw--l">
-        <Rects px={CLAW_L} />
-      </g>
-      <g className="crab__claw crab__claw--r">
-        <Rects px={CLAW_R} />
-      </g>
-      {/* 眼珠：各一个像素，看哪边就往哪边挪一格 */}
-      <rect className="crab__pupil crab__pupil--l" x={7} y={4} width={1} height={1} fill="var(--crab-pupil)" />
-      <rect className="crab__pupil crab__pupil--r" x={14} y={4} width={1} height={1} fill="var(--crab-pupil)" />
-      {/* 眨眼：眼睑盖下来（一块身体色挡住眼白） */}
-      <g className="crab__lids">
-        <rect x={6} y={3} width={2} height={2} fill="var(--crab-body)" />
-        <rect x={14} y={3} width={2} height={2} fill="var(--crab-body)" />
+    <g
+      className={`crab__part crab__${part.name}`}
+      style={part.origin ? { transformOrigin: `${part.origin[0]}px ${part.origin[1]}px` } : undefined}
+    >
+      <Rects rects={part.rects} />
+    </g>
+  );
+}
+
+/** 只画图：给俯冲最后一帧那种「不能点、不会动」的地方用，也是 Crab 自己的画面 */
+export function CrabArt({ variant }: { variant: Variant }) {
+  const look = LOOKS[variant];
+  const [x, y, w, h] = look.box;
+  const on = (layer: Part["layer"], above?: boolean) =>
+    look.parts
+      .filter((p) => p.layer === layer && Boolean(p.above) === Boolean(above))
+      .map((p) => <PartG key={p.name} part={p} />);
+  const { body, clawL, clawR, eyeL, eyeR, legs, color, eye } = CLAWD;
+  return (
+    <svg className="crab__svg" viewBox={`${x} ${y} ${w} ${h}`} shapeRendering="crispEdges" aria-hidden focusable="false">
+      <g className="crab__all">
+        {on("back")}
+        <g className="crab__legs crab__legs--a">
+          <Rects rects={[legs[0], legs[2]].map((l) => ({ ...l, f: color }))} />
+        </g>
+        <g className="crab__legs crab__legs--b">
+          <Rects rects={[legs[1], legs[3]].map((l) => ({ ...l, f: color }))} />
+        </g>
+        <rect className="crab__torso" x={body.x} y={body.y} width={body.w} height={body.h} fill={color} />
+        <g className="crab__eyes">
+          <rect className="crab__eye" x={eyeL.x} y={eyeL.y} width={eyeL.w} height={eyeL.h} fill={eye} />
+          <rect className="crab__eye" x={eyeR.x} y={eyeR.y} width={eyeR.w} height={eyeR.h} fill={eye} />
+        </g>
+        <g className="crab__claw crab__claw--l">
+          {on("clawL")}
+          <rect x={clawL.x} y={clawL.y} width={clawL.w} height={clawL.h} fill={color} />
+          {on("clawL", true)}
+        </g>
+        <g className="crab__claw crab__claw--r">
+          {on("clawR")}
+          <rect x={clawR.x} y={clawR.y} width={clawR.w} height={clawR.h} fill={color} />
+          {on("clawR", true)}
+        </g>
+        {on("front")}
+        {on("fx")}
       </g>
     </svg>
   );
 }
 
-type Mode = "walk" | "wave";
-
 export function Crab({
-  mode,
+  variant,
   label,
-  say,
+  lines = [],
+  side = "up",
+  size,
+  roam = false,
+  greet = true,
+  actKey,
+  playing = false,
   still = false,
   className,
+  style,
 }: {
-  mode: Mode;
+  variant: Variant;
   /** 读屏文字（按钮的 aria-label） */
   label?: string;
-  /** 点它冒出来的那个字（hi / bye!） */
-  say: string;
+  /** 气泡里轮换的几句话（1–3 句），第三人称、只写事实 */
+  lines?: string[];
+  /** 气泡冒在哪边：上方居中 / 上方往左展开 / 上方往右展开 / 左 / 右 */
+  side?: CrabSide;
+  /** 身体（112 那一截）画多宽，px。不给就用 CSS 的 --crab-size（各个位置自己在 CSS 里定，手机上可以更小） */
+  size?: number;
+  /** 待机时在父元素宽度里走几步（书桌前那只在窗口顶边上溜达） */
+  roam?: boolean;
+  /** 第一次进入视口时自己做一次招牌动作 */
+  greet?: boolean;
+  /** 外面要它做招牌动作时就把这个数加一（屏幕里的「Hello Claude」发出去那一刻） */
+  actKey?: number;
+  /** 迷你播放器正在放歌（只有戴耳机那只看它）：跟着点头 */
+  playing?: boolean;
+  /** 只画一只不动、不能点的（俯冲最后一帧用） */
   still?: boolean;
   className?: string;
+  style?: CSSProperties;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
-  const bodyRef = useRef<HTMLSpanElement | null>(null);
-  const [talking, setTalking] = useState(false);
+  const actRef = useRef<() => void>(() => {});
+  const reduceRef = useRef(false);
+  /** 气泡：n 每说一句加一（换一句就重新冒一次），on 是现在看不看得见（收起时字留着，好淡出） */
+  const [say, setSay] = useState({ text: "", n: 0, on: false });
   const [pose, setPose] = useState(false);
-  const hopRef = useRef<() => void>(() => {});
+  /** side="auto"：点的那一刻看自己在父元素的左半边还是右半边，气泡往空的那边冒 */
+  const [autoSide, setAutoSide] = useState<"left" | "right">("left");
+  const turnRef = useRef(0);
+
+  const look = LOOKS[variant];
+  const css = {
+    "--crab-w": look.box[2],
+    "--crab-h": look.box[3],
+    ...(size ? { "--crab-size": `${size}px` } : {}),
+    ...style,
+  } as CSSProperties;
+  const sideNow = side === "auto" ? autoSide : side;
+  const cls = ["crab", `crab--${variant}`, `crab--say-${sideNow}`, still ? "crab--still" : "", className ?? ""]
+    .filter(Boolean)
+    .join(" ");
 
   useEffect(() => {
     const root = rootRef.current;
-    const body = bodyRef.current;
-    if (!root || !body) return;
-    // 起点：底边从左往右 22% 处（still 的那只也摆在这儿，俯冲落地前后才对得上）
-    const startX = () => {
-      const floor = root.parentElement;
-      return floor ? Math.max(0, floor.clientWidth - root.offsetWidth) * 0.22 : 0;
-    };
-    if (still) {
-      if (mode === "walk") root.style.transform = `translate3d(${startX().toFixed(1)}px,0,0)`;
-      return;
-    }
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-
-    let raf = 0;
-    let running = false;
-    let visible = false;
-    let last = 0;
-    let x = 0;
-    let dir = 1;
-    let state: "walk" | "pause" | "look" | "hop" = mode === "walk" ? "walk" : "pause";
-    let until = performance.now() + 1800;
-    let nextBlink = performance.now() + 1800;
-    let nextWave = performance.now() + 900;
-    let legClock = 0;
-    let pointer: { x: number; y: number } | null = null;
-    let hopUntil = 0;
-
-    const floorWidth = () => {
+    if (!root) return;
+    // 会走路的那只，起点在父元素 72% 处（不动的那只也摆在这儿，俯冲最后一帧和落地后的第一帧才对得上）
+    const range = () => {
       const floor = root.parentElement;
       return floor ? Math.max(0, floor.clientWidth - root.offsetWidth) : 0;
     };
-    if (mode === "walk") x = startX();
+    if (roam) root.style.setProperty("--x", `${(range() * 0.72).toFixed(1)}px`);
+    if (still) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    reduceRef.current = reduce;
 
-    const place = () => {
-      root.style.transform = mode === "walk" ? `translate3d(${x.toFixed(1)}px,0,0)` : "";
+    let visible = false;
+    let greeted = !greet;
+    let actTimer = 0;
+    let blinkTimer = 0;
+    let fidgetTimer = 0;
+    let greetTimer = 0;
+    let raf = 0;
+    const later: number[] = [];
+
+    // 走路（只有 roam 的那只）：位置记在 --x 上，用 translate 走，不碰 left
+    let x = range() * 0.72;
+    let target = 0;
+    let lastT = 0;
+    const place = () => root.style.setProperty("--x", `${x.toFixed(1)}px`);
+
+    const flash = (name: string, ms: number) => {
+      root.classList.remove(name);
+      void root.getBoundingClientRect();
+      root.classList.add(name);
+      later.push(window.setTimeout(() => root.classList.remove(name), ms));
     };
-    place();
 
-    const look = (lx: number, ly: number) => {
-      body.style.setProperty("--lx", String(lx));
-      body.style.setProperty("--ly", String(ly));
+    const act = () => {
+      window.clearTimeout(actTimer);
+      stopWalk();
+      root.classList.remove("is-act", "is-fidget");
+      void root.getBoundingClientRect();
+      root.classList.add("is-act");
+      actTimer = window.setTimeout(() => root.classList.remove("is-act"), ACT_MS[variant]);
     };
+    actRef.current = act;
 
-    const wave = (ms: number) => {
-      body.classList.add("is-waving");
-      window.setTimeout(() => body.classList.remove("is-waving"), ms);
-    };
-
-    const frame = (now: number) => {
+    const walkStep = (now: number) => {
       raf = 0;
-      if (!running) return;
-      const dt = Math.min(64, now - (last || now));
-      last = now;
-
-      // 眨眼
-      if (now > nextBlink) {
-        body.classList.add("is-blink");
-        window.setTimeout(() => body.classList.remove("is-blink"), 150);
-        nextBlink = now + 2200 + Math.random() * 3200;
-      }
-
-      // 鼠标靠近：停下来看着它
-      let near = false;
-      if (pointer && state !== "hop") {
-        const r = root.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        const dx = pointer.x - cx;
-        const dy = pointer.y - cy;
-        const reach = Math.max(180, r.width * 3);
-        if (Math.hypot(dx, dy) < reach) {
-          near = true;
-          look(Math.abs(dx) < r.width * 0.3 ? 0 : Math.sign(dx), dy < -r.height * 0.6 ? -1 : 0);
-          if (state !== "look") state = "look";
-        }
-      }
-      if (!near && state === "look") {
-        look(0, 0);
-        state = mode === "walk" ? "walk" : "pause";
-        until = now + 1200 + Math.random() * 1500;
-      }
-
-      if (state === "hop" && now > hopUntil) {
-        state = mode === "walk" ? "pause" : "pause";
-        until = now + 700;
-      }
-
-      if (mode === "walk") {
-        if (state === "walk") {
-          const max = floorWidth();
-          x += dir * dt * 0.045;
-          if (x <= 0 || x >= max) {
-            x = Math.min(max, Math.max(0, x));
-            dir *= -1;
-          }
-          legClock += dt;
-          if (legClock > 150) {
-            legClock = 0;
-            body.classList.toggle("is-step");
-          }
-          if (now > until) {
-            state = "pause";
-            until = now + 900 + Math.random() * 1700;
-            body.classList.remove("is-step");
-          }
-          place();
-        } else if (state === "pause" && now > until) {
-          state = "walk";
-          if (Math.random() < 0.45) dir *= -1;
-          until = now + 1600 + Math.random() * 2600;
-        }
-      } else if (state === "pause" && now > nextWave) {
-        // 第 7 幕：隔一会儿挥一次手
-        wave(1300);
-        nextWave = now + 3600 + Math.random() * 1600;
-      }
-
-      raf = requestAnimationFrame(frame);
-    };
-
-    const start = () => {
-      if (running || reduce || !visible || document.hidden) return;
-      running = true;
-      last = 0;
-      raf = requestAnimationFrame(frame);
-    };
-    const stop = () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      raf = 0;
-    };
-
-    hopRef.current = () => {
-      if (reduce) {
-        setPose((v) => !v);
-        setTalking(true);
+      const dt = Math.min(64, now - (lastT || now));
+      lastT = now;
+      const dir = Math.sign(target - x);
+      x += dir * dt * 0.06;
+      if ((dir > 0 && x >= target) || (dir < 0 && x <= target) || dir === 0) {
+        x = target;
+        place();
+        stopWalk();
         return;
       }
-      state = "hop";
-      hopUntil = performance.now() + 1100;
-      body.classList.remove("is-hop");
-      void body.offsetWidth;
-      body.classList.add("is-hop");
-      wave(1100);
-      window.setTimeout(() => body.classList.remove("is-hop"), 620);
-      setTalking(true);
+      place();
+      raf = requestAnimationFrame(walkStep);
+    };
+    function stopWalk() {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      root?.classList.remove("is-walk");
+    }
+    const stroll = () => {
+      const max = range();
+      if (max < 8) return;
+      // 走一小段：离现在的位置 20%–45% 的距离，碰到边就往回
+      const span = max * rand(0.2, 0.45);
+      target = Math.max(0, Math.min(max, x + (Math.random() < 0.5 ? -span : span)));
+      if (Math.abs(target - x) < 4) target = x > max / 2 ? x - span : x + span;
+      lastT = 0;
+      root.classList.add("is-walk");
+      raf = requestAnimationFrame(walkStep);
+    };
+
+    const scheduleBlink = () => {
+      window.clearTimeout(blinkTimer);
+      blinkTimer = window.setTimeout(() => {
+        if (!running()) return;
+        flash("is-blink", 160);
+        scheduleBlink();
+      }, rand(2400, 5600));
+    };
+    const scheduleFidget = () => {
+      window.clearTimeout(fidgetTimer);
+      fidgetTimer = window.setTimeout(() => {
+        if (!running()) return;
+        if (!root.classList.contains("is-act")) {
+          if (roam) stroll();
+          else if (FIDGET_MS[variant]) flash("is-fidget", FIDGET_MS[variant] as number);
+        }
+        scheduleFidget();
+      }, rand(7000, 13000));
+    };
+
+    const running = () => visible && !document.hidden && !reduce;
+    const sync = () => {
+      const on = visible && !document.hidden;
+      root.classList.toggle("is-on", on);
+      root.classList.toggle("is-off", !on);
+      if (running()) {
+        scheduleBlink();
+        scheduleFidget();
+      } else {
+        window.clearTimeout(blinkTimer);
+        window.clearTimeout(fidgetTimer);
+        stopWalk();
+      }
     };
 
     const io = new IntersectionObserver(
       (entries) => {
-        visible = entries.some((e) => e.isIntersecting);
-        if (visible) start();
-        else stop();
+        const e = entries[entries.length - 1];
+        visible = e.isIntersecting;
+        sync();
+        if (visible && !greeted && !reduce && e.intersectionRatio >= 0.5) {
+          greeted = true;
+          greetTimer = window.setTimeout(() => running() && act(), 450);
+        }
       },
-      { threshold: 0.01 },
+      { threshold: [0, 0.5, 1] },
     );
     io.observe(root);
-    const onVisibility = () => (document.hidden ? stop() : start());
+    const onVisibility = () => sync();
     document.addEventListener("visibilitychange", onVisibility);
+
+    // 鼠标靠近：眼睛往那边挪一格（只在有鼠标的设备上）
+    let lookRaf = 0;
+    let pointer: { x: number; y: number } | null = null;
+    const updateLook = () => {
+      lookRaf = 0;
+      if (!pointer || !visible) return;
+      const r = root.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = pointer.x - cx;
+      const dy = pointer.y - cy;
+      const near = Math.hypot(dx, dy) < Math.max(220, r.width * 2.5);
+      const lx = near && Math.abs(dx) > r.width * 0.25 ? Math.sign(dx) : 0;
+      const ly = near && Math.abs(dy) > r.height * 0.4 ? Math.sign(dy) : 0;
+      root.style.setProperty("--lx", String(lx));
+      root.style.setProperty("--ly", String(ly));
+    };
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
       pointer = { x: event.clientX, y: event.clientY };
+      if (!lookRaf) lookRaf = requestAnimationFrame(updateLook);
     };
-    const onLeave = () => {
-      pointer = null;
-    };
-    if (fine && !reduce) {
-      window.addEventListener("pointermove", onMove, { passive: true });
-      document.documentElement.addEventListener("pointerleave", onLeave);
-    }
+    if (fine && !reduce) window.addEventListener("pointermove", onMove, { passive: true });
 
     return () => {
-      stop();
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pointermove", onMove);
-      document.documentElement.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(lookRaf);
+      stopWalk();
+      [actTimer, blinkTimer, fidgetTimer, greetTimer, ...later].forEach((id) => window.clearTimeout(id));
+      actRef.current = () => {};
     };
-  }, [mode, still]);
+  }, [variant, still, roam, greet]);
 
-  // 气泡 1.6 秒后收起
+  // 外部触发（屏幕里的消息发出去了）：做一次招牌动作
   useEffect(() => {
-    if (!talking) return;
-    const id = window.setTimeout(() => setTalking(false), 1600);
-    return () => window.clearTimeout(id);
-  }, [talking]);
+    if (!actKey || still || reduceRef.current) return;
+    actRef.current();
+  }, [actKey, still]);
 
-  const cls = ["crab", `crab--${mode}`, still ? "crab--still" : "", className ?? ""].filter(Boolean).join(" ");
-  const inner = (
-    <span ref={bodyRef} className={`crab__body${pose ? " is-pose" : ""}`} style={{ "--lx": 0, "--ly": 0 } as CSSProperties}>
-      <span className={`crab__say${talking ? " is-on" : ""}`} aria-hidden>
-        {say}
-      </span>
-      <CrabArt />
-    </span>
-  );
+  // 正在放歌：戴耳机那只跟着点头（减少动态效果时不点）
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    root.classList.toggle("is-groove", playing && !reduceRef.current);
+  }, [playing]);
+
+  // 气泡：字越多停得越久
+  const { n: sayN, on: sayOn, text: sayText } = say;
+  useEffect(() => {
+    if (!sayOn) return;
+    const ms = Math.min(5200, Math.max(2400, 1500 + sayText.length * 70));
+    const id = window.setTimeout(() => setSay((s) => ({ ...s, on: false })), ms);
+    return () => window.clearTimeout(id);
+  }, [sayN, sayOn, sayText]);
 
   if (still) {
     return (
@@ -343,27 +360,53 @@ export function Crab({
           rootRef.current = el;
         }}
         className={cls}
+        style={css}
         aria-hidden
       >
-        {inner}
+        <CrabArt variant={variant} />
       </span>
     );
   }
 
+  const onClick = () => {
+    const root = rootRef.current;
+    const floor = root?.parentElement;
+    if (side === "auto" && root && floor) {
+      const r = root.getBoundingClientRect();
+      const f = floor.getBoundingClientRect();
+      setAutoSide(r.left + r.width / 2 > f.left + f.width / 2 ? "left" : "right");
+    }
+    if (reduceRef.current) setPose((p) => !p);
+    else actRef.current();
+    if (lines.length) {
+      const text = lines[turnRef.current % lines.length];
+      turnRef.current += 1;
+      setSay((prev) => ({ text, n: prev.n + 1, on: true }));
+    }
+  };
+
   return (
-    <button
-      ref={(el) => {
-        rootRef.current = el;
-      }}
-      type="button"
-      className={cls}
-      aria-label={label}
-      onClick={() => hopRef.current()}
-    >
-      {inner}
-      <span className="sr-only" aria-live="polite">
-        {talking ? say : ""}
+    <>
+      <button
+        ref={(el) => {
+          rootRef.current = el;
+        }}
+        type="button"
+        className={`${cls}${pose ? " is-pose" : ""}`}
+        style={css}
+        aria-label={label}
+        onClick={onClick}
+      >
+        <CrabArt variant={variant} />
+        {sayN > 0 && (
+          <span key={sayN} className={`crab__say${sayOn ? " is-on" : ""}`} aria-hidden>
+            {sayText}
+          </span>
+        )}
+      </button>
+      <span className="crab__sr" aria-live="polite">
+        {sayText}
       </span>
-    </button>
+    </>
   );
 }
