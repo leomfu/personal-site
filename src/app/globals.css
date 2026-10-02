@@ -1,906 +1,488 @@
+/* ============================================================================
+   weiliang.dev · 2026-10 改版（scroll-craft）
+   ----------------------------------------------------------------------------
+   世界：Low-key cinematic。底色近黑偏冷，正文偏暖的米白，次级文字是带一点暖的灰；
+   界面强调色只有琥珀一种（台灯的光），冷蓝只出现在光线和氛围里（城市、显示器、大气层）。
+   未来感靠「精密仪器」的语气：发丝线、等宽字体的事实标签与坐标、平面图线稿。
+   不用紫蓝渐变、霓虹发光、渐变文字。
+
+   层级（cascade layer）：
+     Tailwind 的 theme / base / utilities 在各自的 layer 里；
+     scroll-craft 引擎的 scrollcraft.css **原样**导入到 base 层（在 Tailwind preflight 之后），
+     这样引擎的设备规则（pin、cue、reveal…）照常生效，又不会压过 Tailwind 的 utilities；
+     本站自己的样式不进 layer，所以覆盖引擎的 token 只要在 :root 上重写即可。
+   ========================================================================== */
+
 @import "tailwindcss";
+@import "../vendor/scrollcraft/scrollcraft.css" layer(base);
 
-/* ==========================================================================
-   设计 token —— 2026-09-17 全站改版「雾蓝底 · 蓝+橙双主色 · 玻璃卡面 · 手写标题」
-   定稿值来自 docs/design/tokens.css，**不要自行调整比例**。
+@import "../styles/scene.css";
+@import "../styles/home.css";
+@import "../styles/dive.css";
+@import "../styles/tour.css";
+@import "../styles/plan.css";
+@import "../styles/pages.css";
+@import "../styles/prose.css";
+@import "../styles/records.css";
 
-   原黑白系统那套名字（ink / body / muted / faint / line / card / paper）
-   **保留同名**，只换值 —— 所以引用这些名字的组件一行都不用改。
-   暗侧（shell-* / void）和专注区（desk-*）两组随对应页面下线已经删掉。
-
-   `@theme static` 不是随手写的：Tailwind 4 默认只输出「被某个工具类用到」的 token，
-   没被用到的会被摇掉。这套设计系统里有大量 token 是组件通过 var(--color-accent-700)
-   这样直接引用的（内联 style、arbitrary value、本文件下面的 .bg-blob 等），
-   摇掉之后那些引用会静默失效。static 让整块 token 原样输出。
-   ========================================================================== */
-@theme static {
-  /* --- 底色与表面 --- */
-  --color-bg: #edf1f7;       /* 全站底色（雾蓝白） */
-  --color-surface: #ffffff;  /* 卡面基色；玻璃态下按 42% 透明使用，见下面 .glass */
-  --color-card: #ffffff;
-  --color-paper: #f7f9fc;
-
-  /* --- 文字层级 --- */
-  --color-ink: #171b22;        /* 标题、主文字 */
-  --color-body: #40464f;       /* 正文 */
-  --color-muted: #5b636f;      /* 次要文字 */
-  --color-faint: #78818f;      /* 日期、标签、占位 */
-
-  /* --- 线 --- */
-  --color-line: #d8dde6;
-  --color-line-soft: #eceff5;
-  --color-line-strong: #b8c0cd;
-
-  /* --- 主色：蓝 ---
-     ⚠️ 正文里的链接/强调文字用 --color-accent-700，不要用 --color-accent 本体：
-     后者在 #edf1f7 上只有 3:1 出头，只够图标和大标题。 */
-  --color-accent: #4f79cf;
-  --color-accent-100: #eef3fe;
-  --color-accent-200: #dae5fb;
-  --color-accent-300: #b8ccf5;
-  --color-accent-400: #8ba8e9;
-  --color-accent-500: #5b83d6;
-  --color-accent-600: #3a63bd;
-  --color-accent-700: #2a4a95;  /* 正文里的蓝字用这一档，4.5:1 */
-  --color-accent-800: #1d346b;
-  --color-accent-900: #142343;
-
-  /* --- 第二主色：橙。正文里的橙字同理用 --color-accent-2-700 --- */
-  --color-accent-2: #d98341;
-  --color-accent-2-100: #fff3e9;
-  --color-accent-2-200: #ffe2cb;
-  --color-accent-2-300: #fcc79f;
-  --color-accent-2-400: #f0a367;
-  --color-accent-2-500: #d98341;
-  --color-accent-2-600: #b66627;
-  --color-accent-2-700: #8e4d19;
-  --color-accent-2-800: #663512;
-  --color-accent-2-900: #40230f;
-
-  /* --- 中性阶 --- */
-  --color-neutral-100: #f7f9fc;
-  --color-neutral-200: #eceff5;
-  --color-neutral-300: #d8dde6;
-  --color-neutral-400: #b8c0cd;
-  --color-neutral-500: #97a0ae;
-  --color-neutral-600: #78818f;
-  --color-neutral-700: #5b636f;
-  --color-neutral-800: #40464f;
-  --color-neutral-900: #272b31;  /* 页脚底色、深色小面积块、看大图的遮罩 */
-
-  /* --- 品牌色 ---
-     brand-claude   工具页图标 hover
-     brand-bilibili 联系页那枚 B 站圆形图标底（handoff §6.9 指定的唯一一枚彩色） */
-  --color-brand-claude: #c15f3c;
-  --color-brand-bilibili: #fb7299;
-
-  /* --- 字体。var() 都由 app/[locale]/layout.tsx 的 next/font/google 喂 ---
-     ⚠️ --font-hand 的栈序不能反：Caveat 没有 CJK 字形，中文手写标题**必须**
-     靠 Ma Shan Zheng 接；反过来写的话拉丁字母也会被 Ma Shan Zheng 接走。
-     手写标题字重恒为 400，不要加粗。 */
-  --font-hand: var(--font-caveat), var(--font-mashanzheng), var(--font-noto-sans-sc),
-    "Noto Sans SC", cursive;
-  --font-sans: var(--font-figtree), var(--font-noto-sans-sc), "PingFang SC",
-    "Hiragino Sans GB", system-ui, sans-serif;
-  --font-serif: var(--font-noto-serif), "Noto Serif SC", Georgia, serif;
-
-  /* --- 间距：设计稿的 Organic 1.10× 密度 ---
-     设计稿给的阶是 4.4 / 8.8 / 13.2 / 17.6 / 26.4 / 35.2px，正好是 Tailwind
-     默认 4px 基数的 1.1 倍。所以这里不逐个覆盖 --spacing-1…8（那样只有这六档
-     变了，p-5 / p-10 还留在 4px 基数上，一套尺子两种刻度），而是直接把基数
-     调成 4.4px —— 算出来的六档值和 tokens.css 一字不差，其余档位也跟着等比缩放。
-     ⚠️ 这一行会同时影响全站所有数字型间距/尺寸类（p- m- gap- size- w- h- …）。
-     设计稿里写死像素的地方（6px 上浮、44px 触摸目标……）组件里用 [6px] 这种任意值。 */
-  --spacing: 0.275rem;        /* 4.4px ×4 = 17.6 ×6 = 26.4 ×8 = 35.2 */
-
-  /* --- 版心 --- */
-  --spacing-page: 1180px;        /* 默认版心（handoff §4） */
-  --spacing-page-narrow: 1080px;
-
-  /* --- 行宽（文字量度）：新代码不许再写裸值，挑一档用 --- */
-  --spacing-display: 860px;
-  --spacing-column: 700px;    /* 正文和引导语 —— markdown 正文也用它 */
-  --spacing-note: 420px;
-
-  /* --- 圆角。卡片实际用 calc(var(--radius-lg) * 1.15) ≈ 32px；
-         按钮 / 标签 / 输入框 / 胶囊行一律 999px --- */
-  --radius-sm: 8px;
-  --radius-md: 18px;
-  --radius-lg: 28px;
-
-  /* --- 阴影 --- */
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
-  --shadow-glass: 0 10px 36px color-mix(in srgb, #171b22 16%, transparent);
-
-  /* --- 小标签字距 --- */
-  --tracking-label: 0.2em;
-  --tracking-eyebrow: 0.36em;
-}
-
-/* ==========================================================================
-   基础层
-   ========================================================================== */
-@layer base {
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    background: var(--color-bg);
-    color: var(--color-ink);
-    font-family: var(--font-sans);
-    font-size: 15px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  ::selection {
-    background: var(--color-accent-200);
-    color: var(--color-ink);
-  }
-
-  /* 全站统一焦点环（handoff §7）。不要留浏览器默认那圈 */
-  :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-}
-
-/* ==========================================================================
-   改版三层：玻璃卡面 / 两颗光斑 / 错位滑入（改版规格 §五，值是定稿值）
-
-   定稿：**无底纹**（不画网格、圆点阵、纸纹）、**无顶部滚动进度条**。
-   tokens.css 里那两条备用的（网格底纹 / 滚动进度条）刻意没有搬进来。
-
-   放在 @layer components 里、不是裸写在最外层 —— 裸写的规则优先级高过 Tailwind
-   的 utilities 层，`class="glass rounded-full"` 里的 rounded-full 就会被 .glass 自己的
-   圆角吃掉。进了 components 层，组件上的 Tailwind 类才压得住它。
-   ========================================================================== */
-@layer components {
-  /* --- 玻璃卡面。卡片 / 输入框都是这一套 ---
-     ⚠️ 卡面是半透明的，光斑必须从它背后透出来：任何一处改成实色白，
-     那块就会显得像贴上去的。 */
-  .glass {
-    background: color-mix(in srgb, var(--color-surface) 42%, transparent);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
-    border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
-    box-shadow: var(--shadow-glass);
-    border-radius: calc(var(--radius-lg) * 1.15);
-  }
-
-  /* 次要按钮那一档 */
-  .glass-soft {
-    background: color-mix(in srgb, var(--color-surface) 45%, transparent);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-  }
-
-  /* 标签：主色那一枚是定稿值（accent 22% + blur 10px）。
-     橙 / 中性两枚是同一配方换底色 —— 设计稿里的 tag-accent-2 / tag-neutral */
-  .glass-tag,
-  .glass-tag-2,
-  .glass-tag-neutral {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-  }
-
-  .glass-tag {
-    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
-    color: var(--color-accent-800);
-  }
-
-  .glass-tag-2 {
-    background: color-mix(in srgb, var(--color-accent-2) 22%, transparent);
-    color: var(--color-accent-2-800);
-  }
-
-  .glass-tag-neutral {
-    background: color-mix(in srgb, var(--color-neutral-500) 20%, transparent);
-    color: var(--color-body);
-  }
-
-  /* 主按钮的外发光 */
-  .btn-primary-glow {
-    box-shadow: 0 8px 26px color-mix(in srgb, var(--color-accent) 45%, transparent);
-  }
-
-  /* --- 两颗漂移光斑。外层 SiteShell 包了一个 fixed + overflow-hidden 的容器 --- */
-  .bg-blob {
-    position: absolute;
-    width: 680px;
-    height: 680px;
-    border-radius: 50%;
-    filter: blur(46px);
-    opacity: 0.95;
-    pointer-events: none;
-  }
-
-  .bg-blob-a {  /* 右上，蓝，26s */
-    top: -180px;
-    right: -140px;
-    background: radial-gradient(circle at 35% 35%, var(--color-accent-200), transparent 68%);
-    animation: wlDrift 26s ease-in-out infinite;
-  }
-
-  .bg-blob-b {  /* 左中，橙，32s */
-    top: 640px;
-    left: -220px;
-    background: radial-gradient(circle at 60% 40%, var(--color-accent-2-200), transparent 70%);
-    animation: wlDrift2 32s ease-in-out infinite;
-  }
-
-  /* --- 顶栏「左右分立」的渐变下法线：主色从左侧渐退到右侧透明 --- */
-  .nav-split {
-    position: relative;
-  }
-
-  .nav-split::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--color-accent), transparent);
-    pointer-events: none;
-  }
-
-  /* --- 内容图的「washed」：去饱和 + 降对比 + 抬亮，让图沉进雾蓝底里。
-     鼠标移到它所在的 .group 上恢复原色。首页拍立得头像和放大态整帧照片**不用**它。 */
-  .washed {
-    filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
-    transition: filter 0.4s ease;
-  }
-
-  .group:hover .washed,
-  .washed:hover {
-    filter: none;
-  }
-
-  /* --- 翻阅动效「错位滑入」，强度 k = 1.6 ---
-     Reveal 组件给每个块挂 data-wl-rv，奇数序号再挂 data-wl-alt（从右边进），
-     进视口后挂 data-wl-in。错峰延迟 (index % 4) * 110ms 由组件写在 style 上。 */
-  [data-wl-rv] {
-    opacity: 0;
-    transform: translate3d(calc(-96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(0.965);
-    transition:
-      opacity 0.6s ease,
-      transform 0.86s cubic-bezier(0.16, 0.86, 0.22, 1);
-    will-change: opacity, transform;
-  }
-
-  [data-wl-rv][data-wl-alt] {
-    transform: translate3d(calc(96px * var(--wl-k)), calc(18px * var(--wl-k)), 0) scale(0.965);
-  }
-
-  [data-wl-rv][data-wl-in],
-  [data-wl-rv][data-wl-alt][data-wl-in] {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* 换页时整块 main 播一次 */
-  .page-enter {
-    animation: wlPgSlide 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both;
-  }
-}
-
+/* ---------------------------------------------------------------- tokens -- */
 :root {
-  --wl-k: 1.6;  /* 错位滑入的强度 */
+  /* 引擎的六个颜色角色 */
+  --sc-canvas: #0a0c0f;
+  --sc-surface: #12151a;
+  --sc-ink: #ece5d8;
+  --sc-ink-soft: #a39c90;
+  --sc-accent: #e8a23a;
+  --sc-accent-ink: #140e05;
+
+  /* 只用于光线和氛围的冷蓝，不用在界面元素上 */
+  --wl-cold: #7f9cc6;
+  /* 暗房底色慢慢变暖的终点 */
+  --wl-warm-ground: #1f130b;
+
+  --wl-hair: color-mix(in oklab, var(--sc-ink) 13%, transparent);
+  --wl-hair-strong: color-mix(in oklab, var(--sc-ink) 26%, transparent);
+  --wl-panel: color-mix(in oklab, var(--sc-canvas) 86%, transparent);
+  --wl-accent-hover: #f2b65a;
+
+  /* 字体栈：拉丁字体在前，思源黑体在后，中文字符自然落到思源黑体上（见 [locale]/layout.tsx） */
+  --wl-cjk: var(--font-noto-sc), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei";
+  --sc-font-display: var(--font-geist), var(--wl-cjk), system-ui, sans-serif;
+  --sc-font-text: var(--font-geist), var(--wl-cjk), system-ui, sans-serif;
+  --sc-font-mono: var(--font-geist-mono), var(--wl-cjk), ui-monospace, "SF Mono", monospace;
+
+  /* 一套圆角：小。仪器的面板不是药丸 */
+  --sc-r-sm: 4px;
+  --sc-r-md: 6px;
+  --sc-r-lg: 10px;
+
+  --sc-shadow-color: 216 30% 2%;
+  --sc-gutter: clamp(1rem, 5vw, 5.5rem);
+
+  color-scheme: dark;
 }
 
-@keyframes wlDrift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(28px, -34px) scale(1.07);
-  }
+/* ------------------------------------------------------------------ base -- */
+html {
+  background: var(--sc-canvas);
+}
+body {
+  min-height: 100svh;
+  /* 暗底上的浅色字：行高、字距都比亮底多给一点（taste.md） */
+  line-height: 1.7;
+  letter-spacing: 0.005em;
+}
+:lang(zh) body {
+  letter-spacing: 0.02em;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+h1,
+h2,
+h3,
+p,
+ol,
+ul,
+figure {
+  margin: 0;
+}
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+img {
+  height: auto;
 }
 
-@keyframes wlDrift2 {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(-36px, 26px);
-  }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
-@keyframes wlPgSlide {
-  from {
-    opacity: 0;
-    transform: translateX(44px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.mono {
+  font-family: var(--sc-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
 }
 
-/* 顶栏当前项下面那条短横拉开 */
-@keyframes wlBar {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* 关于页「现在」状态点的脉冲光环 */
-@keyframes wlPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 5px var(--color-accent-200);
-  }
-  50% {
-    box-shadow: 0 0 0 11px color-mix(in srgb, var(--color-accent) 10%, transparent);
-  }
-}
-
-/* 「减少动态效果」下：滑入的块直接就位，光斑、换页、脉冲、唱片转动全部停掉。
-   第二条全局兜底把 duration 压到 0.01ms，但 [data-wl-rv] 的初始态是
-   opacity:0，光压时长它会停在看不见的状态 —— 所以这里必须显式置为可见。 */
-@media (prefers-reduced-motion: reduce) {
-  [data-wl-rv] {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-
-  .bg-blob,
-  .page-enter {
-    animation: none !important;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ==========================================================================
-   工具类
-   ========================================================================== */
-
-/* 玻璃卡面的工具类版本（配方和 .glass 一份），给需要和 Tailwind 类混排的地方用 */
-@utility card-face {
-  background: color-mix(in srgb, var(--color-surface) 42%, transparent);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
-  box-shadow: var(--shadow-glass);
-  border-radius: calc(var(--radius-lg) * 1.15);
-}
-
-/* 正文内联链接：主色 700 档（不是 --color-accent 本体，那一档在雾蓝底上不够 4.5:1）
-   + 一条浅主色下划线，hover 加深 */
-@utility link-underline {
-  color: var(--color-accent-700);
-  text-decoration: underline;
-  text-decoration-color: var(--color-accent-300);
-  text-underline-offset: 4px;
-  transition: text-decoration-color 200ms ease;
-
-  &:hover {
-    text-decoration-color: var(--color-accent-700);
-  }
-}
-
-
-/* ==========================================================================
-   .prose-bw —— markdown 正文的排版（content/ 里的 md 渲染进来都套这个）
-   彩色一律不进来：代码高亮走 src/lib/markdown.ts 里的灰阶主题。
-   ========================================================================== */
-/* 正文自己收成阅读列：1180px 的版心对一行文字来说仍然太宽。
-   限宽放在 .prose-bw 上而不是外层容器上，是因为只有 markdown 正文需要它，
-   列表、网格、照片墙都该铺满版心。 */
-.prose-bw {
-  max-width: var(--spacing-column);
-  color: var(--color-body);
-  font-size: 16px;
-  line-height: 1.9;
+/* 事实标签：名称 · 年份 · 用到的 · 状态（Gallery 的展品标签，全站同一个格式） */
+.placard__label {
+  font-family: var(--sc-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--sc-ink-soft);
   text-wrap: pretty;
 }
 
-.prose-bw > * + * {
-  margin-top: 20px;
-}
-
-/* 关于页正文：16px / 1.95，收在 62ch（改版规格 §6.3）。
-   .prose-bw 是不分层的规则，压得过 Tailwind 工具类，所以这一档写在这里而不是组件上 */
-.prose-bw.prose-about {
-  max-width: 62ch;
-  line-height: 1.95;
-}
-
-.prose-bw h2 {
-  margin-top: 52px;
-  font-family: var(--font-hand);
-  font-size: 32px;
-  font-weight: 400;
+/* ------------------------------------------------------------- 主按钮 -- */
+/* 全站唯一用琥珀色填满的东西。一种意图一个名字。 */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.4rem 0.85rem 1.5rem;
+  border-radius: var(--sc-r-md);
+  background: var(--sc-accent);
+  color: var(--sc-accent-ink);
+  font-size: 1.0625rem;
+  font-weight: 600;
   line-height: 1.2;
-  color: var(--color-ink);
-}
-
-.prose-bw h3 {
-  margin-top: 35.2px;
-  font-family: var(--font-hand);
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1.3;
-  color: var(--color-ink);
-}
-
-.prose-bw h2 + *,
-.prose-bw h3 + * {
-  margin-top: 13.2px;
-}
-
-.prose-bw a {
-  color: var(--color-accent-700);
-  text-decoration: underline;
-  text-decoration-color: var(--color-accent-300);
-  text-underline-offset: 4px;
-  transition: text-decoration-color 200ms ease;
-}
-
-.prose-bw a:hover {
-  text-decoration-color: var(--color-accent-700);
-}
-
-.prose-bw strong {
-  font-weight: 500;
-  color: var(--color-ink);
-}
-
-.prose-bw em {
-  font-style: italic;
-}
-
-.prose-bw ul,
-.prose-bw ol {
-  padding-left: 1.25em;
-}
-
-.prose-bw ul {
-  list-style: none;
-}
-
-.prose-bw ul > li {
-  position: relative;
-}
-
-.prose-bw ul > li::before {
-  content: "";
-  position: absolute;
-  left: -1em;
-  top: 0.85em;
-  width: 5px;
-  height: 1px;
-  background: var(--color-line-strong);
-}
-
-.prose-bw ol {
-  list-style: decimal;
-}
-
-.prose-bw li + li {
-  margin-top: 8px;
-}
-
-.prose-bw blockquote {
-  border-left: 1px solid var(--color-line-strong);
-  padding: 2px 0 2px 20px;
-  color: var(--color-muted);
-}
-
-.prose-bw hr {
-  border: 0;
-  border-top: 1px solid var(--color-line);
-  margin: 44px 0;
-}
-
-/* 正文插图走设计稿的「washed」（和 .washed 同一份配方）：去饱和 + 降对比 + 抬亮，
-   让图沉进雾蓝底里而不是浮在上面；鼠标移上去恢复原色。 */
-.prose-bw img {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-line);
-  filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
-  transition: filter 400ms ease;
-}
-
-.prose-bw img:hover {
-  filter: none;
-}
-
-/* ![alt](/path "原色")：明确要求原色的图，一上来就不做 washed 处理 */
-.prose-bw img.img-color,
-.prose-bw img.img-color:hover {
-  filter: none;
-}
-
-.prose-bw :not(pre) > code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.88em;
-  background: var(--color-neutral-200);
-  border: 1px solid var(--color-line);
-  border-radius: 3px;
-  padding: 1px 5px;
-  color: var(--color-ink);
-}
-
-/* shiki 输出的代码块 */
-.prose-bw pre {
-  overflow-x: auto;
-  border: 1px solid var(--color-line);
-  border-radius: 6px;
-  padding: 18px 20px;
-  font-size: 13.5px;
-  line-height: 1.75;
-  background: var(--color-neutral-100) !important;
-}
-
-.prose-bw pre code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.prose-bw table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14.5px;
-}
-
-.prose-bw th,
-.prose-bw td {
-  border-bottom: 1px solid var(--color-line);
-  padding: 10px 12px;
-  text-align: left;
-}
-
-.prose-bw th {
-  font-weight: 500;
-  color: var(--color-ink);
-  letter-spacing: 0.02em;
-}
-
-/* ==========================================================================
-   唱片页（/records）—— 一张斜放的黑胶，直接落在页面浅色背景上
-
-   2026-08-30 重做：原来是一张正对着看的平面 SVG，改成**真的斜放在透视里**。
-   2026-08-31 再改：撤掉了包着它的深色矩形容器（用户原话「我要的是与背景融入的，
-   不是你给我制作出来的分割」），唱片和唱臂现在直接坐在页面的
-   雾蓝底上（见 components/shell/SiteShell.tsx）。黑胶本身还是黑的——那是材质，
-   不是「深色容器」，别混为一谈。
-
-   结构（对应 components/records/Turntable.tsx）：
-
-     .vinyl-frame            容器查询的锚点（盘小到一定程度，标签上的曲目表让位）；
-                             也是 .vinyl-floor-shadow 这层平面投影的定位参照
-       .vinyl-floor-shadow   **不在透视平面里**的一层扁平投影，垫在唱片正下方——
-                             这是让唱片「落在页面上」的关键，浅底上必须是真实的
-                             柔和灰影，不能沿用深底时代那层白色的光
-       .vinyl-scene          透视容器。perspective-origin 默认在正中 = 盘心，
-                             点击反投影（Turntable 里的 planeFromScreen）就是靠这个前提，
-                             改 perspective 的值要同步改那边的 PERSPECTIVE 常数
-         .vinyl-plane        rotateX(25deg) 的那个平面，preserve-3d
-           .vinyl-shadow     盘背后贴着盘身的一圈近影（原来叫 .vinyl-pool，是给深色
-                             背景设计的白色轮廓光；浅色背景下改成更深的接触阴影，
-                             和 .vinyl-floor-shadow 一起把盘「压」在页面上）
-           .vinyl-edge-*     盘的厚度：同一张盘沿自己的法线压下去两层，
-                             斜放之后落在盘的正下方，露出来的那一弯就是盘边
-           .vinyl-disc       盘身
-             .vinyl-grooves  沟槽（**这一层在转**，标签也在里面跟着转）
-             .vinyl-lands    导入槽和收尾槽那两圈没有纹路的平面
-             .vinyl-light    固定的单侧光（不跟着转 —— 灯是不动的，转的是碟）
-             .vinyl-sheen    一道慢慢扫过盘面的柔光
-           svg.vinyl-arm     唱臂，translateZ 浮在盘面上方，和盘在同一个透视平面里。
-                             支点座、配重这些落在盘外的部件原来是给深色台面配的深灰，
-                             浅底上太重，已经调亮一档（材质本身还是深色金属/塑料）
-
-   转速取真实的 33⅓ 转/分（1.8 秒一圈）。暂停时只把 animation-play-state 切成
-   paused，唱片停在原地；上面 prefers-reduced-motion 那条全局兜底会把它掐停，
-   所以「减少动态效果」下唱片不转 —— 但透视和材质都还在。
-   ========================================================================== */
-@keyframes dcSpin {
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 360deg;
-  }
-}
-
-/* 只转沟槽这一层：厚度、唱臂、固定的那道光都在外面，不跟着转。
-   转的是个 div，绕自己的正中心，所以不要 transform-origin —— 别加回来 */
-.records-disc {
-  animation: dcSpin 1.8s linear infinite;
-}
-
-.vinyl-frame {
-  position: relative;
-  container-type: inline-size;
-}
-
-/* 扁平的地面投影，刻意**不**放进 .vinyl-plane（不跟着 25° 倾斜走）——
-   现实里桌面投影不会跟着物体一起转角度，这层只管把唱片「钉」在页面上。
-   宽而扁、模糊得很开，是柔光源（不是聚光灯）打下来的样子。 */
-.vinyl-floor-shadow {
-  position: absolute;
-  left: 50%;
-  top: 54%;
-  width: 82%;
-  aspect-ratio: 2.6 / 1;
-  translate: -50% -50%;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in srgb, var(--color-ink) 22%, transparent),
-    color-mix(in srgb, var(--color-ink) 11%, transparent) 52%,
-    transparent 76%
-  );
-  filter: blur(20px);
-  pointer-events: none;
-}
-
-.vinyl-scene {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1000 / 880;
-  perspective: 1500px;
-}
-
-.vinyl-plane {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(25deg);
-}
-
-/* 盘身和厚度层共用的定位：以盘心为中心，宽度是场景的 78%（= SVG 里的 R=390） */
-.vinyl-layer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  aspect-ratio: 1;
-  width: 78%;
-  border-radius: 50%;
-  translate: -50% -50%;
-}
-
-/* 贴着盘身的一圈近影（原叫 .vinyl-pool，深底时代是白色轮廓光，见上面结构图的说明）。
-   偏心在 44%/62%（不是正中心）：光是从左上来的（Turntable.tsx 里那道单侧光渐变同一个
-   方向），影子自然要往右下偏。 */
-.vinyl-shadow {
-  width: 108%;
-  background: radial-gradient(
-    circle closest-side at 44% 62%,
-    color-mix(in srgb, var(--color-ink) 30%, transparent),
-    color-mix(in srgb, var(--color-ink) 14%, transparent) 55%,
-    transparent 78%
-  );
-  filter: blur(16px);
-  transform: translateZ(-46px);
-}
-
-.vinyl-edge-deep {
-  background: #040404;
-  transform: translateZ(-13px);
-}
-
-.vinyl-edge {
-  background: linear-gradient(
-    104deg,
-    #3d3d3d,
-    #0f0f0f 34%,
-    #333333 68%,
-    #080808
-  );
-  transform: translateZ(-6px);
-}
-
-.vinyl-disc {
-  overflow: hidden;
-  background: #050505;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.11),
-    inset 0 0 26px 4px rgba(0, 0, 0, 0.85);
+    0 1px 0 color-mix(in oklab, white 30%, transparent) inset,
+    0 10px 24px -10px hsl(var(--sc-shadow-color) / 0.6);
+  transition:
+    background-color 160ms var(--sc-ease-out),
+    transform 120ms var(--sc-ease-out);
 }
-
-/* 沟槽。转动绕的是正中心，同心圆转起来不会有摩尔纹，所以纹路可以压得很细 */
-.vinyl-grooves {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    repeating-radial-gradient(
-      circle closest-side at 50% 50%,
-      rgba(255, 255, 255, 0.055) 0 0.5px,
-      rgba(0, 0, 0, 0.52) 0.5px 1.4px,
-      rgba(255, 255, 255, 0.018) 1.4px 2.1px,
-      rgba(0, 0, 0, 0.44) 2.1px 3px
-    ),
-    repeating-radial-gradient(
-      circle closest-side at 50% 50%,
-      rgba(255, 255, 255, 0.075) 0 1px,
-      rgba(255, 255, 255, 0) 1px 27px
-    ),
-    radial-gradient(
-      circle closest-side at 50% 50%,
-      #1c1c1c 0 34%,
-      #151515 58%,
-      #0d0d0d 80%,
-      #070707 100%
-    );
-  will-change: rotate;
+.cta svg {
+  transition: transform 160ms var(--sc-ease-out);
 }
-
-/* 导入槽（贴着盘边）和收尾槽（贴着标签）：这两圈是平的，没有纹路。
-   ⚠️ 内圈那一环**不能盖到标签上**（标签在下面一层），盖上去奶白就变黑了 */
-.vinyl-lands {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      circle closest-side at 50% 50%,
-      rgba(7, 7, 7, 0) 0 39.5%,
-      rgba(7, 7, 7, 0.9) 41.5% 43%,
-      rgba(7, 7, 7, 0) 45.5%
-    ),
-    radial-gradient(
-      circle closest-side at 50% 50%,
-      rgba(7, 7, 7, 0) 94%,
-      rgba(7, 7, 7, 0.92) 96.5%,
-      #060606 100%
-    );
-}
-
-/* 固定的单侧光：灯不动，动的是碟 —— 所以这一层**不**跟着转 */
-.vinyl-light {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 196deg at 50% 50%,
-    rgba(255, 255, 255, 0) 0deg,
-    rgba(255, 255, 255, 0.07) 18deg,
-    rgba(255, 255, 255, 0.29) 37deg,
-    rgba(255, 255, 255, 0.09) 58deg,
-    rgba(255, 255, 255, 0) 84deg,
-    rgba(255, 255, 255, 0) 174deg,
-    rgba(255, 255, 255, 0.05) 196deg,
-    rgba(255, 255, 255, 0.2) 217deg,
-    rgba(255, 255, 255, 0.045) 242deg,
-    rgba(255, 255, 255, 0) 268deg,
-    rgba(255, 255, 255, 0) 360deg
-  );
-  mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(
-    circle closest-side at 50% 50%,
-    transparent 0 40%,
-    #000 44% 91%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  mask-image: radial-gradient(
-    circle closest-side at 50% 50%,
-    transparent 0 40%,
-    #000 44% 91%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-}
-
-/* 一道慢慢扫过盘面的柔光（比转速慢得多，只是让盘面「活着」） */
-.vinyl-sheen {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    rgba(255, 255, 255, 0) 0deg,
-    rgba(255, 255, 255, 0.085) 24deg,
-    rgba(255, 255, 255, 0) 60deg,
-    rgba(255, 255, 255, 0) 360deg
-  );
-  mix-blend-mode: screen;
-  animation: dcSpin 9s linear infinite;
-  -webkit-mask-image: radial-gradient(
-    circle closest-side at 50% 50%,
-    transparent 0 38%,
-    #000 44% 92%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    circle closest-side at 50% 50%,
-    transparent 0 38%,
-    #000 44% 92%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
-/* 中心标签：跟着沟槽一起转，所以放在 .vinyl-grooves 里面。
-   宽度由 Turntable.tsx 里的 R_LABEL/R 算出来写在 style 上，这里不重复一份 */
-.vinyl-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-}
-
-.vinyl-arm {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-  transform: translateZ(12px);
-}
-
-/* 唱臂投在盘面上的影子。filter 在 SVG 内部生效，不会把外面的 3D 压平 */
-.vinyl-arm-body {
-  filter: drop-shadow(0 7px 5px rgba(0, 0, 0, 0.6));
-}
-
-/* 盘小到这个程度，标签上的曲目表就成了灰点 —— 换成只印大字那一版。
-   看的是**盘所在的那一栏**有多宽，不是视口，所以用容器查询 */
-.vinyl-label-tight {
-  display: none;
-}
-
-@container (max-width: 430px) {
-  .vinyl-label-full {
-    display: none;
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    background: var(--wl-accent-hover);
   }
+  .cta:hover svg {
+    transform: translate(2px, 2px);
+  }
+}
+.cta:active {
+  transform: translateY(1px) scale(0.985);
+}
 
-  .vinyl-label-tight {
-    display: block;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--sc-r-md);
+  border: 1px solid var(--wl-hair-strong);
+  font-size: 0.9375rem;
+  transition:
+    border-color 160ms var(--sc-ease-out),
+    background-color 160ms var(--sc-ease-out);
+}
+.btn--primary {
+  background: var(--sc-accent);
+  border-color: var(--sc-accent);
+  color: var(--sc-accent-ink);
+  font-weight: 600;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    border-color: var(--sc-ink-soft);
+  }
+  .btn--primary:hover {
+    background: var(--wl-accent-hover);
+    border-color: var(--wl-accent-hover);
   }
 }
 
-/* ==========================================================================
-   右下角迷你播放器 —— 2026-08-30 新增（播放能力搬到全站层）
-   ========================================================================== */
-
-/* 迷你播放器左边那张小碟：同一套「黑胶 + 奶白标签」材质，缩到 34px 的纯 CSS 版，
-   不是复用大唱片那套（那边的沟槽是一层层画出来的，这个尺寸画不起那么细） */
-.mini-vinyl {
-  display: block;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      circle closest-side at 50% 50%,
-      #0a0a0a 0 7%,
-      rgba(0, 0, 0, 0) 8%
-    ),
-    radial-gradient(
-      circle closest-side at 50% 50%,
-      #ece7dc 0 30%,
-      rgba(0, 0, 0, 0) 31%
-    ),
-    repeating-radial-gradient(
-      circle closest-side at 50% 50%,
-      rgba(255, 255, 255, 0.11) 0 0.5px,
-      rgba(0, 0, 0, 0.55) 0.5px 2px
-    ),
-    radial-gradient(circle closest-side at 50% 50%, #1b1b1b, #050505);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.13);
+/* 文字链接：琥珀色、细下划线 */
+.textlink,
+.viewall {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--sc-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in oklab, var(--sc-accent) 40%, transparent);
+  transition: text-decoration-color 160ms var(--sc-ease-out);
+}
+.viewall::after {
+  content: "→";
+  margin-left: 0.45em;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .textlink:hover,
+  .viewall:hover {
+    text-decoration-color: var(--sc-accent);
+  }
+  .viewall:hover::after {
+    transform: translateX(3px);
+  }
 }
 
-/* 迷你唱片自己的转动。和 .records-disc 是同一份关键帧、同一个转速，
-   分开一条只是因为语义不同：那条属于唱片页那台唱机 */
-.mini-vinyl-spin {
-  animation: dcSpin 1.8s linear infinite;
+.iconbtn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--wl-hair-strong);
+  color: var(--sc-ink);
+  transition:
+    border-color 160ms var(--sc-ease-out),
+    background-color 160ms var(--sc-ease-out),
+    transform 120ms var(--sc-ease-out);
+}
+.iconbtn--primary {
+  width: 3.25rem;
+  height: 3.25rem;
+  background: var(--sc-accent);
+  border-color: var(--sc-accent);
+  color: var(--sc-accent-ink);
+}
+.iconbtn--small {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+@media (pointer: coarse) {
+  .iconbtn--small {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .iconbtn:hover {
+    border-color: var(--sc-ink-soft);
+  }
+  .iconbtn--primary:hover {
+    background: var(--wl-accent-hover);
+    border-color: var(--wl-accent-hover);
+  }
+}
+.iconbtn:active {
+  transform: scale(0.96);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--sc-r-md);
+  border: 1px solid var(--wl-hair-strong);
+  color: var(--sc-ink-soft);
+  font-size: 0.875rem;
+  transition:
+    color 160ms var(--sc-ease-out),
+    border-color 160ms var(--sc-ease-out);
+}
+.chip.is-active {
+  color: var(--sc-ink);
+  border-color: var(--sc-accent);
+}
+.chip__count {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    color: var(--sc-ink);
+  }
+}
+
+/* ------------------------------------------------------- 语言切换 -- */
+.lang {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--sc-r-md);
+  font-family: var(--sc-font-mono);
+  font-size: 0.75rem;
+}
+.lang__item {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.5rem;
+  min-height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid transparent;
+  color: var(--sc-ink-soft);
+  transition: color 160ms var(--sc-ease-out);
+}
+.lang__item.is-active {
+  color: var(--sc-ink);
+  border-color: var(--wl-hair-strong);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.lang__item:hover {
+    color: var(--sc-ink);
+  }
+}
+@media (pointer: coarse) {
+  .lang__item {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+/* ------------------------------------------------------- 邮箱 + 复制 -- */
+.email {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.email__addr {
+  font-family: var(--sc-font-mono);
+  font-size: 0.9375rem;
+  color: var(--sc-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  text-decoration-color: var(--wl-hair-strong);
+  word-break: break-all;
+  transition: text-decoration-color 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .email__addr:hover {
+    text-decoration-color: var(--sc-accent);
+  }
+}
+.email__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid var(--wl-hair-strong);
+  color: var(--sc-ink-soft);
+  font-size: 0.8125rem;
+  transition:
+    color 160ms var(--sc-ease-out),
+    border-color 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .email__copy:hover {
+    color: var(--sc-ink);
+    border-color: var(--sc-ink-soft);
+  }
+}
+@media (pointer: coarse) {
+  .email__copy {
+    min-height: 2.75rem;
+  }
+}
+
+/* ------------------------------------------------------------ 社交账号 -- */
+.socials--icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+.socials--icons .socials__link {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--sc-r-md);
+  border: 1px solid var(--wl-hair);
+  color: var(--sc-ink-soft);
+  transition:
+    color 160ms var(--sc-ease-out),
+    border-color 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .socials--icons .socials__link:hover {
+    color: var(--sc-ink);
+    border-color: var(--wl-hair-strong);
+  }
+}
+@media (pointer: coarse) {
+  .socials--icons .socials__link {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+.socials--rows li + li {
+  border-top: 1px solid var(--wl-hair);
+}
+.socials--rows .socials__link {
+  display: grid;
+  grid-template-columns: 1.25rem auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.35rem 0;
+  color: var(--sc-ink);
+}
+.socials__name {
+  font-size: 0.9375rem;
+}
+.socials__handle {
+  font-family: var(--sc-font-mono);
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.socials__arrow {
+  color: var(--sc-accent);
+  transition: transform 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .socials--rows .socials__link:hover .socials__arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* ------------------------------------------------- 「跳过」等通用小件 -- */
+.skip {
+  position: absolute;
+  left: 0.75rem;
+  top: -4rem;
+  z-index: 300;
+  padding: 0.6rem 1rem;
+  border-radius: var(--sc-r-md);
+  background: var(--sc-accent);
+  color: var(--sc-accent-ink);
+  font-weight: 600;
+}
+.skip:focus {
+  top: 0.75rem;
+}
+
+.redirect {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  color: var(--sc-ink-soft);
+}
+
+/* 减少动态效果：引擎已经把位移都停了，这里补上本站自己的那些（循环动画、悬停位移） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

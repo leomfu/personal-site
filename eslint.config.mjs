@@ -8,7 +8,17 @@ import typescript from "eslint-config-next/typescript";
 const eslintConfig = [
   ...coreWebVitals,
   ...typescript,
-  { ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"] },
+  {
+    ignores: [
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+      // scroll-craft 引擎原样拷贝（src/vendor）和技能目录本身都不是本站代码，不改也不 lint
+      "src/vendor/**",
+      "scrollcraft/**",
+    ],
+  },
 ];
 
 export default eslintConfig;

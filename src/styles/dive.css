@@ -1,0 +1,201 @@
+/* ============================================================================
+   俯冲过渡（components/dive/DiveProvider）。阶段由 .is-<phase> 决定：
+     lock  0.4s 锁定上海：盖住首页，地球朝上海放大一点，准星从四角收拢
+     video 俯冲视频（有的话），只留「跳过」
+     fall  没视频的后备：地球继续放大（越来越快），书房叠化进来
+     land  停在书房 = 第 1 幕远景在 p = 0 时的样子
+     out   落地页挂好之后淡出
+   --ox / --oy 是上海光点在屏幕上的位置；--land-shift 是第 1 幕远景层落地时的位移。
+   ========================================================================== */
+
+.dive {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  background: var(--sc-canvas);
+}
+.dive.is-lock {
+  animation: dive-in 180ms var(--sc-ease-out) both;
+}
+.dive.is-out {
+  animation: dive-out 520ms var(--sc-ease-out) forwards;
+  pointer-events: none;
+}
+@keyframes dive-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes dive-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.dive__earth {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--ox) var(--oy);
+}
+.is-lock .dive__earth {
+  animation: dive-lock 400ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.is-video .dive__earth {
+  transform: scale(1.12);
+}
+.is-fall .dive__earth {
+  /* 越掉越快：这是镜头在往下掉，不是界面动效 */
+  animation: dive-fall 1100ms cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+.is-land .dive__earth,
+.is-out .dive__earth {
+  opacity: 0;
+}
+@keyframes dive-lock {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+@keyframes dive-fall {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(4.4);
+  }
+}
+
+.dive__room {
+  opacity: 0;
+  transform: translate3d(0, var(--land-shift), 0);
+}
+.is-fall .dive__room {
+  animation: dive-fade 640ms var(--sc-ease-out) 470ms both;
+}
+.is-fall .dive__room .plate {
+  animation: dive-settle 900ms var(--sc-ease-out) 470ms both;
+}
+.is-land .dive__room,
+.is-out .dive__room {
+  opacity: 1;
+}
+@keyframes dive-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dive-settle {
+  from {
+    transform: scale(1.22);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* 视频：和第 1 幕远景用同样的放大和位移，最后一帧（房间）才能和落地页对上 */
+.dive__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: translate3d(0, var(--land-shift), 0) scale(1.05);
+  transition: opacity 240ms var(--sc-ease-out);
+}
+.is-video .dive__video {
+  opacity: 1;
+}
+
+/* 准星：四个角从外面收拢到光点上 */
+.dive__reticle {
+  position: absolute;
+  left: var(--ox);
+  top: var(--oy);
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.is-lock .dive__reticle {
+  opacity: 1;
+}
+.dive__reticle span {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--sc-ink);
+}
+.dive__reticle span:nth-child(1) {
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+  animation: ret-tl 400ms var(--sc-ease-out) forwards;
+}
+.dive__reticle span:nth-child(2) {
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+  animation: ret-tr 400ms var(--sc-ease-out) forwards;
+}
+.dive__reticle span:nth-child(3) {
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+  animation: ret-bl 400ms var(--sc-ease-out) forwards;
+}
+.dive__reticle span:nth-child(4) {
+  border-bottom-width: 1.5px;
+  border-right-width: 1.5px;
+  animation: ret-br 400ms var(--sc-ease-out) forwards;
+}
+@keyframes ret-tl {
+  from {
+    transform: translate(-96px, -96px);
+  }
+  to {
+    transform: translate(-24px, -24px);
+  }
+}
+@keyframes ret-tr {
+  from {
+    transform: translate(82px, -96px);
+  }
+  to {
+    transform: translate(10px, -24px);
+  }
+}
+@keyframes ret-bl {
+  from {
+    transform: translate(-96px, 82px);
+  }
+  to {
+    transform: translate(-24px, 10px);
+  }
+}
+@keyframes ret-br {
+  from {
+    transform: translate(82px, 82px);
+  }
+  to {
+    transform: translate(10px, 10px);
+  }
+}
+
+.dive__skip {
+  position: absolute;
+  right: 1.5rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: var(--sc-r-md);
+  border: 1px solid var(--wl-hair-strong);
+  background: color-mix(in oklab, var(--sc-canvas) 60%, transparent);
+  color: var(--sc-ink);
+  font-family: var(--sc-font-mono);
+  font-size: 0.8125rem;
+}

@@ -5,8 +5,7 @@ import { useTranslations } from "next-intl";
 import type { Heading } from "@/lib/markdown";
 
 /**
- * 长文侧边目录（xl 以上才出现，窄屏不显示 —— 700px 内容列两侧才有位置）。
- * 当前小节靠 IntersectionObserver 高亮。
+ * 长文的侧边目录（宽屏才出现，窄屏没有位置）。当前小节靠 IntersectionObserver 高亮。
  */
 export function ArticleToc({ headings }: { headings: Heading[] }) {
   const t = useTranslations("blog");
@@ -27,31 +26,22 @@ export function ArticleToc({ headings }: { headings: Heading[] }) {
       },
       { rootMargin: "-80px 0px -70% 0px", threshold: 0 },
     );
-
     targets.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [headings]);
 
   return (
-    <div className="sticky top-8 flex flex-col gap-3">
-      <span className="text-[11px] tracking-(--tracking-label) text-faint">
-        {t("toc")}
-      </span>
-      <nav className="flex flex-col gap-2 border-l border-line pl-3.5">
+    <nav className="toc" aria-label={t("toc")}>
+      <p className="toc__label mono">{t("toc")}</p>
+      <ol>
         {headings.map((heading) => (
-          <a
-            key={heading.id}
-            href={`#${heading.id}`}
-            className={[
-              "text-[12.5px] leading-[1.5] transition-colors",
-              heading.depth === 3 ? "pl-3" : "",
-              active === heading.id ? "text-accent-700" : "text-faint hover:text-muted",
-            ].join(" ")}
-          >
-            {heading.text}
-          </a>
+          <li key={heading.id} className={heading.depth === 3 ? "toc__sub" : undefined}>
+            <a href={`#${heading.id}`} className={active === heading.id ? "is-active" : undefined} aria-current={active === heading.id ? "true" : undefined}>
+              {heading.text}
+            </a>
+          </li>
         ))}
-      </nav>
-    </div>
+      </ol>
+    </nav>
   );
 }

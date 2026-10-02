@@ -1,45 +1,46 @@
 /**
- * 顶部导航。
+ * 站点结构（2026-10 改版，scroll-craft · BRIEF §5）。
  *
- * 2026-09-17 全站改版第一阶段「精简范围」之后，站上只剩设计稿里的八个页面 + 音乐：
+ *   /{locale}/            首页：单屏的「轨道」，名片 + 入口
+ *   /{locale}/about/      完整介绍：他房间里的 7 个地方，一条长滚动
+ *   /{locale}/<子页>/     每个地方的「查看全部」
+ *   /{locale}/contact/    并入首页和完整介绍页结尾，旧地址客户端跳回首页（不进 sitemap）
  *
- *   顶栏八项   首页 / 项目 / 视频 / 博客 / 摄影 / 工具 / 关于 / 联系（摄影进了顶栏）
- *   不进顶栏   唱片 /records —— 入口是首页「爱好」那几张胶囊卡
- *
- * 书影音、专注区（番茄钟/便签）、放松区、留言板、新闻、⌘K 命令面板都已下线，
- * 原来给 ⌘K 用的搜索别名表（NAV_ALIASES）也随之删掉了。
+ * 7 个地方的顺序就是完整介绍页的分幕顺序，也是房间平面图上「你」走的路线。
  */
-/** 首页就是语言根路径 —— 2026-09-01 起开场页下线，/zh/ 直接是首页，不再有 /zh/home/ */
-export const NAV_HOME = { key: "home", path: "" } as const;
 
-/** 顶栏平铺的八项（含首页），顺序即左到右的顺序 */
-export const NAV_TOP = [
-  NAV_HOME,
-  { key: "projects", path: "/projects" },
-  { key: "videos", path: "/videos" },
-  { key: "blog", path: "/blog" },
-  { key: "photos", path: "/photos" },
-  { key: "tools", path: "/tools" },
-  { key: "about", path: "/about" },
-  { key: "contact", path: "/contact" },
-] as const;
+export const PLACES = ["desk", "screen", "shelf", "projector", "darkroom", "records", "window"] as const;
+export type PlaceKey = (typeof PLACES)[number];
 
-/** 真实页面，但不进顶栏。sitemap 里有 */
-export const NAV_EXTRA = [{ key: "records", path: "/records" }] as const;
+/** 子页，顺序 = 完整介绍页里它们出现的顺序；place 是它在房间里对应的地方 */
+export const SUBPAGES = [
+  { key: "projects", path: "/projects", place: "screen" },
+  { key: "blog", path: "/blog", place: "shelf" },
+  { key: "videos", path: "/videos", place: "projector" },
+  { key: "photos", path: "/photos", place: "darkroom" },
+  { key: "records", path: "/records", place: "records" },
+  { key: "tools", path: "/tools", place: "records" },
+] as const satisfies ReadonlyArray<{ key: string; path: string; place: PlaceKey }>;
 
-export type NavKey = (typeof NAV_TOP)[number]["key"] | (typeof NAV_EXTRA)[number]["key"];
+export type SubpageKey = (typeof SUBPAGES)[number]["key"];
 
-export type NavItem = { key: NavKey; path: string };
-
-/** 摊平的全部页面（sitemap 用） */
-export const NAV_ITEMS: readonly NavItem[] = [...NAV_TOP, ...NAV_EXTRA];
+/** sitemap 里的全部静态页（文章和影集另算） */
+export const SITEMAP_PATHS = ["", "/about", ...SUBPAGES.map((p) => p.path)] as const;
 
 /**
  * 带语言前缀 + 尾斜杠（next.config 开了 trailingSlash）。
- * path 里可以带 `#hash`，斜杠要补在 hash 前面：/zh/projects/#uses
+ * path 里可以带 `#hash`，斜杠要补在 hash 前面：/zh/about/#screen
  */
 export function localePath(locale: string, path: string) {
   const [route, hash] = path.split("#");
   const base = `/${locale}${route === "/" ? "" : route}/`;
   return hash ? `${base}#${hash}` : base;
+}
+
+/** 当前路径换成另一种语言（语言切换用）。认不出来就回那种语言的首页 */
+export function swapLocale(pathname: string, target: string) {
+  const match = pathname.match(/^\/(zh|en)(\/.*)?$/);
+  if (!match) return `/${target}/`;
+  const rest = match[2] ?? "/";
+  return `/${target}${rest.endsWith("/") ? rest : `${rest}/`}`;
 }

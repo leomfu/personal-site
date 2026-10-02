@@ -1,36 +1,43 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { localized } from "@/lib/format";
 import type { Photo } from "@/lib/photoTypes";
 
 /**
- * 单辑页的照片网格 + 放大态。
+ * 单辑页的照片 + 放大看图。
  *
- * 网格和摄影页同一种 figure（改版规格 §6.7）：玻璃底、圆角 28px、4/3 裁切、底下一行图注、
- * hover 上浮 6px；图片走 washed，鼠标移上去恢复原色。
- * 点开之后看到的才是整帧未裁的照片 —— **放大态里的整帧照片不做任何处理**，那一刻看的就是作品本身。
- * 放大态：← → 翻页、ESC 关闭；遮罩是 neutral-900（原来的暗侧 shell 色随改版删掉了）。
+ * 网格里照片按原比例摆（不裁切），点开是整帧原图：**放大态里的照片不做任何处理**，那一刻看的就是作品本身。
+ * 放大态：← → 翻页、Esc 关闭，打开时焦点进对话框、背景不滚，关上后焦点回到点开它的那张。
  */
 export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string }) {
   const t = useTranslations("photos");
   const locale = useLocale();
   const reduced = useReducedMotion() ?? false;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const triggers = useRef<Array<HTMLButtonElement | null>>([]);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const lastOpened = useRef<number | null>(null);
 
   const close = useCallback(() => setOpenIndex(null), []);
   const step = useCallback(
-    (delta: number) =>
-      setOpenIndex((i) => (i === null ? i : (i + delta + photos.length) % photos.length)),
+    (delta: number) => setOpenIndex((i) => (i === null ? i : (i + delta + photos.length) % photos.length)),
     [photos.length],
   );
 
-  /** 放大态：← → 翻页、ESC 关闭，同时锁住背景滚动 */
   useEffect(() => {
-    if (openIndex === null) return;
+    if (openIndex === null) {
+      // 关上之后焦点回到原来那张
+      if (lastOpened.current !== null) {
+        triggers.current[lastOpened.current]?.focus({ preventScroll: true });
+        lastOpened.current = null;
+      }
+      return;
+    }
+    if (lastOpened.current === null) lastOpened.current = openIndex;
+    closeRef.current?.focus({ preventScroll: true });
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
@@ -39,180 +46,103 @@ export function AlbumGrid({ photos, title }: { photos: Photo[]; title: string })
       else return;
       event.preventDefault();
     };
-
-    const previousOverflow = document.body.style.overflow;
+    const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previous;
     };
   }, [openIndex, close, step]);
 
   const current = openIndex === null ? null : photos[openIndex];
   const captionOf = (photo: Photo) => localized(locale, photo.caption ?? "", photo.captionEn);
+  const altOf = (photo: Photo, i: number) => captionOf(photo) || t("photoAlt", { title, index: i + 1 });
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
     <>
-      <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))]">
-        {photos.map((photo, i) => {
-          const caption = captionOf(photo);
-          return (
-            <figure
-              key={photo.file}
-              className="glass group overflow-hidden rounded-[var(--radius-lg)] transition-transform duration-[350ms] hover:-translate-y-[6px]"
+      <ul className="contact-sheet contact-sheet--album">
+        {photos.map((photo, i) => (
+          <li key={photo.file}>
+            <button
+              ref={(el) => {
+                triggers.current[i] = el;
+              }}
+              type="button"
+              className="frame frame--button"
+              onClick={() => setOpenIndex(i)}
+              aria-label={t("open", { alt: altOf(photo, i) })}
             >
-              <button
-                type="button"
-                onClick={() => setOpenIndex(i)}
-                aria-label={t("photoAlt", { title, index: i + 1 })}
-                className="relative block w-full cursor-zoom-in"
-                style={{ aspectRatio: "4 / 3" }}
-              >
-                <Image
-                  src={photo.src}
-                  alt={caption || t("photoAlt", { title, index: i + 1 })}
-                  fill
-                  sizes="(max-width: 640px) 100vw, 560px"
-                  className="washed object-cover"
-                />
-              </button>
-              {caption && (
-                <figcaption className="px-4 py-3 text-[12.5px] text-ink opacity-70">{caption}</figcaption>
-              )}
-            </figure>
-          );
-        })}
-      </div>
+              {/* eslint-disable-next-line @next/next/no-img-element -- 摄影作品，原图原色，按原比例 */}
+              <img src={photo.src} width={photo.width} height={photo.height} alt="" loading="lazy" decoding="async" />
+            </button>
+            {captionOf(photo) && <p className="frame__caption">{captionOf(photo)}</p>}
+          </li>
+        ))}
+      </ul>
 
       <AnimatePresence>
         {current && openIndex !== null && (
           <motion.div
+            key="lightbox"
+            className="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("lightbox.label", { title })}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduced ? 0.01 : 0.24 }}
-            className="fixed inset-0 z-50 flex flex-col bg-neutral-900/95 backdrop-blur-[2px]"
+            transition={{ duration: reduced ? 0 : 0.2, ease: [0.23, 1, 0.32, 1] }}
             onClick={close}
           >
-            {/* 顶部：计数 + 关闭 */}
-            <div className="flex shrink-0 items-center justify-between px-5 py-4 text-[11.5px] tracking-[0.16em] text-neutral-400 sm:px-8">
-              <span>
+            <div className="lightbox__bar">
+              <span className="mono">
                 {pad(openIndex + 1)} / {pad(photos.length)}
               </span>
-              <button
-                type="button"
-                onClick={close}
-                aria-label={t("lightbox.close")}
-                className="flex size-11 cursor-pointer items-center justify-center text-neutral-400 transition-colors hover:text-neutral-100"
-              >
-                <CloseIcon />
+              <button ref={closeRef} type="button" onClick={close} className="lightbox__btn" aria-label={t("lightbox.close")}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden>
+                  <path d="M5 5l10 10M15 5 5 15" />
+                </svg>
               </button>
             </div>
-
-            {/* 中间：整帧照片（点图片本身不关闭，翻页按钮在两侧） */}
-            <div className="flex min-h-0 flex-1 items-center justify-center gap-2 px-3 sm:gap-5 sm:px-8">
-              <ArrowButton
-                dir="prev"
-                label={t("lightbox.prev")}
+            <div className="lightbox__stage">
+              <button
+                type="button"
+                className="lightbox__btn"
+                aria-label={t("lightbox.prev")}
                 onClick={(event) => {
                   event.stopPropagation();
                   step(-1);
                 }}
-              />
-              <motion.div
-                key={current.file}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: reduced ? 0.01 : 0.3 }}
-                className="flex min-w-0 flex-1 justify-center"
-                onClick={(event) => event.stopPropagation()}
               >
-                <Image
-                  src={current.src}
-                  alt={captionOf(current) || t("photoAlt", { title, index: openIndex + 1 })}
-                  width={current.width}
-                  height={current.height}
-                  sizes="100vw"
-                  className="max-h-[74vh] w-auto max-w-full object-contain"
-                />
-              </motion.div>
-              <ArrowButton
-                dir="next"
-                label={t("lightbox.next")}
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M12.2 3.8 6 10l6.2 6.2" />
+                </svg>
+              </button>
+              <figure className="lightbox__figure" onClick={(event) => event.stopPropagation()}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- 整帧原图，不做任何处理 */}
+                <img key={current.file} src={current.src} width={current.width} height={current.height} alt={altOf(current, openIndex)} />
+                {captionOf(current) && <figcaption>{captionOf(current)}</figcaption>}
+              </figure>
+              <button
+                type="button"
+                className="lightbox__btn"
+                aria-label={t("lightbox.next")}
                 onClick={(event) => {
                   event.stopPropagation();
                   step(1);
                 }}
-              />
+              >
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M7.8 3.8 14 10l-6.2 6.2" />
+                </svg>
+              </button>
             </div>
-
-            {/* 底部：说明文字 + 键盘提示 */}
-            <div className="flex shrink-0 flex-col items-center gap-2 px-6 py-5 text-center">
-              {captionOf(current) && (
-                <p className="max-w-[560px] text-[13px] leading-[1.7] text-neutral-300">
-                  {captionOf(current)}
-                </p>
-              )}
-              <p className="hidden text-[11px] tracking-[0.14em] text-neutral-500 sm:block">
-                {t("lightbox.hint")}
-              </p>
-            </div>
+            <p className="lightbox__hint mono">{t("lightbox.hint")}</p>
           </motion.div>
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function ArrowButton({
-  dir,
-  label,
-  onClick,
-}: {
-  dir: "prev" | "next";
-  label: string;
-  onClick: (event: React.MouseEvent) => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="flex size-11 shrink-0 cursor-pointer items-center justify-center text-neutral-400 transition-colors hover:text-neutral-100"
-    >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        {dir === "prev" ? <path d="M12.2 3.8 6 10l6.2 6.2" /> : <path d="M7.8 3.8 14 10l-6.2 6.2" />}
-      </svg>
-    </button>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-      aria-hidden
-    >
-      <path d="M5 5l10 10M15 5 5 15" />
-    </svg>
   );
 }

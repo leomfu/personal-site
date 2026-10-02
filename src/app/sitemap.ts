@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPosts } from "@/lib/content";
-import { NAV_ITEMS, localePath } from "@/lib/nav";
+import { SITEMAP_PATHS, localePath } from "@/lib/nav";
 import { getAlbums } from "@/lib/photos";
 import { routing } from "@/i18n/routing";
 import { siteConfig } from "~/site.config";
@@ -11,10 +11,9 @@ export const dynamic = "force-static";
 /** 站点地图 —— 静态导出时构建成 out/sitemap.xml。每个页面两种语言各一条，并互指 hreflang。 */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/$/, "");
-  /* NAV_ITEMS 的第一项就是首页（path ""，即 /{locale}/），
-     所以这里不再单列一条 "/"，否则 sitemap 里会出现两条同样的 URL。 */
+  /* SITEMAP_PATHS 的第一项就是首页（path ""，即 /{locale}/）。/contact/ 只是跳回首页的旧地址，不收 */
   const paths = [
-    ...NAV_ITEMS.map((item) => item.path),
+    ...SITEMAP_PATHS,
     ...getPosts().map((post) => `/blog/${post.slug}`),
     ...getAlbums().map((album) => `/photos/${album.slug}`),
   ];

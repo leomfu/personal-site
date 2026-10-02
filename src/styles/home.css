@@ -1,0 +1,469 @@
+/* ============================================================================
+   首页 · 轨道（单屏）
+   层：地球(1) → 大气冷光(2) → 文字侧暗面(3) → 地球上的标记(4) → 发丝线刻度(5)
+       → 引线(6) → 文字(7) → 顶栏(8)
+   --mx / --my（指针，-1..1）和 --drift（远景的慢呼吸）由 components/home/HomeStage 写。
+   ========================================================================== */
+
+.home {
+  --mx: 0;
+  --my: 0;
+  --drift: 1.025;
+  position: relative;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--sc-canvas);
+}
+
+/* 远景：地球。指针视差最小，外加极慢的呼吸 */
+.home__earth,
+.home__marks {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--mx) * -8px), calc(var(--my) * -6px), 0) scale(var(--drift));
+}
+.home__earth {
+  z-index: 1;
+}
+.home__marks {
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* 氛围：大气层边缘一道很淡的冷光（光，不是霓虹） */
+.home__limb {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(130% 55% at 50% -6%, color-mix(in oklab, var(--wl-cold) 18%, transparent), transparent 62%);
+  mix-blend-mode: screen;
+  animation: limb 14s ease-in-out infinite alternate;
+}
+@keyframes limb {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* 文字那一列的暗面（只压左边这一列；上海和海面不压） */
+.home__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--sc-canvas) 94%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 84%, transparent) 24%,
+    color-mix(in oklab, var(--sc-canvas) 46%, transparent) 40%,
+    transparent 54%
+  );
+}
+
+/* 前景：坐标刻度和发丝线，指针视差最大 */
+.home__hud {
+  position: absolute;
+  inset: 1rem;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate3d(calc(var(--mx) * 14px), calc(var(--my) * 10px), 0);
+}
+.hud__rule {
+  position: absolute;
+  --tick: var(--wl-hair-strong);
+}
+.hud__rule--top,
+.hud__rule--bottom {
+  left: 12%;
+  right: 12%;
+  height: 9px;
+  background:
+    repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 16px) left bottom / 100% 4px no-repeat,
+    repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 80px) left bottom / 100% 9px no-repeat;
+}
+.hud__rule--top {
+  top: 0;
+}
+.hud__rule--bottom {
+  bottom: 0;
+  transform: scaleY(-1);
+}
+.hud__rule--left {
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 9px;
+  background:
+    repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 16px) left top / 4px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 80px) left top / 9px 100% no-repeat;
+}
+.hud__corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid color-mix(in oklab, var(--sc-ink) 40%, transparent);
+}
+.hud__corner--tl {
+  left: 0;
+  top: 0;
+  border-left-width: 1px;
+  border-top-width: 1px;
+}
+.hud__corner--tr {
+  right: 0;
+  top: 0;
+  border-right-width: 1px;
+  border-top-width: 1px;
+}
+.hud__corner--bl {
+  left: 0;
+  bottom: 0;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+}
+.hud__corner--br {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+/* ------------------------------------------------- 上海：准星 + 脉冲光点 -- */
+.sh__cross {
+  position: absolute;
+  pointer-events: none;
+}
+.sh__cross--h {
+  left: -22vw;
+  width: 44vw;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--wl-hair-strong) 30%, transparent 46%, transparent 54%, var(--wl-hair-strong) 70%, transparent);
+}
+.sh__cross--v {
+  top: -16svh;
+  height: 32svh;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--wl-hair-strong) 30%, transparent 45%, transparent 55%, var(--wl-hair-strong) 70%, transparent);
+}
+.sh__lat,
+.sh__lng {
+  position: absolute;
+  font-size: 0.6875rem;
+  color: var(--sc-ink-soft);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.sh__lat {
+  left: 3.25rem;
+  top: -1.35rem;
+}
+.sh__lng {
+  left: 0.5rem;
+  top: 2.6rem;
+}
+
+.sh__dot {
+  position: absolute;
+  left: -1.375rem;
+  top: -1.375rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  pointer-events: auto;
+}
+.sh__core,
+.sh__ring {
+  grid-area: 1 / 1;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+.sh__core {
+  background: var(--sc-accent);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--sc-canvas) 70%, transparent);
+  transition: transform 160ms var(--sc-ease-out);
+}
+.sh__ring {
+  border: 1.5px solid var(--sc-accent);
+  animation: sh-pulse 2.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+@keyframes sh-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  80%,
+  100% {
+    transform: scale(3.6);
+    opacity: 0;
+  }
+}
+.sh__label {
+  position: absolute;
+  left: 2.6rem;
+  top: 50%;
+  translate: 0 -50%;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid var(--wl-hair-strong);
+  background: color-mix(in oklab, var(--sc-canvas) 78%, transparent);
+  color: var(--sc-ink);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  transition:
+    border-color 160ms var(--sc-ease-out),
+    color 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sh__dot:hover .sh__core {
+    transform: scale(1.35);
+  }
+  .sh__dot:hover .sh__label {
+    border-color: var(--sc-accent);
+    color: var(--sc-accent);
+  }
+}
+.sh__dot:focus-visible {
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* ------------------------------------------------------ 名片到光点的引线 -- */
+.home__leader {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms var(--sc-ease-out) 200ms;
+}
+.home.is-live .home__leader {
+  opacity: 1;
+}
+.home__leader polyline {
+  fill: none;
+  stroke: color-mix(in oklab, var(--sc-ink) 48%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.home__leader circle {
+  fill: var(--sc-ink);
+}
+
+/* ---------------------------------------------------------------- 文字 -- */
+.home__top {
+  position: absolute;
+  z-index: 8;
+  top: 1.25rem;
+  right: calc(var(--sc-gutter) + 0.5rem);
+}
+
+.home__copy {
+  position: absolute;
+  z-index: 7;
+  left: calc(var(--sc-gutter) + 0.5rem);
+  top: 50%;
+  translate: 0 -50%;
+  width: min(29rem, 40vw);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.home__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.home__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.idcard {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 1.1rem;
+  align-items: end;
+  padding: 0.85rem;
+  border: 1px solid var(--wl-hair-strong);
+  border-radius: var(--sc-r-md);
+  background: color-mix(in oklab, var(--sc-canvas) 72%, transparent);
+  box-shadow: var(--sc-edge), var(--sc-e2);
+}
+.idcard__photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--sc-r-sm);
+}
+.idcard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.idcard__coords {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.idcard__name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  font-family: var(--sc-font-display);
+  font-size: clamp(2.25rem, 3.4vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--sc-ink);
+}
+.idcard__name:lang(en),
+:lang(en) .idcard__name {
+  letter-spacing: var(--sc-track-tight);
+}
+.idcard__alt {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--sc-ink-soft);
+}
+.idcard__facts {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--sc-ink);
+}
+
+.home__tagline {
+  max-width: 26em;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--sc-ink);
+  text-wrap: pretty;
+}
+
+.home__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ------------------------------------------------- 窄屏 / 竖屏：上下分开 -- */
+@media (max-width: 860px), (max-aspect-ratio: 4/5) {
+  .home__scrim {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--sc-canvas) 92%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 72%, transparent) 26%,
+        transparent 44%
+      ),
+      linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 80%, transparent) 24%,
+        transparent 42%
+      );
+  }
+  .home__copy {
+    inset: 0;
+    translate: none;
+    width: auto;
+    padding: calc(4rem + env(safe-area-inset-top)) var(--sc-gutter) calc(1rem + env(safe-area-inset-bottom));
+    justify-content: space-between;
+    gap: 1rem;
+    pointer-events: none;
+  }
+  .home__copy > * {
+    pointer-events: auto;
+  }
+  .home__intro {
+    gap: 0.85rem;
+  }
+  .idcard {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.65rem;
+  }
+  .idcard__name {
+    font-size: clamp(1.9rem, 8vw, 2.4rem);
+  }
+  .idcard__facts {
+    font-size: 0.75rem;
+  }
+  .home__tagline {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+  .home__actions {
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+  .home__contact {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+  .home__contact .email__addr {
+    font-size: 0.8125rem;
+  }
+  .home__cta {
+    width: 100%;
+    min-height: 3.5rem;
+  }
+  .home__top {
+    top: calc(0.75rem + env(safe-area-inset-top));
+    right: var(--sc-gutter);
+  }
+  .sh__cross--h {
+    left: -36vw;
+    width: 72vw;
+  }
+  .sh__cross--v {
+    top: -11svh;
+    height: 22svh;
+  }
+  .hud__rule--left {
+    display: none;
+  }
+}
+
+/* 很矮的窗口（横着拿的手机）：省掉一句话，保证入口还在一屏里 */
+@media (max-height: 560px) and (min-width: 861px) {
+  .home__tagline {
+    display: none;
+  }
+  .home__copy {
+    gap: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home__earth,
+  .home__marks,
+  .home__hud {
+    transform: none;
+  }
+  .sh__ring {
+    animation: none;
+    transform: scale(2.2);
+    opacity: 0.45;
+  }
+}

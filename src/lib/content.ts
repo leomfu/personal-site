@@ -37,7 +37,7 @@ const readJson = <T>(file: string, fallback: T): T =>
 
 /* ------------------------------------------------------------------ 纯 markdown 页 */
 
-/** about / home-intro 这类「一整篇正文」的页面。没有这一语言的文件就读中文 */
+/** about 这类「一整篇正文」的页面。没有这一语言的文件就读中文 */
 function readDoc(dir: string, base: string, locale: string) {
   const file = `${base}.${locale}.md`;
   const fallback = `${base}.zh.md`;
@@ -48,8 +48,6 @@ function readDoc(dir: string, base: string, locale: string) {
 }
 
 export const getAbout = (locale: string) => readDoc("about", "about", locale);
-/** 首页 Hero 那句引导语（content/home/intro.zh.md，纯文本一段） */
-export const getHomeIntro = (locale: string) => readDoc("home", "intro", locale);
 
 /** front-matter 里的日期：gray-matter 会把 2026-08-24 解析成 Date，统一转回 YYYY-MM-DD */
 function toISODate(value: unknown) {

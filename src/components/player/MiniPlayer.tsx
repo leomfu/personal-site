@@ -11,16 +11,13 @@ import { useProgressPainter } from "@/lib/useAudioPlayer";
 import { localePath } from "@/lib/nav";
 
 /**
- * 右下角的迷你播放器 —— 离开唱片页之后，音乐还在放，这张小卡片就是它的界面。
+ * 右下角的迷你播放器：离开唱片页之后音乐还在放，这张小卡片就是它的界面。
  *
- * 露面的条件很严：**用户碰过播放器**（在放，或者放过之后按了暂停）才出现，
- * 没播过的时候整站看不到它，一点地方都不占。
- * 唱片页上也不出现 —— 那页已经有一台大唱机了，两个进度条互相打架没有意义。
- *
- * 关掉 = 停止播放并把唱针抬回托架（player.stop()），不是把声音藏起来继续放。
+ * 只有**用户碰过播放器**（在放，或者放过之后按了暂停）才出现，没播过整站看不到它。
+ * 唱片页（已经有大唱机）和首页（单屏的轨道，底部是入口按钮）上不出现。
+ * 完整介绍页右下角有房间平面图，卡片会摞在它上面（--plan-offset，由平面图写）。
+ * 关掉 = 停止播放（player.stop()），不是把声音藏起来继续放。
  */
-
-/** 唱片页和开场页不显示：一个已经有大唱机，一个是整屏的开场 */
 const HIDE_ON = [/\/records\/?$/, /^\/(zh|en)\/?$/];
 
 export function MiniPlayer() {
@@ -31,17 +28,13 @@ export function MiniPlayer() {
   const pathname = usePathname() ?? "";
   const player = usePlayer();
 
-  const fillRef = useRef<HTMLDivElement | null>(null);
-  const knobRef = useRef<HTMLDivElement | null>(null);
+  const fillRef = useRef<HTMLSpanElement | null>(null);
   const timeRef = useRef<HTMLSpanElement | null>(null);
-
   const { track, touched, shouldPlay, live, elapsed, total, isClip } = player;
 
   /** 进度条逐帧画，不走重渲染 */
   const paint = useCallback((fraction: number, done: number) => {
-    const percent = `${(fraction * 100).toFixed(2)}%`;
-    if (fillRef.current) fillRef.current.style.width = percent;
-    if (knobRef.current) knobRef.current.style.left = percent;
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${fraction.toFixed(4)})`;
     if (timeRef.current) timeRef.current.textContent = clock(done);
   }, []);
   useProgressPainter(player.audioRef, total, reduced, paint);
@@ -53,142 +46,65 @@ export function MiniPlayer() {
     <AnimatePresence>
       {show && track && (
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: reduced ? 0.01 : 0.32, ease: [0.22, 0.61, 0.36, 1] }}
-          className="glass fixed right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 w-[min(300px,calc(100vw-1.5rem))] rounded-[calc(var(--radius-lg)*1.15)] px-4 py-3.5 sm:right-5 sm:bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
+          className="mini"
           role="region"
           aria-label={t("regionLabel")}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 8 }}
+          transition={{ duration: reduced ? 0 : 0.24, ease: [0.23, 1, 0.32, 1] }}
         >
-          <div className="flex items-center gap-3">
-            {/* 小唱片：在放就在转 */}
-            <Link
-              href={localePath(locale, "/records")}
-              aria-label={t("toRecords")}
-              className="group flex shrink-0 items-center"
-            >
-              <span
-                className="mini-vinyl mini-vinyl-spin"
-                style={{
-                  animationPlayState:
-                    (shouldPlay || live) && !reduced ? "running" : "paused",
-                }}
-                aria-hidden
-              />
+          <div className="mini__row">
+            <Link href={localePath(locale, "/records")} className="mini__disc" aria-label={t("toRecords")}>
+              <span className={(shouldPlay || live) && !reduced ? "mini__vinyl is-spinning" : "mini__vinyl"} aria-hidden />
             </Link>
-
-            <Link
-              href={localePath(locale, "/records")}
-              className="min-w-0 grow"
-              aria-label={t("toRecords")}
-            >
-              <p className="truncate text-[12.5px] text-ink">
-                {en ? track.titleEn : track.title}
-              </p>
-              <p className="mt-0.5 truncate text-[11px] text-muted">
+            <Link href={localePath(locale, "/records")} className="mini__text">
+              <span className="mini__title">{en ? track.titleEn : track.title}</span>
+              <span className="mini__artist">
                 {en ? track.artistEn : track.artist}
-                {isClip && (
-                  <span className="ml-1.5 text-faint">· {t("preview")}</span>
-                )}
-              </p>
+                {isClip && ` · ${t("preview")}`}
+              </span>
             </Link>
-
             <button
               type="button"
+              className="iconbtn iconbtn--small iconbtn--primary"
               onClick={player.toggle}
               aria-label={shouldPlay ? t("pause") : t("play")}
               aria-pressed={shouldPlay}
-              className="btn-primary-glow flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full sm:size-9 bg-accent text-bg transition-colors hover:bg-accent-600"
             >
               {shouldPlay ? (
-                <svg
-                  width="9"
-                  height="11"
-                  viewBox="0 0 9 11"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                  aria-hidden
-                >
-                  <line x1="2.5" y1="0.5" x2="2.5" y2="10.5" />
-                  <line x1="6.5" y1="0.5" x2="6.5" y2="10.5" />
+                <svg width="10" height="12" viewBox="0 0 9 11" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+                  <path d="M2.5.5v10M6.5.5v10" />
                 </svg>
               ) : (
-                <svg
-                  width="9"
-                  height="11"
-                  viewBox="0 0 9 11"
-                  fill="currentColor"
-                  aria-hidden
-                >
+                <svg width="10" height="12" viewBox="0 0 9 11" fill="currentColor" aria-hidden>
                   <path d="M8.5 5.5 0 11V0z" />
                 </svg>
               )}
             </button>
-
-            <button
-              type="button"
-              onClick={player.stop}
-              aria-label={t("close")}
-              className="glass-soft flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full sm:size-9 text-muted transition-colors hover:text-accent-700"
-            >
-              <svg
-                width="9"
-                height="9"
-                viewBox="0 0 9 9"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                aria-hidden
-              >
-                <line x1="0.5" y1="0.5" x2="8.5" y2="8.5" />
-                <line x1="8.5" y1="0.5" x2="0.5" y2="8.5" />
+            <button type="button" className="iconbtn iconbtn--small" onClick={player.stop} aria-label={t("close")}>
+              <svg width="10" height="10" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
+                <path d="M.5.5l8 8M8.5.5l-8 8" />
               </svg>
             </button>
           </div>
-
-          {/* 进度：能拖，也能用键盘（原生 range 叠在上面，视觉那一层自己画） */}
-          <div className="mt-2.5 flex items-center gap-2.5">
-            <div className="relative h-3 grow">
-              <div className="absolute top-1/2 left-0 h-[3px] w-full -translate-y-1/2 rounded-full bg-line" />
-              <div
-                ref={fillRef}
-                className="absolute top-1/2 left-0 h-[3px] w-0 -translate-y-1/2 rounded-full bg-accent"
-              />
-              <div
-                ref={knobRef}
-                className="absolute top-1/2 left-0 size-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
-              />
-              <input
-                type="range"
-                min={0}
-                max={1000}
-                value={total > 0 ? Math.round((elapsed / total) * 1000) : 0}
-                onChange={(e) => player.seek(Number(e.target.value) / 1000)}
-                aria-label={t("seek")}
-                aria-valuetext={`${clock(elapsed)} / ${clock(total)}`}
-                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-              />
-            </div>
-            <span className="shrink-0 font-mono text-[10px] text-faint tabular-nums">
-              <span ref={timeRef}>{clock(elapsed)}</span>
-              {" / "}
-              {clock(total)}
+          <div className="mini__progress">
+            <span className="mini__track" aria-hidden>
+              <span ref={fillRef} className="mini__fill" />
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={1000}
+              value={total > 0 ? Math.round((elapsed / total) * 1000) : 0}
+              onChange={(e) => player.seek(Number(e.target.value) / 1000)}
+              aria-label={t("seek")}
+              aria-valuetext={`${clock(elapsed)} / ${clock(total)}`}
+            />
+            <span className="mini__time mono">
+              <span ref={timeRef}>{clock(elapsed)}</span> / {clock(total)}
             </span>
           </div>
-
-          {/* 试听片段：随时能去平台听完整版 */}
-          {isClip && track.platformUrl && (
-            <a
-              href={track.platformUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="link-underline mt-2 block text-[11px]"
-            >
-              {t("fullVersion")}
-            </a>
-          )}
         </motion.div>
       )}
     </AnimatePresence>

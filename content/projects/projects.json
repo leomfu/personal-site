@@ -64,7 +64,11 @@
     "featured": true,
     "summary": "把笔记自动加工成带真人发音的记忆卡片。已经产出 5 个牌组、260 张卡，每天在用。",
     "summary_en": "Automatically turns my notes into flashcards with real human pronunciation. It has produced 5 decks and 260 cards so far, and I use it every day.",
-    "featuredStack": ["Anki", "TTS"]
+    "featuredStack": ["Anki", "TTS"],
+    "metrics": [
+      { "value": 5, "label": "个牌组", "label_en": "decks" },
+      { "value": 260, "label": "张卡", "label_en": "cards" }
+    ]
   },
   {
     "slug": "personal-site",

@@ -8,104 +8,154 @@
       "title": "首页",
       "description": "这个站是我给自己开的一块地方：说说我是谁，摊开我做出来的东西，也记下正在学的、想通的、拍到的。"
     },
+    "about": {
+      "title": "完整介绍",
+      "description": "从书桌前走到窗边：我是谁、在做的东西、写下来的、录下来的、拍下来的、听的和用的，最后是联系方式。"
+    },
     "projects": {
       "title": "项目",
-      "description": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。"
+      "description": "做过的和在做的东西，一件件摆在这里，每件都标着现在的状态。"
     },
     "videos": {
       "title": "视频",
-      "description": "自己拍的、剪的、发出去的东西。点播放键直接在这一页看。"
+      "description": "自己拍的、剪的、发出去的东西。点播放键，就在这一页看。"
     },
     "photos": {
       "title": "摄影",
-      "description": "三辑，都是路上随手拍的。上海、北京、青岛。"
+      "description": "路上随手拍的照片，按城市分辑。"
     },
     "blog": {
-      "title": "博客",
-      "description": "自己写的长文、随笔和想法，共 4 篇。"
-    },
-    "about": {
-      "title": "关于",
-      "description": "学着用 AI 把手上的活干得更快更好，顺手做成能跑的东西。"
+      "title": "文章",
+      "description": "自己写的长文、随笔和想法。"
     },
     "tools": {
       "title": "工具",
-      "description": "我每天在用的东西。点一下直接去它们的官网。"
+      "description": "每天在用的东西。点一下去它们的官网。"
     },
     "contact": {
       "title": "联系",
-      "description": "想说点什么，写封邮件就好 —— 我一般两三天内回。"
+      "description": "联系方式在首页和完整介绍页的最后：写封邮件就好，我一般两三天内回。"
     },
     "records": {
       "title": "唱片",
-      "description": "一台真能转、真出声的黑胶唱机，和我按心情听的那些歌。"
+      "description": "一台真能转、真出声的唱机，和我按心情听的那些歌。"
     }
-  },
-  "nav": {
-    "home": "首页",
-    "projects": "项目",
-    "photos": "摄影",
-    "videos": "视频",
-    "blog": "博客",
-    "about": "关于",
-    "tools": "工具",
-    "contact": "联系",
-    "menu": "打开菜单",
-    "close": "关闭菜单",
-    "toHome": "回到首页",
-    "records": "唱片"
   },
   "common": {
     "zh": "中",
-    "en": "EN"
+    "en": "EN",
+    "langLabel": "语言",
+    "toZh": "切换到中文",
+    "toEn": "切换到英文",
+    "skipToContent": "跳到正文",
+    "tour": "完整介绍",
+    "backHome": "回到首页",
+    "backTour": "回到完整介绍",
+    "backTourAt": "回到完整介绍 · {place}",
+    "backNav": "返回",
+    "socials": "社交账号",
+    "socialAria": "{name}（新窗口打开）",
+    "profilePage": "主页",
+    "copy": "复制",
+    "copied": "已复制",
+    "copyAria": "复制邮箱地址",
+    "copiedStatus": "邮箱地址已复制",
+    "emailAria": "给伟良写邮件：{email}"
+  },
+  "profile": {
+    "facts": "{city} · {age} · {major} {year} 届",
+    "label": "{name} · {age} · {city} · {major} {year} 届"
   },
   "home": {
-    "heroTag": "做东西 · 写笔记 · 拍照",
-    "heroEyebrow": "WELCOME · 欢迎来到我的主页",
-    "heroTitle1": "我是伟良，",
-    "heroTitle2": "把想法做成",
-    "heroTitle3": "真在跑的东西",
-    "ctaPrimary": "看看做了什么 →",
-    "ctaSecondary": "联系我",
-    "avatarAlt": "伟良",
-    "avatarCaption": "better stronger me",
-    "buildingTitle": "在做的",
-    "buildingNote": "2026 年 8 月",
-    "writingTitle": "最近写的",
-    "photosTitle": "最近拍的",
-    "hobbiesTitle": "爱好",
-    "hobbies": {
-      "photos": "摄影",
-      "photosNote": "3 辑 · 上海 北京 青岛",
-      "records": "唱片",
-      "recordsNote": "20 首 · 循环里的那几张"
-    }
+    "dotLabel": "上海",
+    "dotAria": "上海的光点：降落，进入完整介绍",
+    "cta": "降落，进来看看",
+    "ctaAria": "降落，进来看看：进入完整介绍",
+    "portraitAlt": "{name}的照片"
   },
-  "about": {
-    "tag": "ABOUT",
-    "title": "关于我",
-    "lead": "学着用 AI 把手上的活干得更快更好，顺手做成能跑的东西。",
-    "nowLabel": "现在",
-    "cardTitle": "边做边记录",
-    "cardBody": "学 AI、做 AI 工具的过程，更新在「伟良-Evren」，小红书和 B 站同步。正在找 AI 运营方向的机会，想交流或有合作，欢迎私信。",
-    "cardTag1": "伟良-Evren",
-    "cardTag2": "小红书",
-    "cardTag3": "B 站",
-    "cardCta": "私信我 →"
+  "dive": {
+    "skip": "跳过",
+    "status": "正在降落到上海"
   },
-  "projects": {
-    "tag": "PROJECTS",
-    "title": "项目",
-    "lead": "做过的东西，一个个列在这里。有线上地址的，点标题就能去。",
+  "plan": {
+    "label": "房间平面图",
+    "open": "打开平面图",
+    "close": "收起平面图",
+    "now": "你在",
+    "city": "上海",
+    "goto": "去{place}：{title}"
+  },
+  "places": {
+    "desk": { "name": "书桌前", "title": "我是谁" },
+    "screen": { "name": "屏幕", "title": "在做的东西" },
+    "shelf": { "name": "书架", "title": "写下来的" },
+    "projector": { "name": "投影", "title": "录下来的" },
+    "darkroom": { "name": "暗房", "title": "拍下来的" },
+    "records": { "name": "唱片架", "title": "听的和用的" },
+    "window": { "name": "窗边", "title": "联系我" }
+  },
+  "tour": {
+    "backOrbit": "回到首页",
+    "landed": "已降落",
+    "portraitAlt": "{name}的人像",
+    "selfIntro": "他自己写的介绍",
+    "screenLead": "{count} 件，每件都标着现在的状态。",
+    "shotAlt": "{name}的真实截图",
+    "visit": "访问网站 ↗",
     "repo": "源码 ↗",
     "noLink": "暂无公开链接",
-    "visit": "访问网站 ↗"
+    "screenAll": "查看全部项目",
+    "minutes": "{minutes} 分钟",
+    "shelfAll": "查看全部文章",
+    "projectorWatch": "去视频页看「{title}」",
+    "bilibili": "哔哩哔哩",
+    "youtube": "YouTube",
+    "published": "{date} 发布",
+    "projectorAll": "查看全部视频",
+    "printAria": "{title}：{caption}。打开这一辑",
+    "albumMeta": "{year} · {count} 张",
+    "darkroomAll": "查看全部影集",
+    "recordsHint": "点一张唱片，放进唱机试听。",
+    "recordsAll": "去唱机",
+    "toolsTitle": "常用工具",
+    "toolsAll": "查看全部工具",
+    "nowPlaying": "正在放",
+    "playSleeve": "播放：{title} · {artist}",
+    "pauseSleeve": "暂停：{title}",
+    "windowLabel": "联系 · {year} · 邮件和社交账号 · 一般两三天内回",
+    "windowLead": "想说点什么，写封邮件就好。"
+  },
+  "nav": {
+    "label": "子页面",
+    "projects": "项目",
+    "blog": "文章",
+    "videos": "视频",
+    "photos": "摄影",
+    "records": "唱片",
+    "tools": "工具"
+  },
+  "projects": {
+    "title": "项目",
+    "lead": "做过的和在做的东西，一件件摆在这里，每件都标着现在的状态。",
+    "visit": "访问网站 ↗",
+    "repo": "源码 ↗",
+    "noLink": "暂无公开链接",
+    "shotAlt": "{name}的真实截图"
+  },
+  "videos": {
+    "title": "视频",
+    "lead": "自己拍的、剪的、发出去的东西。点播放键，就在这一页看。",
+    "load": "点击加载播放器",
+    "loadAria": "加载并播放：{title}",
+    "bilibili": "哔哩哔哩",
+    "youtube": "YouTube",
+    "openOn": "在{platform}打开 ↗"
   },
   "blog": {
-    "tag": "WRITING",
-    "title": "博客",
+    "title": "文章",
     "lead": "自己写的长文、随笔和想法，共 {count} 篇。",
     "filterAll": "全部",
+    "filterLabel": "按类型筛选",
     "types": {
       "blog": "随笔",
       "essay": "长文",
@@ -115,59 +165,41 @@
     "toc": "目录",
     "prev": "上一篇",
     "next": "下一篇",
-    "backToList": "回到列表",
+    "backToList": "回到全部文章",
     "originalLang": "原文为{lang}，暂无{target}版本",
     "langZh": "中文",
-    "langEn": "英文"
-  },
-  "videos": {
-    "tag": "VIDEO",
-    "title": "视频",
-    "lead": "自己拍的、剪的、发出去的东西。点播放键直接在这一页看。",
-    "load": "点击加载播放器",
-    "onBilibili": "在哔哩哔哩打开 ↗",
-    "onYoutube": "在 YouTube 打开 ↗"
+    "langEn": "英文",
+    "pager": "上一篇和下一篇",
+    "empty": "这一类还没有文章。"
   },
   "photos": {
-    "tag": "PHOTOS",
     "title": "摄影",
-    "lead": "三辑，都是路上随手拍的。上海、北京、青岛。",
+    "lead": "路上随手拍的，按城市分辑。点开一辑，可以放大看整张。",
     "albumMeta": "{year} · {count} 张",
-    "photoAlt": "{title} 第 {index} 张",
+    "photoAlt": "{title}第 {index} 张",
+    "open": "放大看：{alt}",
     "newer": "下一辑",
     "older": "上一辑",
-    "backToList": "回到摄影",
+    "backToList": "回到全部影集",
+    "pager": "上一辑和下一辑",
     "lightbox": {
+      "label": "{title}的照片",
       "close": "关闭",
       "prev": "上一张",
       "next": "下一张",
-      "hint": "← → 翻页 · ESC 关闭"
+      "hint": "← → 翻页 · Esc 关闭"
     }
   },
   "tools": {
-    "tag": "TOOLS",
     "title": "工具",
-    "lead": "我每天在用的东西。点一下直接去它们的官网。"
-  },
-  "contact": {
-    "tag": "CONTACT",
-    "title": "联系我",
-    "lead": "想说点什么，写封邮件就好 —— 我一般两三天内回。",
-    "emailLabel": "EMAIL",
-    "write": "写封邮件 →",
-    "socials": {
-      "github": "代码和这个站的源码",
-      "x": "日常想法，更新最勤",
-      "bilibili": "做出来的东西，录成视频"
-    }
+    "lead": "每天在用的东西。点一下去它们的官网。"
   },
   "records": {
-    "tag": "RECORDS",
     "title": "唱片",
     "lead": "享受音乐的放松时刻，让自己慢下来感受自己寻找自己的内心深处。",
-    "footnote": "离开这一页音乐不会停，右下角会出现一张小卡片接着控制它。「按心情听」那一组每首只放 30 秒试听，常驻那组是公共领域录音，完整播放。",
+    "footnote": "离开这一页音乐不会停，右下角会出现一张小卡片接着控制它。「按心情听」那几组每首只放 30 秒试听，常驻那组是公共领域录音，完整播放。",
     "player": {
-      "regionLabel": "黑胶唱机",
+      "regionLabel": "唱机",
       "nowPlaying": "正在播放",
       "stopped": "唱针已抬起",
       "play": "放",
@@ -176,27 +208,24 @@
       "next": "下一首",
       "volume": "音量",
       "seek": "唱片：点一圈跳到那个位置，外圈是开头",
-      "shelf": "碟片",
+      "shelf": "换碟",
       "groupResident": "常驻",
       "showList": "这张碟上的曲目",
       "hideList": "收起曲目",
       "unplayable": "· 放不出来",
-      "hint": "点唱片上的任意一圈跳到那儿；选中唱片后可以用空格播放暂停、左右键 ±5 秒。",
-      "residentCredit": "常驻这张碟：{credit}，自己托管，断不了。",
+      "hint": "点唱片上的任意一圈跳到那儿；选中唱片后，空格播放或暂停，左右键快进快退 5 秒。",
+      "residentCredit": "常驻这张碟：{credit}。自己托管，断不了。",
       "chartNote": "曲目来自按心情整理的歌单，音源是 Apple Music 官方试听。",
-      "sideA": "SIDE A",
-      "labelPreview": "试听 30 秒",
-      "labelFull": "完整播放",
-      "labelFoot": "共 {n} 首 · {mode}",
       "previewTag": "试听 30 秒",
       "fullVersion": "去 Apple Music 听完整版 ↗",
-      "previewNote": "这一组是别人的歌，站内只放 30 秒，最后一秒半会自己淡出 —— 不是播放器坏了。听着对味就去平台听完整版。"
+      "previewNote": "这一组是别人的歌，站内只放 30 秒，最后一秒半会自己淡出，不是播放器坏了。听着对味，就去平台听完整版。"
     },
     "chart": {
       "title": "按心情听",
       "note": "点一行，装到唱机上试听",
+      "count": "{count} 首",
       "playRow": "播放：{title} · {artist}",
-      "openPlatform": "在 Apple Music 打开 ↗"
+      "openPlatformAria": "在 Apple Music 打开「{title}」（新窗口）"
     }
   },
   "player": {
@@ -206,14 +235,10 @@
     "close": "停止播放并收起",
     "seek": "播放进度",
     "preview": "试听",
-    "toRecords": "回唱片页",
-    "fullVersion": "去平台听完整版 ↗"
+    "toRecords": "回唱片页"
   },
-  "footer": {
-    "line1": "做了什么、学了什么、",
-    "line2": "过得怎么样，都在这儿。",
-    "eyebrow": "ELSEWHERE",
-    "cta": "写封邮件 →",
-    "copyright": "© 2026 伟良 · weiliang.dev"
+  "contactRedirect": {
+    "moved": "联系方式搬到了首页。",
+    "goHome": "回到首页"
   }
 }

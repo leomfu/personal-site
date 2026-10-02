@@ -1,0 +1,336 @@
+/* ============================================================================
+   签名动作：房间平面图（components/about/FloorPlan）
+   桌面：右下角一块小图纸。手机：左下角一个小按钮，点开是从底部升起的抽屉。
+   走到窗边（.is-window）：平面图缩到右下角，空出来的地方换成上海的坐标。
+   ========================================================================== */
+
+.plan {
+  position: fixed;
+  z-index: 75;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+
+.plan__panel {
+  position: relative;
+  width: 15rem;
+  padding: 0.6rem 0.6rem 0.45rem;
+  border: 1px solid var(--wl-hair-strong);
+  border-radius: var(--sc-r-lg);
+  background: color-mix(in oklab, var(--sc-canvas) 90%, transparent);
+  box-shadow: var(--sc-edge), var(--sc-e2);
+}
+
+.plan__map {
+  position: relative;
+  aspect-ratio: 240 / 180;
+  transform-origin: 100% 100%;
+  transition:
+    transform 480ms var(--sc-ease-out),
+    opacity 480ms var(--sc-ease-out);
+}
+.plan__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* 线稿：墙最粗，家具细，门和投影光束是虚线 */
+.plan__walls path {
+  fill: none;
+  stroke: var(--sc-ink);
+  stroke-opacity: 0.72;
+  stroke-width: 2.2;
+  stroke-linecap: square;
+}
+.plan__window path {
+  fill: none;
+  stroke: var(--sc-ink-soft);
+  stroke-width: 0.6;
+}
+.plan__thin path,
+.plan__thin rect,
+.plan__thin circle {
+  fill: none;
+  stroke: var(--sc-ink-soft);
+  stroke-opacity: 0.8;
+  stroke-width: 0.8;
+}
+.plan__thin .plan__fill {
+  fill: var(--sc-ink-soft);
+  fill-opacity: 0.45;
+}
+.plan__thin .plan__dash {
+  stroke-dasharray: 2 2.5;
+  stroke-opacity: 0.55;
+}
+.plan__thin .plan__strong {
+  stroke-width: 2;
+}
+
+/* 路线：没走的是虚线，走过的（足迹）是琥珀色实线 */
+.plan__route {
+  fill: none;
+  stroke: var(--sc-ink-soft);
+  stroke-opacity: 0.45;
+  stroke-width: 0.8;
+  stroke-dasharray: 1.5 3;
+}
+.plan__trail {
+  fill: none;
+  stroke: var(--sc-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.plan__station {
+  fill: var(--sc-canvas);
+  stroke: var(--sc-ink-soft);
+  stroke-width: 1;
+  transition:
+    fill 240ms var(--sc-ease-out),
+    stroke 240ms var(--sc-ease-out);
+}
+.plan__station.is-lit {
+  fill: var(--sc-accent);
+  stroke: var(--sc-accent);
+}
+.plan__station.is-here {
+  stroke: var(--sc-ink);
+  stroke-width: 1.6;
+}
+.plan__you-core {
+  fill: var(--sc-ink);
+}
+.plan__you-ring {
+  fill: none;
+  stroke: var(--sc-ink);
+  stroke-opacity: 0.6;
+  stroke-width: 0.9;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: you-pulse 2.6s var(--sc-ease-out) infinite;
+}
+@keyframes you-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 点上去的热区：图上每个地方一个圆，悬停或聚焦时冒出名字 */
+.plan__hits {
+  position: absolute;
+  inset: 0;
+}
+.plan__hits li {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.plan__hit {
+  position: absolute;
+  left: -0.875rem;
+  top: -0.875rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+}
+.plan__hit:focus-visible {
+  outline-offset: 0;
+  border-radius: 50%;
+}
+.plan__tip {
+  position: absolute;
+  bottom: calc(100% + 0.3rem);
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid var(--wl-hair-strong);
+  background: var(--sc-canvas);
+  color: var(--sc-ink);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms var(--sc-ease-out);
+}
+.plan__hit:hover .plan__tip,
+.plan__hit:focus-visible .plan__tip {
+  opacity: 1;
+}
+
+.plan__now {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.45rem 0.15rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--sc-ink);
+}
+.plan__now-label {
+  font-size: 0.6875rem;
+  color: var(--sc-ink-soft);
+}
+.plan__now-title {
+  color: var(--sc-ink-soft);
+}
+
+.plan__coords {
+  position: absolute;
+  left: 0.85rem;
+  top: 0.8rem;
+  display: grid;
+  gap: 0.15rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: var(--sc-ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 360ms var(--sc-ease-out) 120ms;
+}
+.plan__coords span {
+  font-family: var(--sc-font-text);
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.plan.is-window .plan__map {
+  transform: scale(0.46);
+  opacity: 0.6;
+}
+.plan.is-window .plan__coords {
+  opacity: 1;
+}
+
+/* 桌面上不显示的那几样（抽屉专用） */
+.plan__toggle,
+.plan__backdrop,
+.plan__list,
+.plan__close {
+  display: none;
+}
+
+/* ───────────────────────────── 手机：小按钮 + 抽屉 ───────────────────────────── */
+@media (max-width: 860px) {
+  .plan {
+    right: auto;
+    left: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+  .plan__toggle {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 1px solid var(--wl-hair-strong);
+    background: color-mix(in oklab, var(--sc-canvas) 88%, transparent);
+    color: var(--sc-ink);
+    box-shadow: var(--sc-e2);
+  }
+  .plan.is-window .plan__toggle {
+    border-color: var(--sc-accent);
+  }
+  .plan__panel {
+    display: none;
+  }
+  .plan.is-open .plan__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in oklab, #050608 70%, transparent);
+  }
+  .plan.is-open .plan__panel {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: 88svh;
+    overflow-y: auto;
+    padding: 1.25rem var(--sc-gutter) calc(1rem + env(safe-area-inset-bottom));
+    border-radius: var(--sc-r-lg) var(--sc-r-lg) 0 0;
+    border-bottom: 0;
+    background: var(--sc-canvas);
+    animation: sheet-up 280ms var(--sc-ease-drawer) both;
+  }
+  .plan.is-open .plan__map {
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+  .plan.is-window.is-open .plan__map {
+    transform: scale(0.6);
+  }
+  .plan.is-open .plan__hits {
+    display: none;
+  }
+  .plan.is-open .plan__list {
+    display: grid;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--wl-hair);
+  }
+  .plan__list a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--wl-hair);
+    color: var(--sc-ink);
+  }
+  .plan__list a::before {
+    content: "";
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--sc-ink-soft);
+    translate: 0 -0.1rem;
+  }
+  .plan__list a.is-lit::before {
+    background: var(--sc-accent);
+    border-color: var(--sc-accent);
+  }
+  .plan__list a[aria-current="location"] {
+    color: var(--sc-accent);
+  }
+  .plan__list-title {
+    color: var(--sc-ink-soft);
+    font-size: 0.875rem;
+  }
+  .plan.is-open .plan__close {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    margin-top: 0.75rem;
+    border-radius: var(--sc-r-md);
+    border: 1px solid var(--wl-hair-strong);
+    color: var(--sc-ink);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan__you-ring {
+    animation: none;
+  }
+  .plan__map {
+    transition: none;
+  }
+}
+
+/* 完整介绍页上，迷你播放器摞在平面图上面（--plan-offset 由平面图写） */

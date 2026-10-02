@@ -27,15 +27,19 @@ minutes: 6          # 可选：列表上的阅读时长，不写就按字数估
 
 `projects.json`，数组顺序就是页面顺序。字段：
 `slug, name, status, year, desc, stack[], link, repo, featured, summary, featuredStack[]`
-（`featured: true` 的会出现在首页「在做的」，`summary` / `featuredStack` 是首页卡片上的短版）
+（`summary` / `featuredStack` 是完整介绍页「屏幕」那一幕里展品上的短版）
+
+可选 `metrics`：真实的数字，例 `[{ "value": 260, "label": "张卡", "label_en": "cards" }]`，
+完整介绍页会让它从 0 滚上去。**只填真的数**，没有就不写。
+项目截图（可选）：放 `public/images/projects/<slug>.webp`（建议 1280×800），有就显示，没有就只放事实标签。
 
 ## about/ —— 关于页正文
 
 `about.zh.md`，纯正文，小标题用 `###`。
 
-## home/ —— 首页 Hero 引导语
+## home/ —— 首页引导语
 
-`intro.zh.md`，一段纯文本。
+`intro.zh.md`，一段纯文本（2026-10 改版后首页不再显示它，留作站点描述的底稿）。
 
 ## photos/ —— 摄影
 

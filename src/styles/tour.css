@@ -1,0 +1,960 @@
+/* ============================================================================
+   完整介绍页 · 他的房间（7 个地方）
+   每一幕的 --sc-p（0..1）由引擎写在 section 上，这里的「随滚动变化」都从它算。
+   ========================================================================== */
+
+.tour {
+  position: relative;
+  background: var(--sc-canvas);
+}
+
+/* 左上回首页，右上语言。小，固定，不挡画面 */
+.tour__top {
+  position: fixed;
+  z-index: 70;
+  top: calc(0.9rem + env(safe-area-inset-top));
+  left: var(--sc-gutter);
+  right: var(--sc-gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+.tour__top > * {
+  pointer-events: auto;
+}
+.tour__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0 0.8rem 0 0.6rem;
+  border-radius: var(--sc-r-md);
+  border: 1px solid var(--wl-hair);
+  background: var(--wl-panel);
+  color: var(--sc-ink);
+  font-size: 0.8125rem;
+  transition: border-color 160ms var(--sc-ease-out);
+}
+.tour .tour__top .lang {
+  border: 1px solid var(--wl-hair);
+  background: var(--wl-panel);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tour__home:hover {
+    border-color: var(--wl-hair-strong);
+  }
+}
+@media (pointer: coarse) {
+  .tour__home {
+    min-height: 2.75rem;
+  }
+}
+
+.act {
+  position: relative;
+}
+.act__title {
+  font-family: var(--sc-font-display);
+  font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.08;
+  color: var(--sc-ink);
+  text-wrap: balance;
+}
+:lang(en) .act__title {
+  letter-spacing: var(--sc-track-snug);
+}
+.act__title:focus {
+  outline: none;
+}
+
+/* ───────────────────────────── 1 书桌前（峰值） ───────────────────────────── */
+.desk__stage {
+  background: var(--sc-canvas);
+}
+.desk__haze {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(42% 58% at 15% 60%, color-mix(in oklab, var(--sc-accent) 20%, transparent), transparent 70%);
+  mix-blend-mode: screen;
+  animation: haze 11s ease-in-out infinite alternate;
+}
+@keyframes haze {
+  from {
+    opacity: 0.6;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(2%, -1.5%, 0);
+  }
+}
+.desk__subject {
+  position: absolute;
+  z-index: 2;
+  left: 63%;
+  bottom: -2svh;
+  width: min(62svh, 42vw);
+  translate: -50% 0;
+  pointer-events: none;
+}
+.desk__portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: 50% 100%;
+  transform: scale(calc(1 + var(--sc-p, 0) * 0.07));
+}
+.desk__fore {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.bokeh {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0, color-mix(in oklab, var(--c) 30%, transparent) 42%, transparent 70%);
+}
+.bokeh--1 {
+  --c: color-mix(in oklab, var(--sc-accent) 55%, transparent);
+  width: 7rem;
+  height: 7rem;
+  left: 4%;
+  top: 14%;
+}
+.bokeh--2 {
+  --c: color-mix(in oklab, var(--wl-cold) 45%, transparent);
+  width: 4.5rem;
+  height: 4.5rem;
+  right: 7%;
+  top: 22%;
+}
+.bokeh--3 {
+  --c: color-mix(in oklab, var(--sc-accent) 40%, transparent);
+  width: 3rem;
+  height: 3rem;
+  right: 16%;
+  bottom: 30%;
+}
+.bokeh--4 {
+  --c: color-mix(in oklab, var(--wl-cold) 30%, transparent);
+  width: 10rem;
+  height: 10rem;
+  left: 36%;
+  top: -3%;
+}
+.bokeh--5 {
+  --c: color-mix(in oklab, var(--sc-accent) 45%, transparent);
+  width: 2rem;
+  height: 2rem;
+  right: 30%;
+  top: 12%;
+}
+
+.desk__scrim {
+  z-index: 4;
+}
+.desk__copy {
+  z-index: 5;
+  max-width: min(34rem, 44vw);
+  display: grid;
+  gap: 0.9rem;
+}
+/* 三条提示叠在同一个格子里：名字淡出的时候，标签已经在那儿了 */
+.desk__hello {
+  display: grid;
+  gap: 0.6rem;
+}
+.desk__coords {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.desk__name {
+  font-family: var(--sc-font-display);
+  font-size: clamp(3.4rem, 2rem + 6vw, 7rem);
+  font-weight: 500;
+  line-height: 0.98;
+  color: var(--sc-ink);
+}
+:lang(en) .desk__name {
+  letter-spacing: var(--sc-track-tight);
+}
+.desk__name:focus {
+  outline: none;
+}
+.desk__label {
+  font-size: 0.875rem;
+  color: var(--sc-ink);
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--wl-hair-strong);
+}
+.desk__tagline {
+  font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.3rem);
+  line-height: 1.65;
+  color: var(--sc-ink);
+  max-width: 26em;
+  text-wrap: pretty;
+}
+
+/* 1 尾：他的自述 */
+.desk-tail {
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--sc-gutter) clamp(5rem, 10vw, 8rem);
+  background: var(--sc-canvas);
+}
+.desk-tail__inner {
+  max-width: 40rem;
+  margin-left: clamp(0rem, 9vw, 10rem);
+}
+
+/* ───────────────────────────── 2 屏幕（横向展品） ───────────────────────────── */
+.screen__stage {
+  background: linear-gradient(180deg, #0b0e12 0%, #090b0e 100%);
+  display: flex;
+  align-items: center;
+}
+.screen__light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(70% 55% at 55% 45%, color-mix(in oklab, var(--wl-cold) 9%, transparent), transparent 72%);
+}
+.rail {
+  position: relative;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: 0 calc(var(--sc-gutter) + 1rem) 5svh;
+  height: 100%;
+}
+.rail > * {
+  flex: none;
+}
+.rail__head {
+  width: min(19rem, 70vw);
+  display: grid;
+  gap: 1rem;
+}
+.rail__lead {
+  color: var(--sc-ink-soft);
+  max-width: 18em;
+}
+.exhibit {
+  width: min(19rem, 74vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.exhibit--shot {
+  width: min(29rem, 82vw);
+}
+.exhibit--text {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--wl-hair-strong);
+}
+.exhibit__screen {
+  padding: 0.4rem;
+  border: 1px solid var(--wl-hair-strong);
+  border-radius: var(--sc-r-md);
+  background: #06080a;
+  box-shadow: var(--sc-edge), var(--sc-e3);
+}
+.exhibit__screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+.exhibit__name {
+  font-family: var(--sc-font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--sc-ink);
+}
+.exhibit--text .exhibit__name {
+  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+}
+.exhibit__summary {
+  color: var(--sc-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.exhibit__metrics {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.4rem 0;
+}
+.metric {
+  display: grid;
+  gap: 0.1rem;
+}
+.metric__value {
+  font-family: var(--sc-font-mono);
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--sc-ink);
+  font-variant-numeric: tabular-nums;
+}
+.metric__label {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.exhibit__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+}
+.exhibit__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--sc-accent);
+  font-size: 0.9375rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .exhibit__links a:not(.btn):hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+}
+.exhibit__nolink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: 0.875rem;
+  color: var(--sc-ink-soft);
+}
+.rail__end {
+  width: min(13rem, 60vw);
+}
+
+/* 展品依次落位：从 --sc-p 推出来，像抽屉一格格拉开。第一格（标题）不参与 */
+@media (prefers-reduced-motion: no-preference) {
+  .screen .exhibit {
+    --arrive: clamp(0, calc(var(--sc-p, 0) * 6.5 - var(--i) + 1.6), 1);
+    opacity: calc(0.55 + 0.45 * var(--arrive));
+    transform: translate3d(0, calc((1 - var(--arrive)) * 1.25rem), 0);
+  }
+}
+
+/* ───────────────────────────── 3 书架（只有字） ───────────────────────────── */
+.shelf {
+  padding: clamp(6rem, 13vw, 11rem) var(--sc-gutter) clamp(5rem, 10vw, 8rem);
+  background: var(--sc-canvas);
+}
+.shelf__inner {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: clamp(0rem, 6vw, 8rem);
+}
+.shelf .act__title {
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+.spines {
+  border-top: 1px solid var(--wl-hair);
+}
+.spines > li {
+  border-bottom: 1px solid var(--wl-hair);
+}
+.spine {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.35rem 1.75rem;
+  padding: 1.4rem 0;
+}
+.spine__date {
+  grid-row: 1 / span 3;
+  padding-top: 0.45rem;
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.spine__title {
+  font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--sc-ink);
+  transition: color 160ms var(--sc-ease-out);
+}
+.spine__summary {
+  color: var(--sc-ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.spine__meta {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .spine:hover .spine__title {
+    color: var(--sc-accent);
+  }
+}
+.shelf .viewall {
+  margin-top: 1.25rem;
+}
+
+/* ───────────────────────────── 4 投影（擦除） ───────────────────────────── */
+.projector {
+  background: #050608;
+  padding: clamp(5rem, 10vw, 8rem) var(--sc-gutter);
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+}
+.projector__inner {
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(15rem, 1fr);
+  gap: 2rem 3rem;
+  align-items: end;
+}
+.projector .act__title {
+  grid-column: 1 / -1;
+}
+.projector__frame {
+  position: relative;
+}
+.projector__screen {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--sc-r-sm);
+  background: #0c0e11;
+  box-shadow: 0 40px 90px -40px color-mix(in oklab, var(--wl-cold) 30%, transparent);
+}
+.projector__screen img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.projector__screen:focus-visible {
+  outline-offset: -4px;
+}
+.projector__play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 4.5rem;
+  height: 4.5rem;
+  display: grid;
+  place-items: center;
+  padding-left: 4px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--sc-ink) 60%, transparent);
+  background: color-mix(in oklab, var(--sc-canvas) 55%, transparent);
+  color: var(--sc-ink);
+  transition: transform 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .projector__screen:hover .projector__play {
+    transform: scale(1.06);
+  }
+}
+.projector__placard {
+  display: grid;
+  gap: 0.75rem;
+  padding-bottom: 0.25rem;
+}
+.projector__summary {
+  color: var(--sc-ink);
+  line-height: 1.7;
+}
+
+/* ───────────────────────────── 5 暗房（景深 + 底色变暖） ───────────────────────────── */
+.darkroom {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(5rem, 9vw, 8rem) 0;
+}
+.darkroom__ground {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--sc-canvas), var(--wl-warm-ground) calc(var(--sc-p, 0) * 100%));
+}
+.darkroom__safelight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(48% 42% at 86% 8%, rgba(190, 74, 38, 0.2), transparent 72%);
+  opacity: calc(0.15 + var(--sc-p, 0) * 0.85);
+}
+.darkroom__inner {
+  position: relative;
+  padding: 0 var(--sc-gutter);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+.darkroom__stage {
+  position: relative;
+  height: clamp(34rem, 92svh, 56rem);
+  margin: 2.5rem 0 3rem;
+}
+.darkroom__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.print {
+  position: absolute;
+  display: block;
+  padding: 0.35rem;
+  background: #e8e1d3;
+  border-radius: 1px;
+  box-shadow: 0 2px 4px hsl(var(--sc-shadow-color) / 0.4), 0 18px 40px -12px hsl(var(--sc-shadow-color) / 0.7);
+  pointer-events: auto;
+  transition: transform 200ms var(--sc-ease-out);
+}
+.print img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.print:focus-visible {
+  outline-offset: 4px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .print:hover {
+    transform: translateY(-4px);
+  }
+}
+/* 远的小、近的大。照片按原比例，不裁 */
+.print--back-1 {
+  left: 58%;
+  top: 2%;
+  width: 19%;
+}
+.print--back-2 {
+  left: 84%;
+  top: 12%;
+  width: 11%;
+}
+.print--mid-1 {
+  left: 1%;
+  top: 4%;
+  width: 24%;
+}
+.print--mid-2 {
+  left: 30%;
+  top: 20%;
+  width: 14%;
+}
+.print--front-1 {
+  left: 48%;
+  top: 44%;
+  width: 34%;
+}
+.print--front-2 {
+  left: 9%;
+  top: 44%;
+  width: 19%;
+}
+.darkroom__albums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+}
+.darkroom__albums a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--sc-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .darkroom__albums a:hover {
+    color: var(--sc-accent);
+  }
+}
+.darkroom .viewall {
+  margin-top: 0.5rem;
+}
+
+/* ───────────────────────────── 6 唱片架（指针翻动） ───────────────────────────── */
+.records {
+  padding: clamp(5rem, 9vw, 8rem) var(--sc-gutter);
+  background: var(--sc-canvas);
+}
+.records__inner {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+.records__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+}
+.records__hint {
+  color: var(--sc-ink-soft);
+}
+.shelfrow {
+  display: flex;
+  gap: clamp(1rem, 2.5vw, 2.25rem);
+  padding: 2.5rem 0 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.shelfrow::-webkit-scrollbar {
+  display: none;
+}
+.shelfrow__item {
+  flex: none;
+  width: clamp(9.5rem, 15vw, 13rem);
+}
+.sleeve {
+  transform-style: preserve-3d;
+}
+.sleeve__button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-radius: var(--sc-r-sm);
+}
+.sleeve__art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  isolation: isolate;
+}
+/* 封套里探出来的半张黑胶：鼠标移上去再多探出一点 */
+.sleeve__art::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 4%;
+  right: 4%;
+  width: 92%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #0a0a0a 0 8%, var(--sc-accent) 8.5% 17%, #0b0b0c 17.5% 100%),
+    #0b0b0c;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transform: translateX(14%);
+  transition: transform 260ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sleeve__button:hover .sleeve__art::before {
+    transform: translateX(34%);
+  }
+}
+.sleeve__button.is-current .sleeve__art::before {
+  transform: translateX(34%);
+}
+.sleeve__art img,
+.sleeve__blank {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0 2px 4px hsl(var(--sc-shadow-color) / 0.4), 0 20px 40px -14px hsl(var(--sc-shadow-color) / 0.8);
+}
+.sleeve__blank {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.9rem;
+  background: #d9d1c2;
+  color: #17130d;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.sleeve__blank .mono {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+}
+.sleeve__state {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  font-size: 0.6875rem;
+  color: var(--sc-accent-ink);
+  background: var(--sc-accent);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+}
+.sleeve__state:empty {
+  display: none;
+}
+.sleeve__caption {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 0.8rem;
+}
+.sleeve__title {
+  font-size: 0.9375rem;
+  color: var(--sc-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sleeve__artist {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+
+.toolshelf {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--wl-hair);
+}
+.toolshelf__title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--sc-ink);
+  margin-bottom: 0.75rem;
+}
+.toolshelf__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+  column-gap: 2.5rem;
+}
+.tool {
+  display: grid;
+  grid-template-columns: 1.375rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.9rem;
+  min-height: 3.5rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--wl-hair);
+  color: var(--sc-ink-soft);
+  transition: color 160ms var(--sc-ease-out);
+}
+.tool svg {
+  grid-row: 1 / span 2;
+}
+.tool__name {
+  color: var(--sc-ink);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+.tool__desc {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tool:hover {
+    color: var(--sc-ink);
+  }
+}
+
+/* ───────────────────────────── 7 窗边（停住） ───────────────────────────── */
+.window__stage {
+  background: var(--sc-canvas);
+}
+.window__view {
+  position: absolute;
+  inset: 0;
+}
+/* 站到窗边：把房间图放大到窗户上，随这一幕慢慢再往前推一点 */
+.window__view .plate__box {
+  transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
+  transform: scale(calc(1.55 + var(--sc-p, 0) * 0.06));
+}
+.window__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--sc-canvas) 90%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 74%, transparent) 30%,
+    color-mix(in oklab, var(--sc-canvas) 20%, transparent) 56%,
+    transparent 70%
+  );
+}
+.window__copy {
+  position: absolute;
+  z-index: 2;
+  left: var(--sc-gutter);
+  top: 50%;
+  translate: 0 -50%;
+  width: min(30rem, calc(100vw - 2 * var(--sc-gutter)));
+  display: grid;
+  gap: 1.25rem;
+}
+.window__coords {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--sc-ink);
+}
+.window__coords span {
+  font-family: var(--sc-font-text);
+  font-size: 0.9375rem;
+  color: var(--sc-ink-soft);
+}
+.nameplate {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.4rem 1.5rem 1.1rem;
+  border: 1px solid var(--wl-hair-strong);
+  border-radius: var(--sc-r-md);
+  background: color-mix(in oklab, var(--sc-canvas) 88%, transparent);
+  box-shadow: var(--sc-edge), var(--sc-e3);
+}
+.nameplate__title {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.8rem, 1.4rem + 1.4vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--sc-ink);
+}
+.nameplate__title:focus {
+  outline: none;
+}
+.nameplate__lead {
+  color: var(--sc-ink);
+}
+.nameplate__email .email__addr {
+  font-size: 1rem;
+}
+.nameplate__socials {
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--wl-hair);
+}
+.nameplate__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.nameplate__foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--sc-accent);
+}
+
+/* ───────────────────────────── 窄屏：每一幕单独构图 ───────────────────────────── */
+@media (max-width: 860px) {
+  .desk__subject {
+    left: 50%;
+    top: 9svh;
+    bottom: auto;
+    width: min(78vw, 46svh);
+  }
+  .desk__scrim {
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 30%,
+      color-mix(in oklab, var(--sc-canvas) 30%, transparent) 50%,
+      transparent 64%
+    );
+  }
+  .desk__copy {
+    max-width: none;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+  .desk__name {
+    font-size: clamp(3rem, 15vw, 4.2rem);
+  }
+  .desk__label {
+    font-size: 0.8125rem;
+  }
+  .bokeh--4 {
+    display: none;
+  }
+  .desk-tail__inner {
+    margin-left: 0;
+  }
+  .rail {
+    padding-bottom: 8svh;
+  }
+  .projector__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .spine {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .spine__date {
+    grid-row: auto;
+    padding-top: 0;
+  }
+  .shelf__inner {
+    margin-right: 0;
+  }
+  .darkroom__stage {
+    height: clamp(40rem, 130svh, 64rem);
+  }
+  .print--back-1 {
+    left: 44%;
+    top: 0;
+    width: 50%;
+  }
+  .print--back-2 {
+    left: 2%;
+    top: 3%;
+    width: 30%;
+  }
+  .print--mid-1 {
+    left: 34%;
+    top: 22%;
+    width: 62%;
+  }
+  .print--mid-2 {
+    left: 4%;
+    top: 30%;
+    width: 34%;
+  }
+  .print--front-1 {
+    left: 2%;
+    top: 62%;
+    width: 80%;
+  }
+  .print--front-2 {
+    left: 58%;
+    top: 50%;
+    width: 38%;
+  }
+  .window__scrim {
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--sc-canvas) 95%, transparent) 0%,
+      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 46%,
+      color-mix(in oklab, var(--sc-canvas) 30%, transparent) 70%,
+      transparent 84%
+    );
+  }
+  .window__copy {
+    top: auto;
+    bottom: calc(5rem + env(safe-area-inset-bottom));
+    translate: none;
+    gap: 0.9rem;
+  }
+  .nameplate {
+    padding: 1.1rem 1.1rem 0.6rem;
+    gap: 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk__portrait,
+  .window__view .plate__box {
+    transform: none;
+  }
+  .window__view .plate__box {
+    transform: scale(1.55);
+  }
+  .desk__haze {
+    animation: none;
+  }
+}

@@ -1,0 +1,422 @@
+/* ============================================================================
+   唱机（从正上方看的线稿）、按心情听的榜单、右下角的迷你播放器
+   ========================================================================== */
+
+.deck {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: clamp(3.5rem, 7vw, 5.5rem);
+}
+.deck__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 2rem 3.5rem;
+  align-items: center;
+}
+.deck__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  border-radius: var(--sc-r-lg);
+}
+.deck__svg:focus-visible {
+  outline-offset: 4px;
+}
+.deck__plinth {
+  fill: #0e1115;
+  stroke: var(--wl-hair-strong);
+  stroke-width: 1;
+}
+.deck__platter {
+  fill: #090b0d;
+  stroke: var(--wl-hair);
+}
+.deck__vinyl {
+  fill: #050506;
+}
+.deck__groove {
+  fill: none;
+  stroke: rgba(236, 229, 216, 0.07);
+  stroke-width: 0.8;
+}
+.deck__label {
+  fill: #d9d1c2;
+}
+.deck__label-text {
+  fill: #17130d;
+  font-size: 12px;
+  font-family: var(--sc-font-text);
+}
+.deck__label-small {
+  fill: #4a4237;
+  font-size: 7px;
+  letter-spacing: 1px;
+  font-family: var(--sc-font-mono);
+}
+.deck__sheen {
+  fill: none;
+  stroke: rgba(236, 229, 216, 0.1);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.deck__spindle {
+  fill: var(--sc-ink-soft);
+}
+.deck__disc.is-spinning {
+  animation: deck-spin 1.8s linear infinite;
+}
+@keyframes deck-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.deck__rest {
+  fill: #15181d;
+  stroke: var(--wl-hair-strong);
+}
+.deck__pivot {
+  fill: #15181d;
+  stroke: var(--wl-hair-strong);
+}
+.deck__tube {
+  stroke: #bdb6aa;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+}
+.deck__weight {
+  fill: #6b665e;
+}
+.deck__head {
+  fill: #23262b;
+  stroke: var(--sc-ink-soft);
+  stroke-width: 0.8;
+}
+.deck__cap {
+  fill: var(--sc-ink-soft);
+}
+
+.deck__info {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+.deck__title {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--sc-ink);
+}
+.deck__artist {
+  color: var(--sc-ink);
+}
+.deck__artist span {
+  color: var(--sc-ink-soft);
+}
+.deck__desc {
+  color: var(--sc-ink-soft);
+  line-height: 1.75;
+  max-width: 34em;
+}
+.deck__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.deck__time {
+  margin-left: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.deck__state {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.deck__note {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+  line-height: 1.7;
+  max-width: 34em;
+}
+
+.deck__shelf {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--wl-hair);
+  border-bottom: 1px solid var(--wl-hair);
+}
+.deck__volume {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.deck__volume input {
+  width: 9rem;
+  accent-color: var(--sc-accent);
+}
+.deck__discs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.deck__hint,
+.deck__credit {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.deck__list {
+  display: grid;
+  gap: 0.5rem;
+}
+.tracklist {
+  border-top: 1px solid var(--wl-hair);
+}
+.track {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--wl-hair);
+  text-align: left;
+  color: var(--sc-ink);
+}
+.track.is-current {
+  color: var(--sc-accent);
+}
+.track__no,
+.track__time {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.track__artist {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+}
+.track__dead {
+  color: var(--sc-ink-soft);
+}
+@media (max-width: 860px) {
+  .deck__main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .track {
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+  }
+  .track__artist {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------ 榜单 -- */
+.chart {
+  display: grid;
+  gap: 1.75rem;
+}
+.chart__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+}
+.chart__title {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+  font-weight: 500;
+  color: var(--sc-ink);
+}
+.chart__note {
+  color: var(--sc-ink-soft);
+  font-size: 0.875rem;
+}
+.chart__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+  gap: 2.5rem 3.5rem;
+}
+.chart__group h3 {
+  margin-bottom: 0.5rem;
+}
+.chart__group ol {
+  border-top: 1px solid var(--wl-hair);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--wl-hair);
+}
+.row__play {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem 0;
+  text-align: left;
+}
+.row__cover {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--sc-surface);
+}
+.row__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.row__text {
+  display: grid;
+  min-width: 0;
+}
+.row__title {
+  color: var(--sc-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 160ms var(--sc-ease-out);
+}
+.row__artist {
+  font-size: 0.8125rem;
+  color: var(--sc-ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.row__time {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+}
+.row.is-current .row__title {
+  color: var(--sc-accent);
+}
+.row__dead {
+  color: var(--sc-ink-soft);
+  font-size: 0.75rem;
+}
+.row__out {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--sc-accent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .row__play:hover .row__title {
+    color: var(--sc-accent);
+  }
+}
+
+/* ------------------------------------------------------- 迷你播放器 -- */
+.mini {
+  position: fixed;
+  z-index: 80;
+  right: 0.75rem;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom) + var(--plan-offset, 0px));
+  width: min(19rem, calc(100vw - 1.5rem));
+  padding: 0.75rem 0.85rem 0.6rem;
+  border-radius: var(--sc-r-lg);
+  border: 1px solid var(--wl-hair-strong);
+  background: color-mix(in oklab, var(--sc-canvas) 92%, transparent);
+  box-shadow: var(--sc-edge), var(--sc-e3);
+}
+@media (min-width: 861px) {
+  .mini {
+    right: 1rem;
+    bottom: calc(1rem + var(--plan-offset, 0px));
+  }
+}
+.mini__row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.mini__disc {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.mini__vinyl {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--sc-accent) 0 18%, #0b0b0c 19% 100%),
+    #0b0b0c;
+  box-shadow:
+    inset 0 0 0 1px rgba(236, 229, 216, 0.12),
+    inset 0 0 0 5px #0b0b0c,
+    inset 0 0 0 6px rgba(236, 229, 216, 0.07);
+}
+.mini__vinyl.is-spinning {
+  animation: deck-spin 1.8s linear infinite;
+}
+.mini__text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+.mini__title {
+  font-size: 0.8125rem;
+  color: var(--sc-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini__artist {
+  font-size: 0.75rem;
+  color: var(--sc-ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini__progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+}
+.mini__track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--wl-hair-strong);
+  overflow: hidden;
+}
+.mini__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--sc-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.mini__progress input {
+  position: absolute;
+  left: 0;
+  right: 4.5rem;
+  top: 50%;
+  translate: 0 -50%;
+  height: 1.5rem;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.mini__time {
+  font-size: 0.6875rem;
+  color: var(--sc-ink-soft);
+}

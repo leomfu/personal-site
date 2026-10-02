@@ -24,9 +24,8 @@ export const siteConfig = {
   name: "伟良",
   nameEn: "Weiliang",
   /**
-   * 站点描述（RSS 的 <description>、分享出去时的介绍）—— 说清「这个人是做什么的」。
-   * ⚠️ 开场页正中那句**不是这个**，在 messages 的 intro.tagline 里，
-   * 那句是给自己看的一句话，和这句职能不同，2026-08-29 起就不一样了，别再同步成一样的。
+   * 一句话介绍：说清「这个人是做什么的」。RSS 的 <description>、首页名片下面那一行、
+   * 完整介绍页第 1 幕都用它（2026-10 改版）。
    */
   tagline: "学着用 AI 把手上的活干得更快更好，顺手做成能跑的东西。",
   taglineEn:
@@ -38,6 +37,26 @@ export const siteConfig = {
   taglineShort: "把问题查到根上，再写下来",
   taglineShortEn: "Root causes, written down",
   since: "2026",
+
+  /**
+   * 事实标签（2026-10 改版：首页名片和完整介绍页第 1 件展品都用它）。
+   * 数字和地名取自 content/about/about.zh.md 的第一段，改了那边记得同步这里。
+   * 页面上拼成「上海 · 21 · 计算机网络技术 2026 届」，拼法在 messages 的 profile.facts。
+   */
+  profile: {
+    age: 21,
+    city: "上海",
+    cityEn: "Shanghai",
+    major: "计算机网络技术",
+    majorEn: "Computer Network Technology",
+    classOf: "2026",
+  },
+
+  /**
+   * 上海的真实坐标（人民广场一带，保留两位小数）。首页光点、第 7 幕「窗边」和平面图收尾都显示它。
+   * 只用这一组真实坐标，不编造海拔、距离之类的读数。
+   */
+  coords: { lat: 31.23, lng: 121.47, text: "31.23°N 121.47°E" },
 
   /* --- 联系方式 --- */
   email: "weiliang99520@gmail.com",
@@ -93,7 +112,7 @@ export const siteConfig = {
       handle: "主页",
     },
     // 抖音：用户给的 douyin.com/user/self 只对本人生效，不是可分享的主页地址，
-    // 等正确链接（见 docs/素材清单.md）。留空时 UI 渲染成不可点的灰字。
+    // 等正确链接（见 docs/素材清单.md）。href 留空时整站都不显示这一项。
     { key: "douyin", label: "抖音", labelEn: "Douyin", href: "", handle: "[主页]" },
   ] satisfies Social[],
 

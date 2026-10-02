@@ -2,65 +2,35 @@ import { Marked, type Tokens } from "marked";
 import { bundledLanguages, codeToHtml, type ThemeRegistrationRaw } from "shiki";
 
 /**
- * markdown → HTML。渲染结果套在 .prose-bw 里（样式见 globals.css）。
+ * markdown → HTML。渲染结果套在 .prose 里（样式见 src/styles/prose.css）。
  *
  * 两处定制：
  * 1. 内部链接（以 / 开头）自动补语言前缀和尾斜杠，外链自动 target=_blank；
- * 2. 代码块用 shiki 高亮，主题是下面这份手写的灰阶主题 —— 全站只用黑白灰，
- *    彩色代码块会破功，所以用字重和深浅来区分 token。
+ * 2. 代码块用 shiki 高亮，主题是下面这份手写的暗色灰阶主题（2026-10 改版：底色近黑，
+ *    界面强调色只有琥珀一种，彩色代码块会破坏这一点，所以用深浅和粗细区分 token）。
  */
 
-/** 灰阶代码主题：靠 深浅 + 粗细 + 斜体 区分，不用颜色 */
 const MONO_THEME: ThemeRegistrationRaw = {
-  name: "bw",
-  type: "light",
+  name: "wl-dark",
+  type: "dark",
   colors: {
-    "editor.background": "#FBFBFB",
-    "editor.foreground": "#333333",
+    "editor.background": "#101318",
+    "editor.foreground": "#D9D2C5",
   },
   settings: [
-    { settings: { foreground: "#333333", background: "#FBFBFB" } },
+    { settings: { foreground: "#D9D2C5", background: "#101318" } },
+    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: "#8C867C", fontStyle: "italic" } },
+    { scope: ["keyword", "storage", "storage.type", "keyword.control"], settings: { foreground: "#F2ECE1", fontStyle: "bold" } },
+    { scope: ["string", "string.quoted", "constant.other.symbol"], settings: { foreground: "#B9B2A6" } },
+    { scope: ["constant.numeric", "constant.language"], settings: { foreground: "#F2ECE1" } },
+    { scope: ["entity.name.function", "support.function", "meta.function-call"], settings: { foreground: "#F2ECE1" } },
     {
-      scope: ["comment", "punctuation.definition.comment"],
-      settings: { foreground: "#A3A3A3", fontStyle: "italic" },
+      scope: ["entity.name.type", "entity.name.class", "support.type", "support.class"],
+      settings: { foreground: "#E6DFD3", fontStyle: "bold" },
     },
-    {
-      scope: ["keyword", "storage", "storage.type", "keyword.control"],
-      settings: { foreground: "#111111", fontStyle: "bold" },
-    },
-    {
-      scope: ["string", "string.quoted", "constant.other.symbol"],
-      settings: { foreground: "#5C5C5C" },
-    },
-    {
-      scope: ["constant.numeric", "constant.language"],
-      settings: { foreground: "#111111" },
-    },
-    {
-      scope: ["entity.name.function", "support.function", "meta.function-call"],
-      settings: { foreground: "#111111" },
-    },
-    {
-      scope: [
-        "entity.name.type",
-        "entity.name.class",
-        "support.type",
-        "support.class",
-      ],
-      settings: { foreground: "#1A1A1A", fontStyle: "bold" },
-    },
-    {
-      scope: ["entity.name.tag"],
-      settings: { foreground: "#111111", fontStyle: "bold" },
-    },
-    {
-      scope: ["entity.other.attribute-name"],
-      settings: { foreground: "#5C5C5C", fontStyle: "italic" },
-    },
-    {
-      scope: ["punctuation", "meta.brace", "keyword.operator"],
-      settings: { foreground: "#8A8A8A" },
-    },
+    { scope: ["entity.name.tag"], settings: { foreground: "#F2ECE1", fontStyle: "bold" } },
+    { scope: ["entity.other.attribute-name"], settings: { foreground: "#B9B2A6", fontStyle: "italic" } },
+    { scope: ["punctuation", "meta.brace", "keyword.operator"], settings: { foreground: "#9A948A" } },
   ],
 };
 
@@ -86,15 +56,16 @@ export async function renderMarkdown(source: string, locale: string) {
         const id = slugifyHeading(inner.replace(/<[^>]*>/g, ""));
         return `<h${depth} id="${id}">${inner}</h${depth}>`;
       },
-      // 正文图片默认去色（见 globals.css 的 .prose-bw img）。
-      // 写成 ![alt](/path "原色") 的那张保持原色 —— 截图、摄影作品这类
-      // 「图本身就是内容」的图，去色等于改了内容。
+      // 正文图片一律原色（2026-10 改版不再去色）。旧文章里 ![alt](/path "原色") 的写法照样认，
+      // 那个 title 只是旧的标记，不当作悬停提示显示出来。
       image({ href, title, text }) {
-        const keepColor = title?.trim() === "原色";
+        const marker = title?.trim() === "原色";
         const attrs = [
           `src="${href}"`,
           `alt="${text}"`,
-          keepColor ? 'class="img-color"' : title ? `title="${title}"` : "",
+          'loading="lazy"',
+          'decoding="async"',
+          !marker && title ? `title="${title}"` : "",
         ]
           .filter(Boolean)
           .join(" ");
@@ -105,7 +76,6 @@ export async function renderMarkdown(source: string, locale: string) {
         const external = /^https?:\/\//.test(href);
         const attrs = [
           `href="${normalizeHref(href, locale)}"`,
-          'class="link-underline"',
           title ? `title="${title}"` : "",
           external ? 'target="_blank" rel="noreferrer noopener"' : "",
         ]

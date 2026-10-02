@@ -1,0 +1,69 @@
+/* ============================================================================
+   场景图（components/scene/ScenePlate）：纯 CSS 的 cover，图上的点用百分比钉住。
+   视口比 4:5 还窄时换竖版（和 <picture> 的 <source media> 用同一个条件）。
+   ========================================================================== */
+
+.plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  /* 图还没到、或者图不在：一块深色的渐变顶着，不露白 */
+  background: radial-gradient(120% 90% at 50% 30%, #12161c, #07080a);
+  --ar: var(--ar-w);
+  --px: var(--px-w);
+  --py: var(--py-w);
+  --fx: var(--fx-w);
+  --fy: var(--fy-w);
+}
+.plate--ghost {
+  background: none;
+  pointer-events: none;
+}
+@media (max-aspect-ratio: 4/5) {
+  .plate {
+    --ar: var(--ar-t);
+    --px: var(--px-t);
+    --py: var(--py-t);
+    --fx: var(--fx-t);
+    --fy: var(--fy-t);
+  }
+}
+
+.plate__box {
+  position: absolute;
+  width: max(100cqw, calc(100cqh * var(--ar)));
+  aspect-ratio: var(--ar);
+  left: calc(var(--px) * 100%);
+  top: calc(var(--py) * 100%);
+  translate: calc(var(--px) * -100%) calc(var(--py) * -100%);
+}
+
+.plate__media,
+.plate__media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.plate__mark {
+  position: absolute;
+  left: calc(var(--fx) * 100%);
+  top: calc(var(--fy) * 100%);
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+}
+
+/* 第 1 幕的远景（房间）。比画面大 5%，视差上下挪的时候边不会露出来。
+   俯冲过渡的最后一帧也套这个类，两边摆得一模一样才接得上（见 lib/tour.ts） */
+.room-far {
+  position: absolute;
+  inset: 0;
+}
+.room-far .plate {
+  transform: scale(1.05);
+}

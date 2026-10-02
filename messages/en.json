@@ -8,164 +8,196 @@
       "title": "Home",
       "description": "This site is a place I set up for myself: to say who I am, lay out the things I've built, and note down what I'm learning, what I've figured out, and what I've photographed."
     },
+    "about": {
+      "title": "The full tour",
+      "description": "From the desk to the window: who I am, what I'm building, what I've written, filmed and photographed, what I listen to and use, and how to reach me."
+    },
     "projects": {
       "title": "Projects",
-      "description": "Things I've made, listed one by one. Where there's a live address, click the title to go there."
+      "description": "Things I've built and am building, laid out one by one, each labelled with where it stands now."
     },
     "videos": {
       "title": "Videos",
-      "description": "Things I shot, edited and put out myself. Hit the play button to watch right on this page."
+      "description": "Things I filmed, edited and put out myself. Press play to watch them right here."
     },
     "photos": {
-      "title": "Photos",
-      "description": "Three albums, all shot casually on the road. Shanghai, Beijing, Qingdao."
+      "title": "Photography",
+      "description": "Photos shot on the go, grouped by city."
     },
     "blog": {
-      "title": "Blog",
-      "description": "Long pieces, essays and thoughts I've written myself — 4 in total."
-    },
-    "about": {
-      "title": "About",
-      "description": "Learning to use AI to get the work in my hands done faster and better, and turning it into things that run along the way."
+      "title": "Writing",
+      "description": "Long reads, notes and passing thoughts I've written myself."
     },
     "tools": {
       "title": "Tools",
-      "description": "Things I use every day. One click takes you straight to their official sites."
+      "description": "What I use every day. Each one links to its official site."
     },
     "contact": {
       "title": "Contact",
-      "description": "Want to say something? Just write an email — I usually reply within two or three days."
+      "description": "My contact details are on the home page and at the end of the full tour. Just send an email; I usually reply within two or three days."
     },
     "records": {
       "title": "Records",
       "description": "A turntable that really spins and really plays, and what I listen to by mood."
     }
   },
-  "nav": {
-    "home": "Home",
-    "projects": "Projects",
-    "photos": "Photos",
-    "videos": "Videos",
-    "blog": "Blog",
-    "about": "About",
-    "tools": "Tools",
-    "contact": "Contact",
-    "menu": "Open menu",
-    "close": "Close menu",
-    "toHome": "Back to the home page",
-    "records": "Records"
-  },
   "common": {
     "zh": "中",
-    "en": "EN"
+    "en": "EN",
+    "langLabel": "Language",
+    "toZh": "Switch to Chinese",
+    "toEn": "Switch to English",
+    "skipToContent": "Skip to content",
+    "tour": "The full tour",
+    "backHome": "Back home",
+    "backTour": "Back to the full tour",
+    "backTourAt": "Back to the tour · {place}",
+    "backNav": "Go back",
+    "socials": "Social accounts",
+    "socialAria": "{name} (opens in a new tab)",
+    "profilePage": "Profile",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyAria": "Copy email address",
+    "copiedStatus": "Email address copied",
+    "emailAria": "Email Weiliang at {email}"
+  },
+  "profile": {
+    "facts": "{city} · {age} · {major}, class of {year}",
+    "label": "{name} · {age} · {city} · {major}, class of {year}"
   },
   "home": {
-    "heroTag": "Making things · Taking notes · Taking photos",
-    "heroEyebrow": "WELCOME · Welcome to my homepage",
-    "heroTitle1": "I'm Weiliang,",
-    "heroTitle2": "turning ideas into",
-    "heroTitle3": "things that actually run",
-    "ctaPrimary": "See what I've made →",
-    "ctaSecondary": "Contact me",
-    "avatarAlt": "Weiliang",
-    "avatarCaption": "better stronger me",
-    "buildingTitle": "What I'm working on",
-    "buildingNote": "August 2026",
-    "writingTitle": "Recently written",
-    "photosTitle": "Recently shot",
-    "hobbiesTitle": "Hobbies",
-    "hobbies": {
-      "photos": "Photography",
-      "photosNote": "3 albums · Shanghai Beijing Qingdao",
-      "records": "Records",
-      "recordsNote": "20 tracks · the ones on repeat"
-    }
+    "dotLabel": "Shanghai",
+    "dotAria": "The light over Shanghai: land and open the full tour",
+    "cta": "Land and look around",
+    "ctaAria": "Land and look around: open the full tour",
+    "portraitAlt": "Photo of {name}"
   },
-  "about": {
-    "tag": "ABOUT",
-    "title": "About me",
-    "lead": "Learning to use AI to get the work in my hands done faster and better, and turning it into things that run along the way.",
-    "nowLabel": "Now",
-    "cardTitle": "Recording as I go",
-    "cardBody": "The process of learning AI and building AI tools is updated at “伟良-Evren”, synced on Xiaohongshu and Bilibili. I'm looking for opportunities in AI operations — if you'd like to talk or work together, feel free to message me.",
-    "cardTag1": "伟良-Evren",
-    "cardTag2": "Xiaohongshu",
-    "cardTag3": "Bilibili",
-    "cardCta": "Message me →"
+  "dive": {
+    "skip": "Skip",
+    "status": "Landing in Shanghai"
   },
-  "projects": {
-    "tag": "PROJECTS",
-    "title": "Projects",
-    "lead": "Things I've made, listed one by one. Where there's a live address, click the title to go there.",
+  "plan": {
+    "label": "Floor plan of the room",
+    "open": "Open the floor plan",
+    "close": "Close the floor plan",
+    "now": "You are at",
+    "city": "Shanghai",
+    "goto": "Go to {place}: {title}"
+  },
+  "places": {
+    "desk": { "name": "The desk", "title": "Who I am" },
+    "screen": { "name": "The screen", "title": "Things I'm building" },
+    "shelf": { "name": "The bookshelf", "title": "Written down" },
+    "projector": { "name": "The projector", "title": "On camera" },
+    "darkroom": { "name": "The darkroom", "title": "Photographed" },
+    "records": { "name": "The record shelf", "title": "What I listen to and use" },
+    "window": { "name": "The window", "title": "Get in touch" }
+  },
+  "tour": {
+    "backOrbit": "Back home",
+    "landed": "Landed",
+    "portraitAlt": "Portrait of {name}",
+    "selfIntro": "In his own words",
+    "screenLead": "{count} things, each labelled with where it stands now.",
+    "shotAlt": "Screenshot of {name}",
+    "visit": "Visit site ↗",
     "repo": "Source ↗",
     "noLink": "No public link yet",
-    "visit": "Visit site ↗"
+    "screenAll": "All projects",
+    "minutes": "{minutes} min read",
+    "shelfAll": "All writing",
+    "projectorWatch": "Watch “{title}” on the videos page",
+    "bilibili": "Bilibili",
+    "youtube": "YouTube",
+    "published": "Published {date}",
+    "projectorAll": "All videos",
+    "printAria": "{title}: {caption}. Open the album",
+    "albumMeta": "{year} · {count, plural, =1 {# photo} other {# photos}}",
+    "darkroomAll": "All albums",
+    "recordsHint": "Pick a record to put it on the turntable.",
+    "recordsAll": "To the turntable",
+    "toolsTitle": "Tools I use",
+    "toolsAll": "All tools",
+    "nowPlaying": "Playing",
+    "playSleeve": "Play {title} by {artist}",
+    "pauseSleeve": "Pause {title}",
+    "windowLabel": "Contact · {year} · Email and social accounts · Usually replies within two or three days",
+    "windowLead": "If you want to say something, just send an email."
+  },
+  "nav": {
+    "label": "Pages",
+    "projects": "Projects",
+    "blog": "Writing",
+    "videos": "Videos",
+    "photos": "Photos",
+    "records": "Records",
+    "tools": "Tools"
+  },
+  "projects": {
+    "title": "Projects",
+    "lead": "Things I've built and am building, laid out one by one, each labelled with where it stands now.",
+    "visit": "Visit site ↗",
+    "repo": "Source ↗",
+    "noLink": "No public link yet",
+    "shotAlt": "Screenshot of {name}"
+  },
+  "videos": {
+    "title": "Videos",
+    "lead": "Things I filmed, edited and put out myself. Press play to watch them right here.",
+    "load": "Click to load the player",
+    "loadAria": "Load and play: {title}",
+    "bilibili": "Bilibili",
+    "youtube": "YouTube",
+    "openOn": "Open on {platform} ↗"
   },
   "blog": {
-    "tag": "WRITING",
-    "title": "Blog",
-    "lead": "Long pieces, essays and thoughts I've written myself — {count} in total.",
+    "title": "Writing",
+    "lead": "Long reads, notes and passing thoughts I've written myself. {count} so far.",
     "filterAll": "All",
+    "filterLabel": "Filter by type",
     "types": {
-      "blog": "Essays",
+      "blog": "Notes",
       "essay": "Long reads",
       "thought": "Thoughts"
     },
-    "minutes": "{minutes} min",
+    "minutes": "{minutes} min read",
     "toc": "Contents",
     "prev": "Previous",
     "next": "Next",
-    "backToList": "Back to the list",
-    "originalLang": "Written in {lang}; no {target} version yet",
+    "backToList": "Back to all writing",
+    "originalLang": "Originally written in {lang}; no {target} version yet",
     "langZh": "Chinese",
-    "langEn": "English"
-  },
-  "videos": {
-    "tag": "VIDEO",
-    "title": "Videos",
-    "lead": "Things I shot, edited and put out myself. Hit the play button to watch right on this page.",
-    "load": "Click to load the player",
-    "onBilibili": "Open on Bilibili ↗",
-    "onYoutube": "Open on YouTube ↗"
+    "langEn": "English",
+    "pager": "Previous and next",
+    "empty": "Nothing in this category yet."
   },
   "photos": {
-    "tag": "PHOTOS",
     "title": "Photography",
-    "lead": "Three albums, all shot casually on the road. Shanghai, Beijing, Qingdao.",
+    "lead": "Shot on the go and grouped by city. Open an album to see each photo full size.",
     "albumMeta": "{year} · {count, plural, =1 {# photo} other {# photos}}",
-    "photoAlt": "{title} — photo {index}",
-    "newer": "Next",
-    "older": "Previous",
-    "backToList": "Back to Photos",
+    "photoAlt": "{title}, photo {index}",
+    "open": "View larger: {alt}",
+    "newer": "Next album",
+    "older": "Previous album",
+    "backToList": "Back to all albums",
+    "pager": "Previous and next album",
     "lightbox": {
+      "label": "Photos from {title}",
       "close": "Close",
-      "prev": "Previous",
-      "next": "Next",
-      "hint": "← → to browse · ESC to close"
+      "prev": "Previous photo",
+      "next": "Next photo",
+      "hint": "← → to browse · Esc to close"
     }
   },
   "tools": {
-    "tag": "TOOLS",
     "title": "Tools",
-    "lead": "Things I use every day. One click takes you straight to their official sites."
-  },
-  "contact": {
-    "tag": "CONTACT",
-    "title": "Contact me",
-    "lead": "Want to say something? Just write an email — I usually reply within two or three days.",
-    "emailLabel": "EMAIL",
-    "write": "Write an email →",
-    "socials": {
-      "github": "Code, and the source of this site",
-      "x": "Everyday thoughts, updated most often",
-      "bilibili": "Things I've made, recorded as videos"
-    }
+    "lead": "What I use every day. Each one links to its official site."
   },
   "records": {
-    "tag": "RECORDS",
     "title": "Records",
-    "lead": "A quiet moment for music — slow down, and listen your way back to yourself.",
-    "footnote": "The music keeps playing when you leave this page — a small card appears bottom-right to keep hold of it. The mood playlist plays 30 seconds per track; the resident set is public-domain and plays in full.",
+    "lead": "A quiet moment for music: slow down, and listen your way back to yourself.",
+    "footnote": "The music keeps playing when you leave this page, and a small card appears bottom right to keep hold of it. The mood playlists play 30 seconds per track; the resident set is public domain and plays in full.",
     "player": {
       "regionLabel": "Turntable",
       "nowPlaying": "Now playing",
@@ -175,28 +207,25 @@
       "prev": "Previous track",
       "next": "Next track",
       "volume": "Volume",
-      "seek": "Record: click a groove to jump there — the outer edge is the start",
-      "shelf": "Disc",
+      "seek": "Record: click a groove to jump there. The outer edge is the start",
+      "shelf": "Change disc",
       "groupResident": "Resident",
       "showList": "Tracks on this disc",
       "hideList": "Hide tracks",
       "unplayable": "· unavailable",
-      "hint": "Click any groove to jump there. With the record focused: space plays or pauses, arrow keys skip 5 seconds.",
-      "residentCredit": "The resident disc: {credit} — self-hosted, it never goes dead.",
-      "chartNote": "Tracks are drawn from a mood-based playlist, sourced from Apple Music's official previews.",
-      "sideA": "SIDE A",
-      "labelPreview": "PREVIEW 30s",
-      "labelFull": "FULL LENGTH",
-      "labelFoot": "{n, plural, one {# TRACK} other {# TRACKS}} · {mode}",
+      "hint": "Click any groove to jump there. With the record focused, space plays or pauses and the arrow keys skip 5 seconds.",
+      "residentCredit": "The resident disc: {credit}. Self-hosted, so it never goes dead.",
+      "chartNote": "Tracks come from a mood-based playlist, sourced from Apple Music's official previews.",
       "previewTag": "30-second preview",
       "fullVersion": "Hear it in full on Apple Music ↗",
-      "previewNote": "These are someone else’s songs, so this site plays 30 seconds of each and fades the last second and a half out on purpose — nothing is broken. Like what you hear? Go hear the rest on the platform."
+      "previewNote": "These are someone else's songs, so this site plays 30 seconds of each and fades out the last second and a half on purpose. Nothing is broken. If you like it, hear the rest on the platform."
     },
     "chart": {
-      "title": "Listen by Mood",
+      "title": "Listen by mood",
       "note": "Click a row to load it onto the turntable",
-      "playRow": "Play: {title} · {artist}",
-      "openPlatform": "Open in Apple Music ↗"
+      "count": "{count, plural, =1 {# track} other {# tracks}}",
+      "playRow": "Play {title} by {artist}",
+      "openPlatformAria": "Open “{title}” in Apple Music (new tab)"
     }
   },
   "player": {
@@ -206,14 +235,10 @@
     "close": "Stop and close",
     "seek": "Seek",
     "preview": "preview",
-    "toRecords": "Back to Records",
-    "fullVersion": "Hear it in full ↗"
+    "toRecords": "Back to Records"
   },
-  "footer": {
-    "line1": "What I've made, what I've learned,",
-    "line2": "how I've been — it's all here.",
-    "eyebrow": "ELSEWHERE",
-    "cta": "Write an email →",
-    "copyright": "© 2026 Weiliang · weiliang.dev"
+  "contactRedirect": {
+    "moved": "Contact details now live on the home page.",
+    "goHome": "Back home"
   }
 }

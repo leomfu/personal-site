@@ -25,6 +25,11 @@ export type Project = {
   summary_en?: string;
   /** 首页卡片上只列的那几项技术栈；没有就用 stack */
   featuredStack?: string[];
+  /**
+   * 真实的数字（2026-10 改版）：完整介绍页「屏幕」那一幕会让这些数字从 0 滚上去。
+   * **只填真的数**，没有就不写这个字段（例：Claude-Anki 的 5 个牌组、260 张卡）。
+   */
+  metrics?: Array<{ value: number; label: string; label_en?: string }>;
 };
 
 export type Video = {
