@@ -62,8 +62,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         {/* 文字层。DOM 顺序 = 键盘顺序：名片、一句话、联系方式、入口（光点在最后，是第二个入口） */}
         <main className="home__copy">
-          <div className="home__intro">
-            <section className="idcard" data-home-anchor aria-labelledby="home-name">
+          {/* 引线从这一整块出发：手机上从一句话的下面往下连，不会竖着穿过文字 */}
+          <div className="home__intro" data-home-anchor>
+            <section className="idcard" aria-labelledby="home-name">
               {scene.portraitCard.exists && (
                 // eslint-disable-next-line @next/next/no-img-element -- 名片小图，尺寸固定，不需要 next/image
                 <img

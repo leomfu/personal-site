@@ -69,10 +69,10 @@ export function PlayerProvider({
    */
   const known = stored === RESIDENT || scenes.some((s) => s.key === stored);
   const group: Group = known ? stored : (firstScene ?? RESIDENT);
-  const tracks: Track[] =
-    group === RESIDENT
-      ? library.resident
-      : (scenes.find((s) => s.key === group)?.tracks ?? []);
+  const tracks: Track[] = useMemo(
+    () => (group === RESIDENT ? library.resident : (scenes.find((s) => s.key === group)?.tracks ?? [])),
+    [group, library.resident, scenes],
+  );
 
   const player = useAudioPlayer({
     tracks,

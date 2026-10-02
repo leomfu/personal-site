@@ -161,9 +161,10 @@
   white-space: nowrap;
   pointer-events: none;
 }
+/* 纬度挂在水平线下方、「上海」标签下面；经度挂在竖线旁边。两个都不出屏 */
 .sh__lat {
-  left: 3.25rem;
-  top: -1.35rem;
+  left: 2.7rem;
+  top: 1.05rem;
 }
 .sh__lng {
   left: 0.5rem;
@@ -354,7 +355,7 @@
   font-size: 1.0625rem;
   line-height: 1.75;
   color: var(--sc-ink);
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 .home__contact {

@@ -95,9 +95,9 @@
 .desk__subject {
   position: absolute;
   z-index: 2;
-  left: 63%;
-  bottom: -2svh;
-  width: min(62svh, 42vw);
+  left: 64%;
+  bottom: 10svh;
+  width: min(42svh, 29vw);
   translate: -50% 0;
   pointer-events: none;
 }
@@ -197,7 +197,7 @@
   line-height: 1.65;
   color: var(--sc-ink);
   max-width: 26em;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 /* 1 尾：他的自述 */
@@ -847,9 +847,9 @@
 @media (max-width: 860px) {
   .desk__subject {
     left: 50%;
-    top: 9svh;
+    top: 11svh;
     bottom: auto;
-    width: min(78vw, 46svh);
+    width: min(64vw, 38svh);
   }
   .desk__scrim {
     background: linear-gradient(

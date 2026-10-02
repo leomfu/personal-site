@@ -258,7 +258,8 @@ export function useAudioPlayer({
   /** 直接摊到 <audio> 上 */
   const audioProps = {
     ref: audioRef,
-    preload: "metadata" as const,
+    // 没碰过播放器就一个字节都不下（Apple 的预览直链在国内不一定连得上，也不该每页都去请求）
+    preload: (touched ? "metadata" : "none") as "metadata" | "none",
     onLoadedMetadata: handleLoadedMetadata,
     onTimeUpdate: (e: React.SyntheticEvent<HTMLAudioElement>) =>
       setPosition(e.currentTarget.currentTime),
