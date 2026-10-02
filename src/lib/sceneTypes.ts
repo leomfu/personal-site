@@ -14,7 +14,8 @@ export type SceneImage = {
   exists: boolean;
   /**
    * 画面里的关键点。地球图是上海的位置（首页光点、俯冲的放大中心都对准它）；
-   * 房间图是窗户的中心（第 7 幕「窗边」放大到这里）。
+   * 航拍图是陆家嘴塔群（俯冲第二段推向这里）；
+   * 房间图是窗户玻璃的中心（俯冲最后一段、第 1 幕的推镜、第 7 幕「窗边」都朝这里）。
    */
   focus?: Point;
 };
@@ -29,10 +30,12 @@ export type ScenePair = { wide: SceneImage; tall: SceneImage };
 
 export type SceneManifest = {
   earth: ScenePair;
+  /** 三千米高空的上海夜景航拍：俯冲后备方案的中间一段（不在时退回两段） */
+  aerial: ScenePair;
   room: ScenePair;
-  /** 真 alpha 抠图的人像（第 1 幕主体层） */
+  /** 彩铅画像（暖色素描纸，不透明）：第 1 幕钉在窗边的那张画纸 */
   portrait: SceneImage;
-  /** 不抠图的人像（首页名片） */
+  /** 同一张彩铅画像的小尺寸：首页名片那张画纸 */
   portraitCard: SceneImage;
   dive: {
     wide: SceneVideo;
