@@ -73,6 +73,10 @@
 .desk__stage {
   background: var(--sc-canvas);
 }
+/* 落地之后镜头再往书桌推一点（p = 0 时和俯冲最后一帧一样是 1.05，交接不受影响） */
+.desk__far .plate {
+  transform: scale(calc(1.05 + var(--sc-p, 0) * 0.09));
+}
 .desk__haze {
   position: absolute;
   inset: 0;
@@ -106,7 +110,7 @@
   width: 100%;
   height: auto;
   transform-origin: 50% 100%;
-  transform: scale(calc(1 + var(--sc-p, 0) * 0.07));
+  transform: scale(calc(1 + var(--sc-p, 0) * 0.12));
 }
 .desk__fore {
   position: absolute;
@@ -947,6 +951,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .desk__far .plate {
+    transform: scale(1.05);
+  }
   .desk__portrait,
   .window__view .plate__box {
     transform: none;

@@ -5,7 +5,8 @@
  * 这个脚本只在「正式素材还没到」时用来重建占位图，步骤和每个文件的要求见
  * scrollcraft/builds/weiliang/ASSETS.md。
  *
- *   node scripts/scene-placeholders.mjs
+ *   node scripts/scene-placeholders.mjs          只补缺的文件，已有的一个都不碰
+ *   node scripts/scene-placeholders.mjs --force  全部重新生成（会覆盖正式素材，慎用）
  *
  * 依赖 sharp（Next.js 自带的可选依赖，node_modules 里已有）。
  */
@@ -21,11 +22,23 @@ const SKYLINE = path.join(ROOT, "public/images/photos/shanghai-01.webp");
 
 fs.mkdirSync(OUT, { recursive: true });
 
+/** 正式素材到位后再跑这个脚本，不能把它们覆盖掉：默认只写不存在的文件 */
+const FORCE = process.argv.includes("--force");
+const skip = (...files) => {
+  const existing = files.filter((f) => fs.existsSync(path.join(OUT, f)));
+  if (!FORCE && existing.length === files.length) {
+    console.log("已存在，跳过：", existing.join(" / "));
+    return true;
+  }
+  return false;
+};
+
 const svg = (w, h, body) =>
   Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${body}</svg>`);
 
 /* ------------------------------------------------------------------ 地球 */
 async function earth() {
+  if (skip("earth-16x9.webp", "earth-9x16.webp")) return;
   if (!fs.existsSync(EARTH_SRC)) {
     console.warn("跳过地球：找不到", EARTH_SRC);
     return;
@@ -42,6 +55,7 @@ async function earth() {
 
 /* ------------------------------------------------------------------ 房间 */
 async function room({ w, h, file, win, desk, lamp, monitor }) {
+  if (skip(file)) return;
   const base = svg(
     w,
     h,
@@ -126,6 +140,7 @@ async function room({ w, h, file, win, desk, lamp, monitor }) {
 
 /* ------------------------------------------------------------------ 人像 */
 async function portraits() {
+  if (skip("portrait-card.webp", "portrait.webp")) return;
   // 从拍立得海报里裁脸部附近的 3:4，压暗、去饱和（临时图，不是正式的即梦人像）
   const crop = { left: 200, top: 100, width: 390, height: 520 };
 
