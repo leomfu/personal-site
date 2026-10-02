@@ -59,10 +59,10 @@
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    color-mix(in oklab, var(--sc-canvas) 94%, transparent) 0%,
-    color-mix(in oklab, var(--sc-canvas) 84%, transparent) 24%,
-    color-mix(in oklab, var(--sc-canvas) 46%, transparent) 40%,
-    transparent 54%
+    color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 90%, transparent) 30%,
+    color-mix(in oklab, var(--sc-canvas) 52%, transparent) 44%,
+    transparent 58%
   );
 }
 
@@ -156,6 +156,9 @@
 .sh__lat,
 .sh__lng {
   position: absolute;
+  padding: 0 0.25rem;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--sc-canvas) 88%, transparent);
   font-size: 0.6875rem;
   color: var(--sc-ink-soft);
   white-space: nowrap;
@@ -271,6 +274,11 @@
   top: 1.25rem;
   right: calc(var(--sc-gutter) + 0.5rem);
 }
+/* 右上角压在大气层那道亮边上，给语言切换垫一块底 */
+.home__top .lang {
+  border: 1px solid var(--wl-hair);
+  background: color-mix(in oklab, var(--sc-canvas) 82%, transparent);
+}
 
 .home__copy {
   position: absolute;
@@ -348,6 +356,7 @@
   font-size: 0.8125rem;
   line-height: 1.5;
   color: var(--sc-ink);
+  text-wrap: balance;
 }
 
 .home__tagline {
@@ -370,9 +379,9 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in oklab, var(--sc-canvas) 92%, transparent) 0%,
-        color-mix(in oklab, var(--sc-canvas) 72%, transparent) 26%,
-        transparent 44%
+        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 90%, transparent) 32%,
+        transparent 52%
       ),
       linear-gradient(
         0deg,
@@ -443,6 +452,25 @@
   }
   .hud__rule--left {
     display: none;
+  }
+}
+
+/* 矮一些的手机（360×640 这类）：名片和一句话占的高度比例更大，上面那片暗面跟着往下延 */
+@media (max-width: 860px) and (max-height: 720px) {
+  .home__scrim {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 92%, transparent) 40%,
+        transparent 60%
+      ),
+      linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--sc-canvas) 96%, transparent) 0%,
+        color-mix(in oklab, var(--sc-canvas) 82%, transparent) 30%,
+        transparent 46%
+      );
   }
 }
 
