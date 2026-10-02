@@ -24,6 +24,7 @@ export function HomeStage({ children }: { children: ReactNode }) {
     if (!root) return;
     const dot = root.querySelector<HTMLElement>("[data-home-dot]");
     const anchor = root.querySelector<HTMLElement>("[data-home-anchor]");
+    const facts = root.querySelector<HTMLElement>(".idcard__facts");
     const line = root.querySelector<SVGPolylineElement>("[data-home-leader] polyline");
     const knot = root.querySelector<SVGCircleElement>("[data-home-leader] circle");
 
@@ -42,13 +43,15 @@ export function HomeStage({ children }: { children: ReactNode }) {
       let ex: number;
       let ey: number;
       if (dx > a.right + 32) {
-        // 光点在名片右边：从名片右缘出发，先水平走一段再斜着连过去
+        // 光点在名片右边（桌面，R6 名片在左边）：从名片右缘出发，先水平走一段再斜着连过去
         ax = a.right;
-        ay = a.top + Math.min(a.height * 0.5, 64);
+        // 桌面从事实票根的右端出发（它是名片右缘最醒目的一点），找不到就退回名片上部
+        const f = facts?.getBoundingClientRect();
+        ay = f && f.height > 0 ? f.top + f.height / 2 : a.top + Math.min(a.height * 0.5, 64);
         ex = ax + (dx - ax) * 0.38;
         ey = ay;
       } else if (dx < a.left - 32) {
-        // 光点在名片左边（桌面，第二版名片在右边的海面上）：从画纸的左缘中间出发，先往左平走一段
+        // 光点在名片左边（目前没有这种布局，留着兜底）：从名片的左缘出发，先往左平走一段
         ax = a.left;
         ay = a.top + Math.min(a.height * 0.42, 150);
         ex = ax - (ax - dx) * 0.38;

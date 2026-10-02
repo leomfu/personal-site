@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { localized } from "@/lib/format";
@@ -35,7 +35,10 @@ export function BlogList({ posts }: { posts: PostCard[] }) {
   const locale = useLocale();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
 
-  const visible = useMemo(() => (filter === "all" ? posts : posts.filter((p) => p.type === filter)), [filter, posts]);
+  const visible = useMemo(
+    () => (filter === "all" ? posts : posts.filter((p) => p.type === filter)),
+    [filter, posts],
+  );
 
   return (
     <div className="bloglist">
@@ -56,21 +59,37 @@ export function BlogList({ posts }: { posts: PostCard[] }) {
         })}
       </div>
 
-      <ol className="spines spines--page">
-        {visible.map((post) => (
-          <li key={post.slug}>
-            <Link href={localePath(locale, `/blog/${post.slug}`)} className="spine">
-              <span className="spine__date mono">{post.date}</span>
-              <span className="spine__title">{localized(locale, post.title, post.title_en)}</span>
-              <span className="spine__summary">{localized(locale, post.summary, post.summary_en)}</span>
-              <span className="spine__meta mono">
-                {tType(post.type)} · {t("minutes", { minutes: post.minutes })}
-                {post.tags.length > 0 && ` · ${post.tags.join(" / ")}`}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ol>
+      <div
+        className="bloglist__sheet scrap"
+        style={{ "--tilt": "-0.4deg" } as CSSProperties}
+      >
+        <span className="tape tape--orange" aria-hidden />
+        <div className="scrap__paper deckle bloglist__paper">
+          <ol className="spines spines--page">
+            {visible.map((post) => (
+              <li key={post.slug}>
+                <Link
+                  href={localePath(locale, `/blog/${post.slug}`)}
+                  className="spine"
+                >
+                  <span className="spine__date mono">{post.date}</span>
+                  <span className="spine__title">
+                    {localized(locale, post.title, post.title_en)}
+                  </span>
+                  <span className="spine__summary">
+                    {localized(locale, post.summary, post.summary_en)}
+                  </span>
+                  <span className="spine__meta mono">
+                    {tType(post.type)} ·{" "}
+                    {t("minutes", { minutes: post.minutes })}
+                    {post.tags.length > 0 && ` · ${post.tags.join(" / ")}`}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
       {visible.length === 0 && <p className="bloglist__empty">{t("empty")}</p>}
     </div>
   );

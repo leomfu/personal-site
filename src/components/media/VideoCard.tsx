@@ -27,35 +27,40 @@ export function VideoCard({ video }: { video: Video }) {
 
   return (
     <article className="video">
-      <div className="video__frame">
-        {loaded ? (
-          <iframe
-            src={embed}
-            title={title}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
-            allowFullScreen
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
-        ) : (
-          <button type="button" className="video__poster" onClick={() => setLoaded(true)} aria-label={t("loadAria", { title })}>
-            {video.cover && (
-              // eslint-disable-next-line @next/next/no-img-element -- 封面是作品，原图原色
-              <img src={video.cover} alt="" width={1280} height={720} loading="lazy" decoding="async" />
-            )}
-            <span className="video__play" aria-hidden>
-              <svg width="22" height="24" viewBox="0 0 16 18" fill="currentColor">
-                <path d="M15 9 0 18V0z" />
-              </svg>
-            </span>
-            <span className="video__hint mono" aria-hidden>
-              {t("load")}
-            </span>
-          </button>
-        )}
+      {/* 黑卡纸贴在本子上（四角胶带），画面在黑卡纸里 */}
+      <div className="video__film">
+        <span className="tape tape--corner-l" aria-hidden />
+        <span className="tape tape--corner-r tape--blue" aria-hidden />
+        <div className="video__frame">
+          {loaded ? (
+            <iframe
+              src={embed}
+              title={title}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          ) : (
+            <button type="button" className="video__poster" onClick={() => setLoaded(true)} aria-label={t("loadAria", { title })}>
+              {video.cover && (
+                // eslint-disable-next-line @next/next/no-img-element -- 封面是作品，原图原色
+                <img src={video.cover} alt="" width={1280} height={720} loading="lazy" decoding="async" />
+              )}
+              <span className="video__play" aria-hidden>
+                <svg width="22" height="24" viewBox="0 0 16 18" fill="currentColor">
+                  <path d="M15 9 0 18V0z" />
+                </svg>
+              </span>
+              <span className="video__hint mono" aria-hidden>
+                {t("load")}
+              </span>
+            </button>
+          )}
+        </div>
       </div>
       <div className="video__body">
-        <p className="placard__label mono">
+        <p className="placard__label">
           {[title, video.date.slice(0, 4), platform, shortDate(video.date, locale)].join(" · ")}
         </p>
         <h2 className="video__title">{title}</h2>

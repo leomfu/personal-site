@@ -345,3 +345,15 @@
     transition: none;
   }
 }
+
+/* 子页标题下面那道波浪线：子页不在任何一幕里，按时间画（打开 0.3 秒后） */
+.mark--timed {
+  --draw: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark--timed path {
+    stroke-dashoffset: 1;
+    animation: note-stroke 700ms cubic-bezier(0.5, 0, 0.3, 1) both;
+    animation-delay: calc(350ms + var(--i) * 300ms);
+  }
+}

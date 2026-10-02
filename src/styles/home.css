@@ -3,7 +3,7 @@
    层：地球(1) → 大气光(2) → 文字侧很轻的暗面(3) → 地球上的标记(4) → 发丝线刻度(5)
        → 引线(6) → 文字(7) → 顶栏(8)
    --mx / --my（指针，-1..1）和 --drift（远景的慢呼吸）由 components/home/HomeStage 写。
-   第二版：整体提亮加暖（地球 CSS 调色、暗面更轻），名片换成一张真实的彩铅画纸，放在右边的海面上。
+   第二版：整体提亮加暖（地球 CSS 调色、暗面更轻），名片换成一张真实的彩铅画纸。R6：介绍块回到左边（和第一版一样），上海光点在它的右侧，引线从名片右缘连过去。
    ========================================================================== */
 
 .home {
@@ -59,14 +59,14 @@
   }
 }
 
-/* 文字那一列很轻的暗面：只压右边这一列的海面，只压到字能读清为止 */
+/* 文字那一列很轻的暗面：只压左边这一列，只压到字能读清为止 */
 .home__scrim {
   position: absolute;
   inset: 0;
   z-index: 3;
   pointer-events: none;
   background: linear-gradient(
-    270deg,
+    90deg,
     color-mix(in oklab, var(--sc-canvas) 80%, transparent) 0%,
     color-mix(in oklab, var(--sc-canvas) 74%, transparent) 30%,
     color-mix(in oklab, var(--sc-canvas) 40%, transparent) 42%,
@@ -172,14 +172,30 @@
   white-space: nowrap;
   pointer-events: none;
 }
-/* 桌面：标签都挂在光点左边（右边是名片和引线）。纬度在「上海」下面，经度再往下一格 */
+/* 桌面：标签都挂在光点右边（左边是名片和引线）。纬度在「上海」下面，经度再往下一格 */
 .sh__lat {
-  right: 2.7rem;
+  left: 2.7rem;
   top: 1.15rem;
 }
 .sh__lng {
-  right: 0.5rem;
+  left: 0.5rem;
   top: 2.85rem;
+}
+
+/* 给首页小螃蟹（宇航员，BRIEF R7）预留的位置：在上海光点右上方，约 80px 见方，坐在海面上，不压标签和名片。
+   另一位代理把 <Crab /> 放进 [data-crab-slot="home"]。默认空着，不占交互 */
+.crab-slot {
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+  pointer-events: none;
+}
+.crab-slot > * {
+  pointer-events: auto;
+}
+.crab-slot--home {
+  left: 3.4rem;
+  top: -6.4rem;
 }
 
 .sh__dot {
@@ -222,7 +238,7 @@
 }
 .sh__label {
   position: absolute;
-  right: 2.6rem;
+  left: 2.6rem;
   top: 50%;
   translate: 0 -50%;
   padding: 0.2rem 0.6rem;
@@ -291,10 +307,10 @@
 .home__copy {
   position: absolute;
   z-index: 7;
-  right: calc(var(--sc-gutter) + 0.5rem);
+  left: calc(var(--sc-gutter) + 0.5rem);
   top: 50%;
   translate: 0 -50%;
-  width: min(35rem, 42vw);
+  width: min(32rem, 40vw);
   display: flex;
   flex-direction: column;
   gap: 1.75rem;

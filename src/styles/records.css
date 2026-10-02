@@ -24,12 +24,12 @@
   outline-offset: 4px;
 }
 .deck__plinth {
-  fill: #0e1115;
+  fill: #2a231d;
   stroke: var(--wl-hair-strong);
   stroke-width: 1;
 }
 .deck__platter {
-  fill: #090b0d;
+  fill: #15110e;
   stroke: var(--wl-hair);
 }
 .deck__vinyl {
@@ -72,11 +72,11 @@
   }
 }
 .deck__rest {
-  fill: #15181d;
+  fill: #2f2822;
   stroke: var(--wl-hair-strong);
 }
 .deck__pivot {
-  fill: #15181d;
+  fill: #2f2822;
   stroke: var(--wl-hair-strong);
 }
 .deck__tube {
@@ -88,7 +88,7 @@
   fill: #6b665e;
 }
 .deck__head {
-  fill: #23262b;
+  fill: #3a322a;
   stroke: var(--sc-ink-soft);
   stroke-width: 0.8;
 }
@@ -131,7 +131,7 @@
   color: var(--sc-ink-soft);
 }
 .deck__state {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .deck__note {
@@ -152,7 +152,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .deck__volume input {
@@ -193,7 +193,7 @@
 }
 .track__no,
 .track__time {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .track__artist {
@@ -295,7 +295,7 @@
   white-space: nowrap;
 }
 .row__time {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }
 .row.is-current .row__title {
@@ -303,7 +303,7 @@
 }
 .row__dead {
   color: var(--sc-ink-soft);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 .row__out {
   flex: none;
@@ -378,7 +378,7 @@
   white-space: nowrap;
 }
 .mini__artist {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -417,6 +417,6 @@
   cursor: pointer;
 }
 .mini__time {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   color: var(--sc-ink-soft);
 }

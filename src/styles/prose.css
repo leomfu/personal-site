@@ -1,10 +1,10 @@
 /* ============================================================================
-   markdown 正文（文章、他的自述）。暗底浅字：字号、行高都比亮底多给一点。
+   markdown 正文（文章、他的自述）。第二版都在纸面上：深墨正文，字号比第一版大一档。
    ========================================================================== */
 
 .prose {
   max-width: 46rem;
-  font-size: 1.0625rem;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
   line-height: 1.85;
   color: color-mix(in oklab, var(--sc-ink) 94%, var(--sc-canvas));
   text-wrap: pretty;
@@ -56,7 +56,7 @@
 .prose blockquote {
   margin-inline: 0;
   padding-left: 1.1em;
-  border-left: 1px solid var(--wl-hair-strong);
+  border-left: 2px solid var(--wl-pencil-blue);
   color: var(--sc-ink-soft);
 }
 .prose ul,
@@ -128,10 +128,11 @@
 
 /* 第 1 幕尾巴：他的自述。第一段（我叫伟良…）是引子，放大一档 */
 .prose--self {
-  font-size: 1.125rem;
+  font-size: clamp(1.0625rem, 0.98rem + 0.32vw, 1.1875rem);
 }
 .prose--self > p:first-child {
-  font-size: clamp(1.3rem, 1.05rem + 1vw, 1.65rem);
+  font-size: clamp(1.4rem, 1.1rem + 1.1vw, 1.8rem);
+  font-weight: 500;
   line-height: 1.6;
   color: var(--sc-ink);
 }

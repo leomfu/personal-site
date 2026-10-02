@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -82,7 +83,12 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
         </header>
 
         <div className={showToc ? "article__layout has-toc" : "article__layout"}>
-          <article className="prose" dangerouslySetInnerHTML={{ __html: html }} />
+          <div className="article__sheet scrap" style={{ "--tilt": "0deg" } as CSSProperties}>
+            <span className="tape tape--blue" aria-hidden />
+            <div className="scrap__paper deckle article__paper">
+              <article className="prose" dangerouslySetInnerHTML={{ __html: html }} />
+            </div>
+          </div>
           {showToc && (
             <aside className="article__toc">
               <ArticleToc headings={headings} />

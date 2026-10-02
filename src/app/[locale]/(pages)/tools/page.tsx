@@ -27,20 +27,25 @@ export default async function ToolsPage({ params }: { params: Promise<{ locale: 
     <ScrollCraftRoot>
       <main id="main" className="pagemain">
         <PageHead place={tp("records.name")} title={t("title")} lead={t("lead")} />
-        <ul className="toolgrid" data-sc-in data-sc-stagger="40">
-          {tools.map((tool) => (
-            <li key={tool.name}>
-              <a href={tool.url} target="_blank" rel="noreferrer noopener" className="tool tool--card">
-                <ToolIcon name={tool.icon} size={22} />
-                <span className="tool__name">{tool.name}</span>
-                <span className="tool__desc">{localized(locale, tool.desc, tool.desc_en)}</span>
-                <span className="tool__arrow" aria-hidden>
-                  ↗
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="toolcard scrap">
+          <span className="tape tape--blue" aria-hidden />
+          <div className="scrap__paper deckle-top toolcard__paper">
+            <ul className="toolgrid" data-sc-in data-sc-stagger="40">
+              {tools.map((tool) => (
+                <li key={tool.name}>
+                  <a href={tool.url} target="_blank" rel="noreferrer noopener" className="tool tool--card">
+                    <ToolIcon name={tool.icon} size={22} />
+                    <span className="tool__name">{tool.name}</span>
+                    <span className="tool__desc">{localized(locale, tool.desc, tool.desc_en)}</span>
+                    <span className="tool__arrow" aria-hidden>
+                      ↗
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </main>
     </ScrollCraftRoot>
   );

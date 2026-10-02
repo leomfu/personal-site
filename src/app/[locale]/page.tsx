@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  *   文字  名字、一句话、邮箱、社交图标、语言切换、入口
  *   批注  一支彩铅手画的箭头 + 手写字，指着入口按钮，打开约 1 秒后一笔一笔画出来
  *
- * 名片放在右边那片海面上（暗、干净），左边那一大片金色的城市灯光不再被暗面压住，整页就亮了。
+ * R6（站主修正）：介绍块放回左边，和第一版一样；上海光点在它右侧，引线从名片右缘连过去。
  * 入口有两个，做同一件事（俯冲进完整介绍页）：上海那颗脉冲光点，和全页唯一用强调色填满的主按钮。
  * 手机上主按钮是底部的全宽大按钮。
  */
@@ -156,6 +156,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <span className="sh__lng mono" aria-hidden>
                 {coords.lng.toFixed(2)}°E
               </span>
+              {/* 给首页小螃蟹（宇航员）预留的位置，见 home.css .crab-slot--home；另一位代理放 <Crab />，这里留空 */}
+              <span className="crab-slot crab-slot--home" data-crab-slot="home" />
               <DiveLink href={tour} className="sh__dot" ariaLabel={t("dotAria")} dot>
                 <span className="sh__ring" aria-hidden />
                 <span className="sh__core" aria-hidden />
