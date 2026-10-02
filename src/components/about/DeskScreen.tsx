@@ -24,8 +24,8 @@ import type { Point, Quad } from "@/lib/sceneTypes";
 
 /** 设计尺寸（px）：和屏幕在图上的长宽比一致（横版 553×353 ≈ 1.57，竖版透视过的约 1.25） */
 const SIZE = { wide: { w: 640, h: 408 }, tall: { w: 560, h: 450 } } as const;
-/** 四个角从中心往外放大的比例（只盖住屏幕边框一两个像素，免得露出底图的亮边） */
-const BLEED = { wide: 0.006, tall: 0.014 } as const;
+/** 四个角从中心往外放大的比例（坐标本身已经比亮屏大 2px 左右，这里再保险一点点，免得缩放取整后露出亮边） */
+const BLEED = { wide: 0.004, tall: 0.004 } as const;
 const TALL_QUERY = "(max-aspect-ratio: 4/5)";
 
 /** 单位正方形 → 四边形的投影矩阵，再缩放到 w×h 的元素上，写成 CSS matrix3d（transform-origin 0 0） */

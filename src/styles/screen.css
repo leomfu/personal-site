@@ -44,14 +44,14 @@
 @media (max-aspect-ratio: 4/5) {
   .dscreen {
     --m: 18px;
-    --perch: 104px;
+    --perch: 100px;
     --bar: 0px;
     --pad: 22px;
-    --fs-me: 48px;
-    --fs-ai: 42px;
-    --fs-in: 40px;
-    --spark: 50px;
-    --in-h: 78px;
+    --fs-me: 44px;
+    --fs-ai: 39px;
+    --fs-in: 36px;
+    --spark: 46px;
+    --in-h: 70px;
     width: 560px;
     height: 450px;
   }
@@ -78,7 +78,7 @@
   z-index: 3;
 }
 .dscreen__perch .crab {
-  --crab-size: 64px;
+  --crab-size: 70px;
   --crab-say-size: 22px;
   --crab-say-max: 13em;
   --crab-focus: #b4501f;
@@ -88,7 +88,7 @@
 }
 @media (max-aspect-ratio: 4/5) {
   .dscreen__perch .crab {
-    --crab-size: 104px;
+    --crab-size: 100px;
     --crab-say-size: 40px;
     --crab-say-max: 9em;
   }
@@ -214,6 +214,8 @@
   margin: 0;
   padding-top: 0.08em;
   line-height: 1.32;
+  /* 中文只在标点后换行：「你好！/ 今天想做点什么？」，不会把「么？」甩到下一行 */
+  word-break: keep-all;
   opacity: 0;
   transform: translateY(0.4em);
   transition:
