@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { Crab } from "@/components/crab/Crab";
+import { Crab, CrabArt } from "@/components/crab/Crab";
 import type { Point, Quad } from "@/lib/sceneTypes";
 
 /**
@@ -124,8 +124,9 @@ export function DeskScreen({
   }, [quads]);
 
   /**
-   * 对话：落地之后开始，只演一遍。书桌那一幕上有 data-desk-landing 时等它的 wl:landed（或者已经打上的 data-landed）；
-   * 没有落地这一出的地方（以后别处复用）退回老规矩：屏幕第一次出现在视口里约 1.4 秒后开始。
+   * 对话：小螃蟹从屏幕下沿钻进来、走到输入框前以后才开始，只演一遍（DeskLanding 发 wl:landed；演完发 wl:replied，它再跳上顶边）。
+   * 被跳过 / 直接打开 / 看过一次了 / 减少动态效果（书桌那一幕上有 data-final，或收到 wl:finish）：直接是对话完成的样子。
+   * 没有 DeskLanding 的地方（以后别处复用）退回老规矩：屏幕第一次出现在视口里约 1.4 秒后开始。
    */
   useEffect(() => {
     if (still) return;
@@ -134,16 +135,19 @@ export function DeskScreen({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timers: number[] = [];
     const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const desk = el.closest<HTMLElement>("[data-desk-landing]");
     let started = false;
+    const finish = () => {
+      started = true;
+      timers.splice(0).forEach((id) => window.clearTimeout(id));
+      setTyped(hello.length);
+      setStage("replied");
+    };
     const run = (lead: number) => {
       if (started) return;
       started = true;
-      // 减少动态效果：不演，直接是对话完成的样子
       if (reduce) {
-        later(0, () => {
-          setTyped(hello.length);
-          setStage("replied");
-        });
+        later(0, finish);
         return;
       }
       let at = lead;
@@ -161,15 +165,18 @@ export function DeskScreen({
       at += 420;
       later(at, () => setStage("thinking"));
       at += 1150;
-      later(at, () => setStage("replied"));
+      later(at, () => {
+        setStage("replied");
+        desk?.dispatchEvent(new Event("wl:replied"));
+      });
     };
 
-    const desk = el.closest<HTMLElement>("[data-desk-landing]");
     let io: IntersectionObserver | null = null;
-    const onLanded = () => run(700);
+    const onLanded = () => run(350);
     if (desk) {
-      if (desk.hasAttribute("data-landed")) run(700);
+      if (desk.hasAttribute("data-final") || reduce) later(0, finish);
       else desk.addEventListener("wl:landed", onLanded);
+      desk.addEventListener("wl:finish", finish);
     } else {
       io = new IntersectionObserver((entries) => {
         if (entries.some((e) => e.isIntersecting)) {
@@ -182,6 +189,7 @@ export function DeskScreen({
     return () => {
       io?.disconnect();
       desk?.removeEventListener("wl:landed", onLanded);
+      desk?.removeEventListener("wl:finish", finish);
       timers.forEach((id) => window.clearTimeout(id));
     };
   }, [still, hello]);
@@ -208,6 +216,14 @@ export function DeskScreen({
         />
         )}
       </div>
+      {/* 进屏幕的那只（小尺寸）：从屏幕下沿钻进来，走到输入框前；演完跳上顶边，这只就藏起来 */}
+      {!still && (
+        <span className="dscreen__walker" aria-hidden>
+          <span className="crab crab--desk crab--still dscreen__wcrab" style={{ "--crab-w": 112, "--crab-h": 78 } as CSSProperties}>
+            <CrabArt variant="desk" />
+          </span>
+        </span>
+      )}
       <div className="dscreen__win" aria-hidden>
         <div className="dscreen__bar">
           <span className="dscreen__lights">

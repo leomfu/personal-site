@@ -294,3 +294,20 @@
     animation: none;
   }
 }
+
+/* 进屏幕的那只（DeskLanding 摆位置、做动画）：在屏幕的最上面一层之下、窗口之上；超出屏幕下沿的部分被 .dscreen 裁掉 */
+.dscreen__walker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+}
+.dscreen__wcrab.crab {
+  position: absolute;
+  left: 0;
+  top: 0;
+  --crab-focus: #b4501f;
+}

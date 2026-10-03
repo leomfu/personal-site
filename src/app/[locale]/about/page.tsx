@@ -211,8 +211,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             {/* 远景：深夜的房间（位移最小）。MacBook 那块屏幕长在图上，跟着视差和推镜一起动 */}
             <div className="desk__far room-far" data-sc-parallax={DESK_FAR_RATE}>
               <ScenePlate pair={scene.room} eager className="tone-room">
-                <DeskScreen quads={scene.screen} crabLabel={crab.label.desk} crabLines={crab.lines.desk} />
+                {/* 桌上走路的那只在屏幕图片的下面一层，所以 DeskLanding 在 DeskScreen 前面（走到屏幕下沿就被盖住） */}
                 <DeskLanding />
+                <DeskScreen quads={scene.screen} crabLabel={crab.label.desk} crabLines={crab.lines.desk} />
               </ScenePlate>
             </div>
             {/* 氛围：台灯的一束暖光雾（自己慢慢变，只做分离） */}

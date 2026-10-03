@@ -357,3 +357,10 @@
     animation-delay: calc(350ms + var(--i) * 300ms);
   }
 }
+
+/* 手机上纸面右边缘的胶带角会探出几像素，把整页撑宽（scrollWidth 比视口宽 5px，出现横向滑动）：只在横向裁掉，竖向照旧 */
+@media (max-width: 860px) {
+  .sheet.paper {
+    overflow-x: clip;
+  }
+}

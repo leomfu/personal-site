@@ -97,6 +97,16 @@ export function HelmetArt() {
   );
 }
 
+/** 脱下来的小红斗篷（落到书桌上用）：就是 flyer 身后那块斗篷的第一帧，坐标一样，画框正好框住它 */
+export function CapeArt() {
+  const cape = LOOKS.flyer.parts.find((p) => p.name === "capeA");
+  return (
+    <svg className="crab__svg" viewBox="-59.5 38.5 59.5 31.5" shapeRendering="crispEdges" aria-hidden focusable="false">
+      {cape && <PartG part={cape} />}
+    </svg>
+  );
+}
+
 export function Crab({
   variant,
   label,

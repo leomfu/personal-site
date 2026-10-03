@@ -1,35 +1,69 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
-import { CrabArt, HelmetArt } from "@/components/crab/Crab";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
+import { useTranslations } from "next-intl";
+import { CapeArt, CrabArt, HelmetArt } from "@/components/crab/Crab";
 
 /**
- * 第 1 幕开场：「到了」（BRIEF R9 第 1 条第 4 点）。
+ * 第 1 幕开场：「进屋之后」（BRIEF R11）。第 0 幕里小宇航员悄悄钻进了窗缝；书桌那一幕钉住的那一刻（顶到屏幕顶），
+ * 这里自动演一小段（约 4.3 秒走到屏幕里，再加屏幕里打字、回复，一共 9 秒左右）：
+ *   从窗户那边落到桌上 → 摘下头盔（弹起，落在桌上滚一下）→ 抖掉小红斗篷（飘落在桌上）
+ *   → 小碎步走到 MacBook 前、爬上键盘 → 沿屏幕底边往里走、越走越小，跨过屏幕下沿时被屏幕遮住（这只在屏幕图片的下面一层）
+ *   → 在 Claude 窗口里重新出现（DeskScreen 里的 .dscreen__walker，小尺寸）→ 走到输入框前，屏幕里打出「Hello Claude」、发送、回复
+ *   → 跳到窗口顶边，变回桌宠（桌宠在窗口顶边上继续自主意识）
+ * 全程同一时刻只有一只：桌上这只走进屏幕下沿就藏起来，屏幕里那只出现；它跳上顶边，那只藏起来，桌宠出现。
  *
- * 第 0 幕里小宇航员先一步飞进了那扇窗；第 1 幕钉住的那一刻（书桌那一幕的顶到了屏幕顶），这里演一小段（约 3 秒）：
- *   从房间的窗户飞进来（由小变大）→ 落在 MacBook 右边的桌面上、站直 → 举起两只钳子摘下头盔，
- *   头盔放到旁边、滚一下停在桌上 → 跳上 Claude 窗口的顶边，半空里斗篷收掉 → 变成桌宠
- * 变身那一刻：书桌那一幕打上 data-landed（CSS 显出窗口顶边上的桌宠），这只表演用的藏起来，
- * 两者位置、大小一样，所以任何时候屏幕上只有一只。然后发 wl:landed，屏幕里才开始打「Hello Claude」。
+ * 头盔和斗篷留在桌上当彩蛋：它们是 <button>，点一下（回车也行）晃一晃、冒一句话（字典 desk.helmetSay / desk.capeSay）。
+ * 只播一次：同一次访问里看过（sessionStorage）、直接打开 /about/ 的书桌位置、从平面图跳过来、减少动态效果，
+ * 都直接是最终状态（桌宠在屏幕上、对话完成、头盔和斗篷在桌上）。点击、按键、滚轮（开演 1.8 秒之后）都能直接跳到最终状态。
  *
  * 这只是 .plate__box 的孩子：坐标用房间图本身的比例，跟着第 1 幕的视差、推镜一起动。
  * 动画用 Web Animations（只动 transform / opacity，播完就停），不开常驻循环；滚动只在 scroll 事件里看一眼位置。
- * 退回第 0 幕（书桌那一幕的顶又落到屏幕三成以下）就复位，下次到达再演；打字只演一遍。
- * 减少动态效果：不演，桌宠一开始就在屏幕上。
- * 页面直接从更下面打开（书桌那一幕整个在上面了）：也不演，直接是落好的样子。
  */
 
-/** 房间图上的几个点（归一化坐标）：窗户里飞进来的地方、落脚点（脚底）、头盔最后停的地方（底边） */
-const SPOTS = {
-  wide: { window: { x: 0.52, y: 0.36 }, land: { x: 0.668, y: 0.79 }, helmet: { x: 0.724, y: 0.797 } },
-  tall: { window: { x: 0.56, y: 0.38 }, land: { x: 0.69, y: 0.768 }, helmet: { x: 0.785, y: 0.782 } },
-} as const;
+type Spot = { x: number; y: number };
+type Spots = { window: Spot; land: Spot; helmet: Spot; cape: Spot; front: Spot; kb1: Spot; kb2: Spot; scr: Spot };
+/** 房间图上的几个点（归一化坐标，看图量的）：窗户里落进来的地方、落脚点（脚底）、头盔和斗篷最后停的地方、
+ *  走路的几个点（笔记本右前角、键盘右、键盘中、屏幕里面）。竖版的笔记本是斜着摆的 */
+const SPOTS: Record<"wide" | "tall", Spots> = {
+  wide: {
+    window: { x: 0.52, y: 0.36 },
+    land: { x: 0.668, y: 0.79 },
+    helmet: { x: 0.706, y: 0.845 },
+    cape: { x: 0.585, y: 0.855 },
+    front: { x: 0.635, y: 0.805 },
+    kb1: { x: 0.6, y: 0.748 },
+    kb2: { x: 0.545, y: 0.724 },
+    scr: { x: 0.52, y: 0.668 },
+  },
+  tall: {
+    window: { x: 0.56, y: 0.38 },
+    land: { x: 0.69, y: 0.768 },
+    helmet: { x: 0.84, y: 0.775 },
+    cape: { x: 0.54, y: 0.765 },
+    front: { x: 0.76, y: 0.745 },
+    kb1: { x: 0.7, y: 0.708 },
+    kb2: { x: 0.57, y: 0.7 },
+    scr: { x: 0.5, y: 0.645 },
+  },
+};
 const TALL_QUERY = "(max-aspect-ratio: 4/5)";
 /** 身体框的高宽比（clawd 78 / 112） */
 const BODY = 78 / 112;
+/** 落在桌上时比屏幕上的桌宠大一点点（离镜头近一点） */
+const DS = 1.6;
+const SEEN_KEY = "wl-desk-played";
+/** 彩蛋歇脚时的姿势 */
+const HELMET_REST = "rotate(17deg) scale(0.92)";
+const CAPE_REST = "rotate(-8deg) scale(1.9, 1.25)";
+
+type State = "waiting" | "playing" | "landed";
 
 export function DeskLanding() {
+  const t = useTranslations("desk");
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [say, setSay] = useState<"" | "helmet" | "cape">("");
+  const sayTimer = useRef(0);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -37,197 +71,495 @@ export function DeskLanding() {
     const section = root?.closest<HTMLElement>("[data-desk-landing]");
     const mover = root?.querySelector<HTMLElement>(".landing__mover");
     const crab = root?.querySelector<HTMLElement>(".landing__crab");
-    const helmet = root?.querySelector<HTMLElement>(".landing__helmet");
+    const helmet = root?.querySelector<HTMLElement>(".landing__prop--helmet");
+    const cape = root?.querySelector<HTMLElement>(".landing__prop--cape");
     const spark = root?.querySelector<HTMLElement>(".landing__spark");
-    if (!root || !box || !section || !mover || !crab || !helmet || !spark) return;
+    if (!root || !box || !section || !mover || !crab || !helmet || !cape || !spark) return;
     const perch = section.querySelector<HTMLElement>(".dscreen__perch");
     const pet = () => section.querySelector<HTMLElement>(".dscreen__crab");
+    const walker = () => section.querySelector<HTMLElement>(".dscreen__walker");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    type State = "waiting" | "playing" | "landed";
     let state: State = "waiting";
+    let startedAt = 0;
     const timers: number[] = [];
     const anims: Animation[] = [];
     const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const anim = (el: HTMLElement, frames: Keyframe[], opts: KeyframeAnimationOptions) => {
+      const a = el.animate(frames, { fill: "forwards", ...opts });
+      anims.push(a);
+      return a;
+    };
+
+    const seen = () => {
+      try {
+        return sessionStorage.getItem(SEEN_KEY) === "1";
+      } catch {
+        return false;
+      }
+    };
+    const markSeen = () => {
+      try {
+        sessionStorage.setItem(SEEN_KEY, "1");
+      } catch {
+        // 无痕模式写不了：这一次访问里就可能再播一遍，不碍事
+      }
+    };
+
+    /* ---------------------------------------------------------------- 几何 -- */
+    type Geo = {
+      bw: number;
+      bh: number;
+      S: number;
+      spots: Spots;
+      hw: number;
+      hh: number;
+      cw: number;
+      ch: number;
+      /** 头盔、斗篷歇脚时的左上角（盒子像素） */
+      hr: Spot;
+      cr: Spot;
+    };
+    const geo = (): Geo | null => {
+      const bw = box.offsetWidth;
+      const bh = box.offsetHeight;
+      if (bw < 10) return null;
+      const spots = SPOTS[window.matchMedia(TALL_QUERY).matches ? "tall" : "wide"];
+      // 身体的大小 = 屏幕上桌宠的大小（换成房间图坐标）：桌宠设计尺寸 × 屏幕在盒子里的缩放。取不到就按屏幕宽度估
+      const p = pet();
+      const scr = section.querySelector<HTMLElement>(".dscreen");
+      let S = bw * 0.0236;
+      if (p && scr && scr.offsetWidth > 0) {
+        const m = new DOMMatrix(getComputedStyle(scr).transform);
+        const k = Math.hypot(m.a, m.b) || 0;
+        if (k > 0 && p.offsetWidth > 2) S = p.offsetWidth * k;
+      }
+      S *= 1.3;
+      const u = (S * DS) / 112;
+      const hw = 133 * u;
+      const hh = 120 * u;
+      const cw = 59.5 * u;
+      const ch = 31.5 * u;
+      return {
+        bw,
+        bh,
+        S,
+        spots,
+        hw,
+        hh,
+        cw,
+        ch,
+        hr: { x: spots.helmet.x * bw - hw / 2, y: spots.helmet.y * bh - hh * 0.9 },
+        cr: { x: spots.cape.x * bw - cw / 2, y: spots.cape.y * bh - ch * 0.7 },
+      };
+    };
+
+    /** 头盔和斗篷歇脚的位置和大小，写成盒子的百分比（缩放窗口也跟得上） */
+    const layoutRest = () => {
+      const g = geo();
+      if (!g) return null;
+      const put = (el: HTMLElement, x: number, y: number, w: number, h: number) => {
+        el.style.left = `${((x / g.bw) * 100).toFixed(3)}%`;
+        el.style.top = `${((y / g.bh) * 100).toFixed(3)}%`;
+        el.style.width = `${((w / g.bw) * 100).toFixed(3)}%`;
+        el.style.height = `${((h / g.bh) * 100).toFixed(3)}%`;
+      };
+      put(helmet, g.hr.x, g.hr.y, g.hw, g.hh);
+      put(cape, g.cr.x, g.cr.y, g.cw, g.ch);
+      return g;
+    };
 
     const setPerch = (on: boolean) => {
       if (perch) perch.inert = !on;
       section.toggleAttribute("data-landed", on);
     };
-
-    /** 落好了：桌宠上场（叫醒它的自主意识），屏幕开始打字 */
-    const handoff = (instant: boolean) => {
-      state = "landed";
-      setPerch(true);
-      mover.style.opacity = "0";
-      pet()?.dispatchEvent(new Event("wl:wake"));
-      section.dispatchEvent(new Event("wl:landed"));
-      if (!instant) {
-        const r = pet()?.getBoundingClientRect();
-        const b = box.getBoundingClientRect();
-        const k = b.width / Math.max(box.offsetWidth, 1);
-        if (r) {
-          spark.style.left = `${(r.left + r.width / 2 - b.left) / k}px`;
-          spark.style.top = `${(r.top + r.height * 0.3 - b.top) / k}px`;
-          anims.push(spark.animate([{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.1, offset: 0.35 }, { opacity: 0, scale: 1.5 }], { duration: 520, easing: "ease-out" }));
-        }
-      }
+    const resetCrab = () => {
+      crab.classList.remove("is-stand", "is-bare", "is-plain", "is-stretch", "is-walk");
     };
 
-    const reset = () => {
+    /* ---------------------------------------------------------------- 最终状态 -- */
+    /** 桌宠在屏幕上、对话完成、头盔和斗篷在桌上。instant = 不是演完的而是直接跳到这里（屏幕里也得跟着直接完成） */
+    const settle = (instant: boolean) => {
       timers.splice(0).forEach((id) => window.clearTimeout(id));
       anims.splice(0).forEach((a) => a.cancel());
-      state = "waiting";
-      setPerch(false);
+      state = "landed";
       mover.style.opacity = "0";
-      helmet.style.opacity = "0";
-      crab.classList.remove("is-stand", "is-bare", "is-plain", "is-stretch");
+      const w = walker();
+      if (w) w.style.opacity = "0";
+      layoutRest();
+      helmet.classList.add("is-on");
+      cape.classList.add("is-on");
+      helmet.style.opacity = "1";
+      cape.style.opacity = "1";
+      helmet.style.transform = HELMET_REST;
+      cape.style.transform = CAPE_REST;
+      setPerch(true);
+      markSeen();
+      removeSkip();
+      if (instant) {
+        section.setAttribute("data-final", "");
+        section.dispatchEvent(new Event("wl:finish"));
+      }
+      pet()?.dispatchEvent(new Event("wl:wake"));
     };
 
+    /* ---------------------------------------------------------------- 开演 -- */
+    const trot = (g: Geo, from: Spot, to: Spot, s0: number, s1: number, hops: number, lift = 0.07) => {
+      // 一段小碎步：从 from 走到 to（脚底坐标），每一步颠一下
+      const frames: Keyframe[] = [];
+      const n = hops * 2;
+      for (let i = 0; i <= n; i++) {
+        const f = i / n;
+        const up = i % 2 === 1 ? g.S * lift : 0;
+        frames.push({
+          transform: at(g, from.x + (to.x - from.x) * f, from.y + (to.y - from.y) * f - up, s0 + (s1 - s0) * f),
+          offset: f,
+        });
+      }
+      return frames;
+    };
+    /** 脚底在 (x, y)、放大 s 倍时 mover 的 transform（transform-origin 是脚底） */
+    const at = (g: Geo, x: number, y: number, s: number) =>
+      `translate(${(x - g.S / 2).toFixed(1)}px, ${(y - g.S * BODY).toFixed(1)}px) scale(${s.toFixed(3)})`;
+
     const play = () => {
+      const g = layoutRest();
+      if (!g) {
+        settle(true);
+        return;
+      }
       state = "playing";
-      const tall = window.matchMedia(TALL_QUERY).matches;
-      const spots = SPOTS[tall ? "tall" : "wide"];
-      const bw = box.offsetWidth;
-      const bh = box.offsetHeight;
-      const b = box.getBoundingClientRect();
-      const k = b.width / Math.max(bw, 1);
-      // 身体的大小 = 屏幕上桌宠的大小（换成房间图坐标）；落在桌上时比它大一点点（离镜头近一点）
-      const petRect = pet()?.getBoundingClientRect();
-      const S = petRect && petRect.width > 2 ? petRect.width / k : bw * 0.024;
+      startedAt = performance.now();
+      addSkip();
+      const { bw, bh, S, spots } = g;
       mover.style.width = `${S}px`;
       mover.style.height = `${S * BODY}px`;
       crab.style.setProperty("--crab-size", `${S}px`);
+      const px = (s: Spot): Spot => ({ x: s.x * bw, y: s.y * bh });
+      const W = px(spots.window);
+      const D = px(spots.land);
+      const F = px(spots.front);
+      const K1 = px(spots.kb1);
+      const K2 = px(spots.kb2);
+      const SC = px(spots.scr);
 
-      /** 脚底在 (x, y)、放大 s 倍时 mover 的 transform（transform-origin 是脚底） */
-      const at = (x: number, y: number, s: number) => `translate(${(x - S / 2).toFixed(1)}px, ${(y - S * BODY).toFixed(1)}px) scale(${s.toFixed(3)})`;
-      const W = { x: spots.window.x * bw, y: spots.window.y * bh };
-      const D = { x: spots.land.x * bw, y: spots.land.y * bh };
-      const DS = 1.15;
-
-      crab.classList.remove("is-stand", "is-bare", "is-plain", "is-stretch");
+      resetCrab();
+      crab.classList.add("is-stand");
+      helmet.classList.remove("is-on");
+      cape.classList.remove("is-on");
       helmet.style.opacity = "0";
+      cape.style.opacity = "0";
       mover.style.opacity = "1";
 
-      // 1. 从窗户飞进来，落到桌上（先抬一点再落，像减速降落）
+      // 1. 从窗户那边落到桌上（先抬一点再落，像减速降落）
       const midX = W.x + (D.x - W.x) * 0.55;
       const midY = Math.min(W.y, D.y) + (D.y - W.y) * 0.25;
-      anims.push(
-        mover.animate(
-          [
-            { transform: at(W.x, W.y, 0.45), opacity: 0 },
-            { transform: at(W.x + (D.x - W.x) * 0.12, W.y + (D.y - W.y) * 0.05, 0.55), opacity: 1, offset: 0.14 },
-            { transform: at(midX, midY, 0.85), opacity: 1, offset: 0.6 },
-            { transform: at(D.x, D.y - S * 0.12, DS), opacity: 1, offset: 0.88 },
-            { transform: at(D.x, D.y, DS), opacity: 1 },
-          ],
-          { duration: 1000, easing: "cubic-bezier(0.3, 0.1, 0.3, 1)", fill: "forwards" },
-        ),
+      anim(
+        mover,
+        [
+          { transform: at(g, W.x, W.y, 0.45), opacity: 0 },
+          { transform: at(g, W.x + (D.x - W.x) * 0.12, W.y + (D.y - W.y) * 0.05, 0.55), opacity: 1, offset: 0.14 },
+          { transform: at(g, midX, midY, 0.85), opacity: 1, offset: 0.6 },
+          { transform: at(g, D.x, D.y - S * 0.12, DS), opacity: 1, offset: 0.88 },
+          { transform: at(g, D.x, D.y, DS), opacity: 1 },
+        ],
+        { duration: 1000, easing: "cubic-bezier(0.3, 0.1, 0.3, 1)" },
       );
-      // 2. 站直
-      later(900, () => crab.classList.add("is-stand"));
-      // 3. 举起钳子摘头盔：头盔换成单独的道具，放到旁边、滚一下停在桌上
-      later(1250, () => crab.classList.add("is-stretch"));
-      later(1450, () => {
+
+      // 2. 摘头盔：举钳子，头盔弹起、落在桌上滚一下（之后它就留在那儿）
+      later(1150, () => crab.classList.add("is-stretch"));
+      later(1350, () => {
         crab.classList.add("is-bare");
         // 头盔在 flyer 坐标里的框是 (-10.5, -42, 133, 120)，身体框是 (0, 0, 112, 78)
         const u = (S * DS) / 112;
         const hx = D.x - (S * DS) / 2 - 10.5 * u;
         const hy = D.y - S * BODY * DS - 42 * u;
-        const hw = 133 * u;
-        const hh = 120 * u;
-        helmet.style.width = `${hw}px`;
-        helmet.style.height = `${hh}px`;
+        helmet.classList.add("is-on");
         helmet.style.opacity = "1";
-        const R = { x: spots.helmet.x * bw - hw / 2, y: spots.helmet.y * bh - hh * 0.9 };
-        const tf = (x: number, y: number, r: number, s = 1) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg) scale(${s})`;
-        anims.push(
-          helmet.animate(
-            [
-              { transform: tf(hx, hy, 0) },
-              { transform: tf(hx + hw * 0.05, hy - hh * 0.32, -5), offset: 0.3 },
-              { transform: tf(hx + (R.x - hx) * 0.6, hy - hh * 0.36, 6), offset: 0.55 },
-              { transform: tf(R.x, R.y, 12, 0.92), offset: 0.82 },
-              { transform: tf(R.x + hw * 0.04, R.y, 17, 0.92) },
-            ],
-            { duration: 1050, easing: "cubic-bezier(0.4, 0, 0.3, 1)", fill: "forwards" },
-          ),
+        const off = (x: number, y: number, r: number, s = 1) => `translate(${(x - g.hr.x).toFixed(1)}px, ${(y - g.hr.y).toFixed(1)}px) rotate(${r}deg) scale(${s})`;
+        anim(
+          helmet,
+          [
+            { transform: off(hx, hy, 0) },
+            { transform: off(hx + g.hw * 0.05, hy - g.hh * 0.32, -5), offset: 0.3 },
+            { transform: off(hx + (g.hr.x - hx) * 0.6, hy - g.hh * 0.36, 6), offset: 0.55 },
+            { transform: off(g.hr.x, g.hr.y, 12, 0.92), offset: 0.82 },
+            { transform: HELMET_REST },
+          ],
+          { duration: 1050, easing: "cubic-bezier(0.4, 0, 0.3, 1)" },
         );
       });
-      later(2200, () => crab.classList.remove("is-stretch"));
-      // 4. 跳上 Claude 窗口的顶边，半空里斗篷收掉，落下去就是桌宠
-      later(2600, () => {
-        const nb = box.getBoundingClientRect();
-        const nk = nb.width / Math.max(box.offsetWidth, 1);
-        const r = pet()?.getBoundingClientRect();
-        // 屏幕上的桌宠：脚底（身体框的底边中点）和它相对 S 的大小
-        const P = r ? { x: (r.left + r.width / 2 - nb.left) / nk, y: (r.bottom - nb.top) / nk } : { x: D.x - S * 2, y: D.y - bh * 0.3 };
-        const ps = r ? r.width / nk / S : 1;
-        const apexY = Math.min(P.y, D.y) - S * 1.1;
-        anims.push(
-          mover.animate(
-            [
-              { transform: at(D.x, D.y, DS) },
-              { transform: at(D.x, D.y + S * 0.06, DS * 1.02), offset: 0.12 },
-              { transform: at((D.x + P.x) / 2, apexY, (DS + ps) / 2), offset: 0.55 },
-              { transform: at(P.x, P.y, ps) },
-            ],
-            { duration: 680, easing: "cubic-bezier(0.33, 0, 0.4, 1)", fill: "forwards" },
-          ),
+      later(2050, () => crab.classList.remove("is-stretch"));
+
+      // 3. 抖斗篷：身子左右抖三下，斗篷脱下来飘落到桌上
+      later(2150, () => {
+        anim(crab, [{ rotate: "0deg" }, { rotate: "-5deg" }, { rotate: "5deg" }, { rotate: "-4deg" }, { rotate: "4deg" }, { rotate: "0deg" }], {
+          duration: 520,
+          easing: "ease-in-out",
+        });
+      });
+      later(2400, () => {
+        crab.classList.add("is-plain");
+        const u = (S * DS) / 112;
+        const wx = D.x - (S * DS) / 2 - 59.5 * u;
+        const wy = D.y - S * BODY * DS + 38.5 * u;
+        const dx = wx - g.cr.x;
+        const dy = wy - g.cr.y;
+        const tf = (x: number, y: number, r: number, sx: number, sy: number) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg) scale(${sx}, ${sy})`;
+        cape.classList.add("is-on");
+        cape.style.opacity = "1";
+        anim(
+          cape,
+          [
+            { transform: tf(dx, dy, 0, 1, 1) },
+            { transform: tf(dx * 0.62 - u * 14, dy * 0.45 - u * 10, -16, 1.1, 1), offset: 0.3 },
+            { transform: tf(dx * 0.3 + u * 10, dy * 0.2, 12, 1.5, 1.1), offset: 0.62 },
+            { transform: tf(dx * 0.08 - u * 3, dy * 0.04, -12, 1.8, 1.2), offset: 0.85 },
+            { transform: CAPE_REST },
+          ],
+          { duration: 900, easing: "cubic-bezier(0.35, 0.1, 0.4, 1)" },
         );
-        later(330, () => crab.classList.add("is-plain"));
-        later(690, () => handoff(false));
+      });
+
+      // 4. 小碎步走到 MacBook 前，爬上键盘，沿屏幕底边往里走、越走越小
+      later(3000, () => {
+        crab.classList.add("is-walk");
+        anim(mover, trot(g, D, F, DS, DS, 3), { duration: 420, easing: "linear" });
+      });
+      later(3440, () => {
+        crab.classList.remove("is-walk");
+        // 爬上键盘：跳一下
+        anim(
+          mover,
+          [
+            { transform: at(g, F.x, F.y, DS) },
+            { transform: at(g, F.x, F.y + S * 0.06, DS * 1.02), offset: 0.15 },
+            { transform: at(g, (F.x + K1.x) / 2, Math.min(F.y, K1.y) - S * 0.9, (DS + 1.35) / 2), offset: 0.55 },
+            { transform: at(g, K1.x, K1.y, 1.35) },
+          ],
+          { duration: 300, easing: "cubic-bezier(0.33, 0, 0.4, 1)" },
+        );
+      });
+      later(3760, () => {
+        crab.classList.add("is-walk");
+        anim(mover, trot(g, K1, K2, 1.35, 1.1, 4), { duration: 480, easing: "linear" });
+      });
+      later(4260, () => {
+        // 屏幕底边就在前面：往里走，越走越小，身子慢慢被屏幕盖住
+        anim(mover, trot(g, K2, SC, 1.1, 0.55, 4), { duration: 540, easing: "linear" });
+      });
+      later(4830, () => {
+        crab.classList.remove("is-walk");
+        mover.style.opacity = "0";
+        enterScreen();
+      });
+
+      // 兜底：万一屏幕里的回复事件没来，也要收尾
+      later(14000, () => {
+        if (state === "playing") settle(true);
       });
     };
 
-    // 位置判断：书桌那一幕钉住了（顶到屏幕顶）就开演；退回第 0 幕就复位
+    /* ---------------------------------------------------------------- 屏幕里 -- */
+    const enterScreen = () => {
+      const w = walker();
+      const scr = section.querySelector<HTMLElement>(".dscreen");
+      const input = scr?.querySelector<HTMLElement>(".dscreen__input");
+      const win = scr?.querySelector<HTMLElement>(".dscreen__win");
+      const p = pet();
+      if (!w || !scr || !input || !win || !p) {
+        settle(true);
+        return;
+      }
+      const Sw = p.offsetWidth * 0.8;
+      const crabEl = w.firstElementChild as HTMLElement;
+      w.style.width = `${Sw}px`;
+      w.style.height = `${Sw * BODY}px`;
+      crabEl.style.setProperty("--crab-size", `${Sw}px`);
+      const W0 = scr.offsetWidth;
+      const H0 = scr.offsetHeight;
+      const wat = (x: number, y: number, s: number) => `translate(${(x - Sw / 2).toFixed(1)}px, ${(y - Sw * BODY).toFixed(1)}px) scale(${s.toFixed(3)})`;
+      const inTop = win.offsetTop + input.offsetTop;
+      const goal = { x: win.offsetLeft + input.offsetLeft + Math.min(input.offsetWidth * 0.22, 130), y: inTop + 3 };
+      const start = { x: W0 * 0.52, y: H0 + Sw * BODY + 6 };
+      w.style.opacity = "1";
+      // 从屏幕下沿钻出来（屏幕自己会把超出下沿的部分裁掉），小碎步走到输入框前
+      crabEl.classList.add("is-walk");
+      const arrive = w.animate(
+        (() => {
+          const frames: Keyframe[] = [];
+          const n = 8;
+          for (let i = 0; i <= n; i++) {
+            const f = i / n;
+            const e = 1 - (1 - f) * (1 - f);
+            frames.push({ transform: wat(start.x + (goal.x - start.x) * e, start.y + (goal.y - start.y) * e - (i % 2 ? Sw * 0.07 : 0), 1), offset: f });
+          }
+          return frames;
+        })(),
+        { duration: 700, fill: "forwards", easing: "linear" },
+      );
+      anims.push(arrive);
+      later(700, () => {
+        crabEl.classList.remove("is-walk");
+        // 站在输入框前，屏幕里开始打字（DeskScreen 听这个事件）
+        section.dispatchEvent(new Event("wl:landed"));
+      });
+
+      // 回复出来之后，跳到窗口顶边，变回桌宠
+      const onReplied = () => {
+        section.removeEventListener("wl:replied", onReplied);
+        later(500, () => {
+          if (state !== "playing") return;
+          const P = {
+            x: (perch?.offsetLeft ?? 0) + p.offsetLeft + p.offsetWidth / 2,
+            y: (perch?.offsetTop ?? 0) + p.offsetTop + p.offsetHeight,
+          };
+          const ps = p.offsetWidth / Sw;
+          const apex = Math.min(goal.y, P.y) - Sw * 1.0;
+          const jump = w.animate(
+            [
+              { transform: wat(goal.x, goal.y, 1) },
+              { transform: wat(goal.x, goal.y + Sw * 0.06, 1.02), offset: 0.12 },
+              { transform: wat((goal.x + P.x) / 2, apex, (1 + ps) / 2), offset: 0.55 },
+              { transform: wat(P.x, P.y, ps) },
+            ],
+            { duration: 640, fill: "forwards", easing: "cubic-bezier(0.33, 0, 0.4, 1)" },
+          );
+          anims.push(jump);
+          later(650, handoff);
+        });
+      };
+      section.addEventListener("wl:replied", onReplied);
+    };
+
+    /** 跳上顶边：这只藏起来，桌宠上场。屏幕里的对话已经演完了，不用再通知它 */
+    const handoff = () => {
+      const w = walker();
+      if (w) w.style.opacity = "0";
+      state = "landed";
+      layoutRest();
+      setPerch(true);
+      markSeen();
+      removeSkip();
+      pet()?.dispatchEvent(new Event("wl:wake"));
+      const r = pet()?.getBoundingClientRect();
+      const b = box.getBoundingClientRect();
+      const k = b.width / Math.max(box.offsetWidth, 1);
+      if (r) {
+        spark.style.left = `${(r.left + r.width / 2 - b.left) / k}px`;
+        spark.style.top = `${(r.top + r.height * 0.3 - b.top) / k}px`;
+        anims.push(spark.animate([{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.1, offset: 0.35 }, { opacity: 0, scale: 1.5 }], { duration: 520, easing: "ease-out" }));
+      }
+    };
+
+    /* ---------------------------------------------------------------- 跳过 -- */
+    const skip = (event: Event) => {
+      if (state !== "playing") return;
+      if (event.type === "wheel" && performance.now() - startedAt < 1800) return;
+      settle(true);
+    };
+    const addSkip = () => {
+      window.addEventListener("pointerdown", skip, true);
+      window.addEventListener("keydown", skip, true);
+      window.addEventListener("wheel", skip, { passive: true });
+      window.addEventListener("touchstart", skip, { passive: true });
+    };
+    function removeSkip() {
+      window.removeEventListener("pointerdown", skip, true);
+      window.removeEventListener("keydown", skip, true);
+      window.removeEventListener("wheel", skip);
+      window.removeEventListener("touchstart", skip);
+    }
+
+    /* ---------------------------------------------------------------- 什么时候开演 -- */
+    // 书桌那一幕钉住了（顶到屏幕顶）、而且刚刚是从第 0 幕滚下来的：开演。其他情况（直接打开、从平面图跳来）直接是最终状态
+    const river = document.getElementById("river");
+    let flightSeen = -1e9;
     let raf = 0;
     const read = () => {
       raf = 0;
-      if (reduce) return;
-      const r = section.getBoundingClientRect();
+      if (state !== "waiting") return;
       const vh = window.innerHeight;
-      if (state === "waiting" && r.top <= 2 && r.bottom > vh * 0.6 && !document.hidden) play();
-      else if (state !== "waiting" && r.top > vh * 0.3) reset();
+      if (river) {
+        const rr = river.getBoundingClientRect();
+        if (rr.bottom > 0 && rr.top < vh) flightSeen = performance.now();
+      }
+      const r = section.getBoundingClientRect();
+      if (r.top <= 2 && r.bottom > vh * 0.6 && !document.hidden) {
+        if (performance.now() - flightSeen < 2500) play();
+        else settle(true);
+      } else if (r.bottom < vh * 0.5) {
+        settle(true);
+      }
     };
     const schedule = () => {
       if (!raf) raf = requestAnimationFrame(read);
     };
 
-    if (reduce) {
-      handoff(true);
+    const ro = new ResizeObserver(() => {
+      layoutRest();
+    });
+    ro.observe(box);
+
+    if (reduce || seen()) {
+      settle(true);
     } else {
       const r = section.getBoundingClientRect();
-      // 打开时已经在更下面（书桌那一幕整个过去了）：直接是落好的样子
-      if (r.bottom < window.innerHeight * 0.5) handoff(true);
-      else {
-        setPerch(false);
-        read();
-      }
+      setPerch(false);
+      if (r.top <= 2 || r.bottom < window.innerHeight * 0.5) settle(true);
     }
     window.addEventListener("scroll", schedule, { passive: true });
     document.addEventListener("visibilitychange", schedule);
 
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
+      removeSkip();
       window.removeEventListener("scroll", schedule);
       document.removeEventListener("visibilitychange", schedule);
       timers.forEach((id) => window.clearTimeout(id));
       anims.forEach((a) => a.cancel());
+      window.clearTimeout(sayTimer.current);
     };
   }, []);
 
+  /** 彩蛋：晃一晃、冒一句话 */
+  const poke = (which: "helmet" | "cape") => (event: ReactMouseEvent<HTMLButtonElement>) => {
+    const el = event.currentTarget;
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.animate([{ rotate: "0deg" }, { rotate: "-12deg" }, { rotate: "9deg" }, { rotate: "-6deg" }, { rotate: "3deg" }, { rotate: "0deg" }], {
+        duration: 520,
+        easing: "ease-out",
+      });
+    }
+    setSay(which);
+    window.clearTimeout(sayTimer.current);
+    sayTimer.current = window.setTimeout(() => setSay(""), 2600);
+  };
+
   return (
-    <div ref={rootRef} className="landing" aria-hidden>
-      <span className="landing__helmet">
-        <HelmetArt />
-      </span>
-      <span className="landing__mover">
+    <div ref={rootRef} className="landing">
+      <span className="landing__mover" aria-hidden>
         <span className="crab crab--flyer crab--still landing__crab" style={{ "--crab-w": 112, "--crab-h": 78 } as CSSProperties}>
           <CrabArt variant="flyer" />
         </span>
       </span>
-      <span className="landing__spark">
+      <button type="button" className="landing__prop landing__prop--helmet" aria-label={t("helmetLabel")} onClick={poke("helmet")}>
+        <HelmetArt />
+        <span className={`landing__say${say === "helmet" ? " is-on" : ""}`} aria-hidden>
+          {t("helmetSay")}
+        </span>
+      </button>
+      <button type="button" className="landing__prop landing__prop--cape" aria-label={t("capeLabel")} onClick={poke("cape")}>
+        <CapeArt />
+        <span className={`landing__say${say === "cape" ? " is-on" : ""}`} aria-hidden>
+          {t("capeSay")}
+        </span>
+      </button>
+      <span className="sr-only" role="status">
+        {say === "helmet" ? t("helmetSay") : say === "cape" ? t("capeSay") : ""}
+      </span>
+      <span className="landing__spark" aria-hidden>
         <i />
         <i />
         <i />
