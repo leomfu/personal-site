@@ -33,6 +33,10 @@
   /* 到 p = 1 的那一刻整个舞台消失，第 1 幕（已经钉在同一位置、画面一样）接手 */
   opacity: clamp(0, calc((1 - var(--sc-p, 0)) * 300), 1);
 }
+.flight[data-through] {
+  /* 飞完了：这一幕最后一屏盖在第 1 幕上面，别挡住下面的点击（桌上的头盔和斗篷是按钮） */
+  pointer-events: none;
+}
 .flight[data-through] .flight__stage {
   visibility: hidden;
 }
@@ -664,22 +668,32 @@
   opacity: 0;
   animation: none;
 }
-/* 桌上的头盔和斗篷：彩蛋，是按钮。位置大小是盒子的百分比（DeskLanding 写），落地之前藏着 */
+/* 桌上的头盔和斗篷：彩蛋，是按钮。外面一层（.landing__slot）管位置大小（盒子的百分比，DeskLanding 写），
+   里面 .landing__prop 管姿势和动画，气泡挂在外层，不跟着歪；落地之前藏着 */
+.landing__slot {
+  position: absolute;
+  pointer-events: none;
+}
 .landing__prop {
   position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.landing__btn {
   display: block;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
   border: 0;
   background: none;
   color: inherit;
   font: inherit;
-  opacity: 0;
-  pointer-events: none;
   cursor: pointer;
+  pointer-events: none;
   -webkit-tap-highlight-color: transparent;
 }
-.landing__prop.is-on {
+.landing__prop.is-on .landing__btn {
   pointer-events: auto;
 }
 .landing__prop--helmet {
@@ -694,7 +708,7 @@
   height: 100%;
   overflow: visible;
 }
-.landing__prop:focus-visible {
+.landing__btn:focus-visible {
   outline: 2px solid #ffe7a3;
   outline-offset: 4px;
   border-radius: 4px;
@@ -757,4 +771,13 @@
   .landing__say {
     transition: none;
   }
+}
+
+/* 书桌那一幕的名字和坐标压在桌面上，别挡住桌上的头盔和斗篷（它们是按钮）；这块字本身没有可点的东西 */
+.desk .desk__copy,
+.desk .desk__copy * {
+  pointer-events: none !important; /* 引擎会把可读的文字块设成 auto，这里要压过它 */
+}
+.desk .desk__copy :is(a, button) {
+  pointer-events: auto !important;
 }

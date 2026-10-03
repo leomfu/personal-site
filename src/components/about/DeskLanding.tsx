@@ -73,8 +73,10 @@ export function DeskLanding() {
     const crab = root?.querySelector<HTMLElement>(".landing__crab");
     const helmet = root?.querySelector<HTMLElement>(".landing__prop--helmet");
     const cape = root?.querySelector<HTMLElement>(".landing__prop--cape");
+    const helmetSlot = helmet?.parentElement;
+    const capeSlot = cape?.parentElement;
     const spark = root?.querySelector<HTMLElement>(".landing__spark");
-    if (!root || !box || !section || !mover || !crab || !helmet || !cape || !spark) return;
+    if (!root || !box || !section || !mover || !crab || !helmet || !cape || !spark || !helmetSlot || !capeSlot) return;
     const perch = section.querySelector<HTMLElement>(".dscreen__perch");
     const pet = () => section.querySelector<HTMLElement>(".dscreen__crab");
     const walker = () => section.querySelector<HTMLElement>(".dscreen__walker");
@@ -164,8 +166,8 @@ export function DeskLanding() {
         el.style.width = `${((w / g.bw) * 100).toFixed(3)}%`;
         el.style.height = `${((h / g.bh) * 100).toFixed(3)}%`;
       };
-      put(helmet, g.hr.x, g.hr.y, g.hw, g.hh);
-      put(cape, g.cr.x, g.cr.y, g.cw, g.ch);
+      put(helmetSlot, g.hr.x, g.hr.y, g.hw, g.hh);
+      put(capeSlot, g.cr.x, g.cr.y, g.cw, g.ch);
       return g;
     };
 
@@ -525,7 +527,7 @@ export function DeskLanding() {
 
   /** 彩蛋：晃一晃、冒一句话 */
   const poke = (which: "helmet" | "cape") => (event: ReactMouseEvent<HTMLButtonElement>) => {
-    const el = event.currentTarget;
+    const el = event.currentTarget.closest<HTMLElement>(".landing__prop") ?? event.currentTarget;
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.animate([{ rotate: "0deg" }, { rotate: "-12deg" }, { rotate: "9deg" }, { rotate: "-6deg" }, { rotate: "3deg" }, { rotate: "0deg" }], {
         duration: 520,
@@ -544,18 +546,26 @@ export function DeskLanding() {
           <CrabArt variant="flyer" />
         </span>
       </span>
-      <button type="button" className="landing__prop landing__prop--helmet" aria-label={t("helmetLabel")} onClick={poke("helmet")}>
-        <HelmetArt />
+      <span className="landing__slot">
+        <span className="landing__prop landing__prop--helmet">
+          <button type="button" className="landing__btn" aria-label={t("helmetLabel")} onClick={poke("helmet")}>
+            <HelmetArt />
+          </button>
+        </span>
         <span className={`landing__say${say === "helmet" ? " is-on" : ""}`} aria-hidden>
           {t("helmetSay")}
         </span>
-      </button>
-      <button type="button" className="landing__prop landing__prop--cape" aria-label={t("capeLabel")} onClick={poke("cape")}>
-        <CapeArt />
+      </span>
+      <span className="landing__slot">
+        <span className="landing__prop landing__prop--cape">
+          <button type="button" className="landing__btn" aria-label={t("capeLabel")} onClick={poke("cape")}>
+            <CapeArt />
+          </button>
+        </span>
         <span className={`landing__say${say === "cape" ? " is-on" : ""}`} aria-hidden>
           {t("capeSay")}
         </span>
-      </button>
+      </span>
       <span className="sr-only" role="status">
         {say === "helmet" ? t("helmetSay") : say === "cape" ? t("capeSay") : ""}
       </span>

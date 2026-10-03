@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Crab } from "@/components/crab/Crab";
-import { FlightScene } from "@/components/flight/FlightScene";
+import { FlightScene, facadeVars } from "@/components/flight/FlightScene";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import type { SceneManifest } from "@/lib/sceneTypes";
 
@@ -232,7 +232,7 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
             </div>
           </div>
           {/* 超人姿势的那只：和第 0 幕里那只用同一个位置（.flight__crabslot），飞完正好停在那里 */}
-          <div className="flight-scene dive__heroscene" aria-hidden>
+          <div className="flight-scene dive__heroscene" style={facadeVars(scene)} aria-hidden>
             <div className="flight__crabslot">
               <div className="flight__crabfloat">
                 <span ref={heroRef} className="dive__hero">

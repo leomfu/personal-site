@@ -69,6 +69,18 @@ function spotVars(k: "w" | "t", v: FacadeSpots) {
   };
 }
 
+/** 外墙图的比例和关键点，写成 CSS 变量（第 0 幕、俯冲盖层里起飞的那只都要用，位置公式在 flight.css 里） */
+export function facadeVars(scene: SceneManifest): CSSProperties {
+  const { facade, facadeSpots: spots } = scene;
+  const facadeT = facade.tall.exists ? facade.tall : facade.wide;
+  return {
+    "--far-w": (facade.wide.width / facade.wide.height).toFixed(5),
+    "--far-t": (facadeT.width / facadeT.height).toFixed(5),
+    ...spotVars("w", spots.wide),
+    ...spotVars("t", spots.tall),
+  } as CSSProperties;
+}
+
 export function FlightScene({
   scene,
   crab,
@@ -88,8 +100,7 @@ export function FlightScene({
   /** 文字（地点标签），叠在最上面 */
   children?: ReactNode;
 }) {
-  const { flight, flightBands, facade, facadeSpots: spots } = scene;
-  const facadeT = facade.tall.exists ? facade.tall : facade.wide;
+  const { flight, flightBands } = scene;
   const wide = flight.wide;
   const tall = flight.tall.exists ? flight.tall : flight.wide;
   const style = {
@@ -99,10 +110,7 @@ export function FlightScene({
     "--fy-w": wide.focus?.y ?? 0.5,
     "--fx-t": tall.focus?.x ?? 0.5,
     "--fy-t": tall.focus?.y ?? 0.5,
-    "--far-w": (facade.wide.width / facade.wide.height).toFixed(5),
-    "--far-t": (facadeT.width / facadeT.height).toFixed(5),
-    ...spotVars("w", spots.wide),
-    ...spotVars("t", spots.tall),
+    ...facadeVars(scene),
     "--bund": flightBands.bund.exists ? `url(${flightBands.bund.src})` : "none",
     "--lujiazui": flightBands.lujiazui.exists ? `url(${flightBands.lujiazui.src})` : "none",
   } as CSSProperties;
