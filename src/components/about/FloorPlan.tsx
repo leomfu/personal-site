@@ -13,6 +13,8 @@ import { PLACES, type PlaceKey } from "@/lib/nav";
  * 4. 走到「窗边」，平面图缩小，换回首页那组上海坐标，首尾呼应；
  * 5. 手机上收成一个小按钮，点开是抽屉。减少动态效果时小点直接跳到所在的地方，不走路。
  * 6. 第二版：走进纸面段落之后（<html data-ground="paper">），换成彩铅画在纸上的样子，功能不变（plan.css）。
+ * 7. 第 0 幕「沿江飞行」在房间外面（[data-plan-outside]）：小点停在窗外，写「窗外 · 黄浦江」；
+ *    穿过窗户那一段，小点从窗口进来、走到书桌前。
  *
  * 小点走在哪儿完全由滚动位置算出来（不是动画）：每一幕的顶部进到屏幕 35% 处算「到了」，
  * 底部升到屏幕 85% 处算「离开」，离开和下一处到达之间那半屏的滚动，小点沿路线走过去。
@@ -60,6 +62,10 @@ function buildRoute() {
   return { points, at: at as Record<PlaceKey, number>, total: length };
 }
 
+/** 窗外（第 0 幕）：上墙那段窗户的外面一点；穿窗时先到窗里这一点，再去书桌 */
+const OUTSIDE: [number, number] = [167, 3.5];
+const INSIDE: [number, number] = [167, 20];
+
 /** 路线是死的（房间不会变），模块加载时算一次 */
 const ROUTE_DATA = buildRoute();
 const ROUTE_POINTS = ROUTE_DATA.points.map((p) => p.join(",")).join(" ");
@@ -89,6 +95,7 @@ export function FloorPlan({
   closeLabel,
   hereLabel,
   gotoLabel,
+  outsideLabel,
 }: {
   labels: Labels;
   coords: string;
@@ -99,11 +106,14 @@ export function FloorPlan({
   hereLabel: string;
   /** 每个地方链接的读屏文字，已经按地方填好 */
   gotoLabel: Record<PlaceKey, string>;
+  /** 第 0 幕在房间外面时显示的地方 */
+  outsideLabel: { name: string; title: string };
 }) {
   const route = ROUTE_DATA;
   const routePoints = ROUTE_POINTS;
 
   const [current, setCurrent] = useState<PlaceKey>("desk");
+  const [outside, setOutside] = useState(false);
   const [visited, setVisited] = useState<number>(0);
   const [open, setOpen] = useState(false);
 
@@ -122,6 +132,8 @@ export function FloorPlan({
     let maxL = 0;
     let lastL = -1;
     let lastCurrent: PlaceKey | null = null;
+    let lastOutside: boolean | null = null;
+    const outsideEl = document.querySelector<HTMLElement>("[data-plan-outside]");
     let lastVisited = -1;
     let raf = 0;
 
@@ -162,11 +174,35 @@ export function FloorPlan({
         }
       }
 
-      maxL = Math.max(maxL, l);
-      if (Math.abs(l - lastL) > 0.05) {
+      // 第 0 幕：还在房间外面。书桌那一幕的顶离屏幕顶还有三成半屏以上 = 窗外；之后这一段 = 从窗口进来走到书桌
+      const deskTop = ranges[0]?.top ?? 0;
+      const enter = deskTop - vh * 0.35;
+      const isOutside = Boolean(outsideEl) && y < enter;
+      let at: [number, number] | null = null;
+      if (outsideEl && y < deskTop) {
+        const k = reduce ? (isOutside ? 0 : 1) : Math.min(1, Math.max(0, (y - enter) / (vh * 0.35)));
+        if (k <= 0.35) {
+          const t = k / 0.35;
+          at = [OUTSIDE[0] + (INSIDE[0] - OUTSIDE[0]) * t, OUTSIDE[1] + (INSIDE[1] - OUTSIDE[1]) * t];
+        } else {
+          const t = (k - 0.35) / 0.65;
+          const desk = STATIONS.desk;
+          at = [INSIDE[0] + (desk[0] - INSIDE[0]) * t, INSIDE[1] + (desk[1] - INSIDE[1]) * t];
+        }
+      } else {
+        maxL = Math.max(maxL, l);
+      }
+      if (at) {
+        lastL = -1;
+        for (const you of yous) you.setAttribute("transform", `translate(${at[0].toFixed(2)} ${at[1].toFixed(2)})`);
+      } else if (Math.abs(l - lastL) > 0.05) {
         lastL = l;
         const [x, py] = pointAt(route.points, l);
         for (const you of yous) you.setAttribute("transform", `translate(${x.toFixed(2)} ${py.toFixed(2)})`);
+      }
+      if (isOutside !== lastOutside) {
+        lastOutside = isOutside;
+        setOutside(isOutside);
       }
       for (const trail of trails) trail.style.strokeDashoffset = (route.total - maxL).toFixed(2);
 
@@ -215,7 +251,8 @@ export function FloorPlan({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const els = Array.from(document.querySelectorAll<HTMLElement>(`[data-place="${key}"]`));
     if (!els.length) return;
-    const top = key === PLACES[0] ? 0 : Math.min(...els.map((el) => el.getBoundingClientRect().top + window.scrollY));
+    // 书桌前也按它自己的位置跳（它前面还有第 0 幕；跳到这里正好是第 1 幕刚钉住、小宇航员飞进来的那一刻）
+    const top = Math.min(...els.map((el) => el.getBoundingClientRect().top + window.scrollY));
     window.scrollTo({ top, behavior: reduce ? "instant" : "smooth" });
     setOpen(false);
     const heading = document.getElementById(`${key}-title`);
@@ -237,6 +274,8 @@ export function FloorPlan({
   }, [open]);
 
   const atWindow = current === "window";
+  const nowName = outside ? outsideLabel.name : labels[current].name;
+  const nowTitle = outside ? outsideLabel.title : labels[current].title;
   const reachedSet = new Set(PLACES.slice(0, visited));
 
   const map = (withLinks: boolean) => (
@@ -286,7 +325,7 @@ export function FloorPlan({
         {PLACES.map((key) => (
           <circle
             key={key}
-            className={`plan__station${reachedSet.has(key) ? " is-lit" : ""}${current === key ? " is-here" : ""}`}
+            className={`plan__station${reachedSet.has(key) ? " is-lit" : ""}${current === key && !outside ? " is-here" : ""}`}
             cx={STATIONS[key][0]}
             cy={STATIONS[key][1]}
             r={3.2}
@@ -307,7 +346,7 @@ export function FloorPlan({
                 href={`#${key}`}
                 className="plan__hit"
                 aria-label={gotoLabel[key]}
-                aria-current={current === key ? "location" : undefined}
+                aria-current={current === key && !outside ? "location" : undefined}
                 onClick={(event) => {
                   event.preventDefault();
                   jump(key);
@@ -325,7 +364,11 @@ export function FloorPlan({
   );
 
   return (
-    <nav ref={rootRef} className={`plan wl-chrome${atWindow ? " is-window" : ""}${open ? " is-open" : ""}`} aria-label={navLabel}>
+    <nav
+      ref={rootRef}
+      className={`plan wl-chrome${atWindow ? " is-window" : ""}${outside ? " is-outside" : ""}${open ? " is-open" : ""}`}
+      aria-label={navLabel}
+    >
       {/* 手机：收成一个小按钮 */}
       <button
         ref={toggleRef}
@@ -333,7 +376,7 @@ export function FloorPlan({
         className="plan__toggle"
         aria-expanded={open}
         aria-controls="plan-sheet"
-        aria-label={open ? closeLabel : `${openLabel} · ${labels[current].name}`}
+        aria-label={open ? closeLabel : `${openLabel} · ${nowName}`}
         onClick={() => setOpen((v) => !v)}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
@@ -349,8 +392,8 @@ export function FloorPlan({
         <p className="plan__now">
           <span className="plan__now-label mono">{hereLabel}</span>
           <span className="plan__now-place">
-            {labels[current].name}
-            <span className="plan__now-title"> · {labels[current].title}</span>
+            {nowName}
+            <span className="plan__now-title"> · {nowTitle}</span>
           </span>
         </p>
         <p className="plan__coords mono" aria-hidden={!atWindow}>
@@ -366,7 +409,7 @@ export function FloorPlan({
                 ref={i === 0 ? firstLinkRef : undefined}
                 href={`#${key}`}
                 className={reachedSet.has(key) ? "is-lit" : undefined}
-                aria-current={current === key ? "location" : undefined}
+                aria-current={current === key && !outside ? "location" : undefined}
                 onClick={(event) => {
                   event.preventDefault();
                   jump(key);

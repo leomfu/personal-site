@@ -16,10 +16,11 @@ import type { Point, Quad } from "@/lib/sceneTypes";
  *
  * 屏幕内容是一个简化的 Claude 应用窗口（自己画的示意，不是截图，没有官方 logo 矢量，也不冒充真实对话）：
  * 暖色浅底、标题栏、右边用户气泡「Hello Claude」、左边一句简短友好的回复（橙色星芒代表 Claude）、底部输入框。
- * 第 1 幕落地后，输入框里逐字打出「Hello Claude」，发送，再出回复；消息发出去那一刻，
- * 蹲在窗口顶边的 Claude 小螃蟹跳起来挥手。
+ * 第 1 幕里小宇航员落到书桌、摘了头盔、跳上窗口顶边变成桌宠之后（DeskLanding 在书桌那一幕上打 data-landed、
+ * 发 wl:landed），输入框里才逐字打出「Hello Claude」，发送，再出回复；消息发出去那一刻，桌宠跳起来挥手。
  * 手机上屏幕只有一百多像素宽：不要标题栏的字，只留气泡、输入框和小螃蟹，字号按屏幕放大。
- * 减少动态效果时直接是对话完成的样子；`still` 时是还没打字的初始画面（俯冲最后一帧用，和落地后的第一帧一致）。
+ * 减少动态效果时直接是对话完成的样子；`still` 时是还没打字的初始画面（第 0 幕穿过窗户后的那一帧用，和第 1 幕 p = 0 一致），
+ * 那里 `pet={false}`：桌宠还没到。
  */
 
 /** 设计尺寸（px）：和屏幕在图上的长宽比一致（横版 553×353 ≈ 1.57，竖版透视过的约 1.25） */
@@ -74,11 +75,14 @@ type Stage = "idle" | "typing" | "sent" | "thinking" | "replied";
 export function DeskScreen({
   quads,
   still = false,
+  pet = true,
   crabLabel,
   crabLines,
 }: {
   quads: { wide: Quad; tall: Quad };
   still?: boolean;
+  /** 窗口顶边上有没有桌宠（第 0 幕穿窗那一帧里还没有） */
+  pet?: boolean;
   /** 桌宠按钮的读屏文字和气泡（服务端从 content/ 现取，见 lib/crabLines） */
   crabLabel?: string;
   crabLines?: string[];
@@ -119,7 +123,10 @@ export function DeskScreen({
     };
   }, [quads]);
 
-  /** 对话：屏幕第一次出现在视口里约 1.4 秒后开始（俯冲的盖层这时正好淡出），只演一遍 */
+  /**
+   * 对话：落地之后开始，只演一遍。书桌那一幕上有 data-desk-landing 时等它的 wl:landed（或者已经打上的 data-landed）；
+   * 没有落地这一出的地方（以后别处复用）退回老规矩：屏幕第一次出现在视口里约 1.4 秒后开始。
+   */
   useEffect(() => {
     if (still) return;
     const el = ref.current;
@@ -128,7 +135,8 @@ export function DeskScreen({
     const timers: number[] = [];
     const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
     let started = false;
-    const run = () => {
+    const run = (lead: number) => {
+      if (started) return;
       started = true;
       // 减少动态效果：不演，直接是对话完成的样子
       if (reduce) {
@@ -138,7 +146,7 @@ export function DeskScreen({
         });
         return;
       }
-      let at = 1400;
+      let at = lead;
       later(at, () => setStage("typing"));
       for (let i = 1; i <= hello.length; i++) {
         at += 75 + (hello[i - 1] === " " ? 110 : 0);
@@ -155,15 +163,25 @@ export function DeskScreen({
       at += 1150;
       later(at, () => setStage("replied"));
     };
-    const io = new IntersectionObserver((entries) => {
-      if (!started && entries.some((e) => e.isIntersecting)) {
-        run();
-        io.disconnect();
-      }
-    });
-    io.observe(el);
+
+    const desk = el.closest<HTMLElement>("[data-desk-landing]");
+    let io: IntersectionObserver | null = null;
+    const onLanded = () => run(700);
+    if (desk) {
+      if (desk.hasAttribute("data-landed")) run(700);
+      else desk.addEventListener("wl:landed", onLanded);
+    } else {
+      io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          run(1400);
+          io?.disconnect();
+        }
+      });
+      io.observe(el);
+    }
     return () => {
-      io.disconnect();
+      io?.disconnect();
+      desk?.removeEventListener("wl:landed", onLanded);
       timers.forEach((id) => window.clearTimeout(id));
     };
   }, [still, hello]);
@@ -176,6 +194,7 @@ export function DeskScreen({
     <div ref={ref} className={`dscreen${tall ? " is-tall" : " is-wide"}`} style={{ "--typed": typed } as CSSProperties}>
       {/* 窗口顶边上面那一条：桌宠蹲在这儿，偶尔沿着窗口顶边走几步 */}
       <div className="dscreen__perch">
+        {pet && (
         <Crab
           variant="desk"
           roam
@@ -187,6 +206,7 @@ export function DeskScreen({
           lines={crabLines}
           className="dscreen__crab"
         />
+        )}
       </div>
       <div className="dscreen__win" aria-hidden>
         <div className="dscreen__bar">

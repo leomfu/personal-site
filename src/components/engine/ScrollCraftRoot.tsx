@@ -49,6 +49,12 @@ export function ScrollCraftRoot({
             el.setAttribute("data-sc-span", el.getAttribute("data-span-compact") ?? "");
           });
         }
+        // 同样的办法：data-span-reduce 是减少动态效果时的 span（第 0 幕那时只是一张静止的江景，不占三屏多的空滚动）
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          root.querySelectorAll<HTMLElement>("[data-span-reduce]").forEach((el) => {
+            el.setAttribute("data-sc-span", el.getAttribute("data-span-reduce") ?? "");
+          });
+        }
         api = engine.mount(root);
 
         let last = root.offsetHeight;

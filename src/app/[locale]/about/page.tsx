@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { DeskLanding } from "@/components/about/DeskLanding";
 import { DeskScreen } from "@/components/about/DeskScreen";
 import { FloorPlan } from "@/components/about/FloorPlan";
 import { PhotoFlip } from "@/components/about/PhotoFlip";
@@ -11,6 +12,8 @@ import { LangSwitch } from "@/components/common/LangSwitch";
 import { SocialLinks } from "@/components/common/SocialLinks";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { Crab } from "@/components/crab/Crab";
+import { FlightDriver } from "@/components/flight/FlightDriver";
+import { FlightScene } from "@/components/flight/FlightScene";
 import { MusicCrab } from "@/components/crab/MusicCrab";
 import { ToolIcon } from "@/components/icons/ToolIcon";
 import { RESIDENT } from "@/components/player/PlayerProvider";
@@ -48,7 +51,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * 彩铅批注和爱好涂鸦随滚动一笔一笔画出来。
  *
  *   幕  地方     device                     span   情绪
- *   1   书桌前   pin + parallax（四层）      2.6    震撼 → 亲近（峰值，俯冲落地的地方）
+ *   0   沿江飞行 pin + 透视分层 + 擦除      3.25   飞起来了（峰值，BRIEF R9）：跟着小宇航员贴着黄浦江飞，
+ *                                                  两岸的楼迎面掠过，最后穿过一扇亮灯的窗户
+ *   1   书桌前   pin + parallax（四层）      2.6    到了：小宇航员落到书桌、摘下头盔、跳上屏幕变成桌宠
  *   1尾 书桌前   flow（纸盖上来）            自然   他的自述（content/about），速写本第一页
  *   2   屏幕     pan + count                 1.9    惊讶：原来是真在跑的
  *   3   书架     flow + in                   自然   安静（只有字，最静的一幕）
@@ -57,6 +62,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  *   6   唱片架   flow + tilt                 自然   轻松：唱片一碰就转
  *   7   写给你   pin（短停）                 1.25   笃定：速写本最后一页，停在这里，不淡出
  *
+ * 第 0 幕在房间外面（平面图显示「窗外 · 黄浦江」），它最后一帧就是第 1 幕的第一帧：第 1 幕用负的上外边距
+ * 叠在第 0 幕钉住的最后一屏下面，第 0 幕 p = 1 时整块透明，第 1 幕接手（flight.css）。
+ * 从首页点进来的俯冲最后落在第 0 幕的第一帧上（components/dive）。
  * 导航是房间平面图（components/about/FloorPlan），没有顶栏。
  * 每个地方住着一只 Claude 小螃蟹（BRIEF R7，components/crab）：1 屏幕上的桌宠、2 安全帽、3 圆眼镜、4 导演帽、
  * 5 贝雷帽、6 大耳机、7 邮差帽。气泡第三人称介绍他，句子从 content/ 现取（lib/crabLines）。
@@ -70,6 +78,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const tPlan = await getTranslations("plan");
   const tProfile = await getTranslations("profile");
   const tTypes = await getTranslations("blog.types");
+  const tFlight = await getTranslations("flight");
   const tRecords = await getTranslations("records.player");
   const crab = await getCrabCopy(locale);
 
@@ -151,16 +160,47 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         closeLabel={tPlan("close")}
         hereLabel={tPlan("now")}
         gotoLabel={gotoLabel}
+        outsideLabel={{ name: tPlan("outside.name"), title: tPlan("outside.title") }}
       />
       <RailFocus />
       <DrawDriver />
       <Ground />
 
       <main>
-        {/* ───────────── 1 书桌前 · 我是谁（峰值，夜里） ───────────── */}
+        {/* ───────────── 0 沿江飞行（峰值，房间外面） ───────────── */}
+        <section
+          id="river"
+          data-plan-outside
+          data-sc-act="pin"
+          data-sc-span={SPAN.flight}
+          data-span-reduce={SPAN.flightReduced}
+          className="act flight"
+          style={{ height: `${SPAN.flight * 100}vh` }}
+          aria-labelledby="river-title"
+        >
+          <div data-sc-stage className="sc-stage flight__stage">
+            <FlightScene
+              scene={scene}
+              room={{ coords: `${coords.text} · ${t("landed")}`, name }}
+              crab={<Crab variant="flyer" label={crab.label.flyer} lines={crab.lines.flight} side="up" />}
+            >
+              <div className="sc-scrim sc-scrim--lead flight__scrim" aria-hidden />
+              <div className="sc-copy sc-copy--lead flight__copy" data-sc-cue="0 0.8 0 0.12">
+                <p id="river-title" className="flight__place">
+                  {tFlight("place")}
+                </p>
+                <p className="flight__coords mono">{coords.text}</p>
+              </div>
+            </FlightScene>
+            <FlightDriver />
+          </div>
+        </section>
+
+        {/* ───────────── 1 书桌前 · 我是谁（到了，夜里） ───────────── */}
         <section
           id="desk"
           data-place="desk"
+          data-desk-landing
           data-sc-act="pin"
           data-sc-span={SPAN.desk}
           className="act desk"
@@ -172,6 +212,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <div className="desk__far room-far" data-sc-parallax={DESK_FAR_RATE}>
               <ScenePlate pair={scene.room} eager className="tone-room">
                 <DeskScreen quads={scene.screen} crabLabel={crab.label.desk} crabLines={crab.lines.desk} />
+                <DeskLanding />
               </ScenePlate>
             </div>
             {/* 氛围：台灯的一束暖光雾（自己慢慢变，只做分离） */}

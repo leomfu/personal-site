@@ -1,0 +1,603 @@
+/* ============================================================================
+   第 0 幕「沿江飞行」（components/flight/FlightScene，BRIEF R9）。全页的峰值。
+   所有运动都从 --sc-p（引擎写在 section 上）算出来，只动 transform / opacity / clip-path，没有自己的 rAF。
+   进度分段（和 lib/tour.ts 的说明是同一组数）：
+     0    – 0.84  沿江推进（--fly）：底图朝江面消失点推近，轻微摇移、侧倾
+     0.19 – 0.31  底图两岸压暗（--shade）；0.26 – 0.36 两岸楼群墙淡入（--walls），替换底图两岸，不和它叠成重影
+     0.76 – 0.90  转向那扇亮着暖灯的窗户（--turn）
+     0.80 – 0.97  穿过窗户（--c1 / --cross）：窗户越来越大，房间从窗洞里露出来、慢慢停稳
+     1            最后一帧 = 第 1 幕 p = 0；这一刻整个舞台变透明，下面已经钉住的第 1 幕接手
+   俯冲盖层里没有 --sc-p，取 0，就是第一帧。
+   原型和参数推导见 scrollcraft/builds/weiliang/lab/r7-flight/（不进 git）。
+   ========================================================================== */
+
+/* 滚动速度（0..1，FlightDriver 写）。注册成 <number> 才能用 transition 平滑：滚快了流光、速度线变浓，停下来慢慢收住 */
+@property --fv {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.flight {
+  position: relative;
+  z-index: 2;
+  transition: --fv 260ms ease-out;
+}
+.flight.is-coast {
+  transition: --fv 1100ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.flight__stage {
+  background: #07090c;
+  /* 到 p = 1 的那一刻整个舞台消失，第 1 幕（已经钉在同一位置、画面一样）接手 */
+  opacity: clamp(0, calc((1 - var(--sc-p, 0)) * 300), 1);
+}
+.flight[data-through] .flight__stage {
+  visibility: hidden;
+}
+
+.flight-scene {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  container-type: size;
+
+  /* 横版 21:9（视口比 4:5 宽） */
+  --ar: var(--ar-w);
+  --fx: var(--fx-w);
+  --fy: var(--fy-w);
+  --px: 0.5;
+  --py: 0.5;
+  /* 两岸堤线从消失点往外下斜的角度（看图量的：外滩斜率 0.168，陆家嘴 0.112） */
+  --bank-l: 9.5deg;
+  --bank-r: 6.4deg;
+  /* 透视墙（cqh：底图按视口高度缩放，墙也跟着） */
+  --persp: 78cqh;
+  --wall-len: 444cqh;
+  --wall-h: 167cqh;
+  --x0l: 111cqh;
+  --x0r: 111cqh;
+  --caml: 18.7cqh;
+  --camr: 12.4cqh;
+  --z0: -44cqh;
+  --travel: 200cqh;
+  /* 窗户：出现的位置（cqw / cqh 的数）和窗玻璃的半宽、半高（cqh 的数） */
+  --wx0: 37;
+  --wy0: 47;
+  --gw: 2.3;
+  --gh: 2.9;
+  /* 小螃蟹的位置（百分比的数） */
+  --cx: 44;
+  --cy: 69;
+
+  /* ---- 进度 ---- */
+  --p: var(--sc-p, 0);
+  --fly: clamp(0, calc(var(--p) / 0.84), 1);
+  --push: calc(1 + var(--fly) * 0.6 + var(--fly) * var(--fly) * 0.25);
+  --shade: clamp(0, calc((var(--p) - 0.19) / 0.12), 1);
+  --walls: clamp(0, calc((var(--p) - 0.26) / 0.1), 1);
+  --t1: clamp(0, calc((var(--p) - 0.76) / 0.14), 1);
+  --turn: calc(var(--t1) * var(--t1) * (3 - 2 * var(--t1)));
+  --c1: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
+  --cross: calc(var(--c1) * var(--c1) * (3 - 2 * var(--c1)));
+  --ce: clamp(0, calc((var(--c1) - 0.88) / 0.12), 1);
+  /* 匀速靠近一扇窗，它的视大小是 1 / 距离：越到最后长得越快 */
+  --ws: calc(1 / (1 - 0.975 * var(--c1)));
+  --wo: clamp(0, calc((var(--p) - 0.75) / 0.05), 1);
+  --d1: clamp(0, calc((var(--p) - 0.79) / 0.1), 1);
+  --dive: calc(var(--d1) * var(--d1) * (3 - 2 * var(--d1)));
+  --ramp: min(1, calc(var(--fly) * 5));
+  --sway: calc(sin(calc(var(--fly) * 3.8)) * 1.1 * var(--ramp));
+  --roll: calc(sin(calc(var(--fly) * 5.3)) * 0.6 * var(--ramp) - var(--turn) * 1.4);
+  --panx: calc(var(--sway) + var(--turn) * 7);
+  --wx: calc(var(--wx0) + (50 - var(--wx0)) * var(--turn));
+  --wy: calc(var(--wy0) + (50 - var(--wy0)) * var(--turn));
+
+  /* ---- 消失点在屏幕上的位置（和 ScenePlate 同一套 cover 算法；cq 单位在用到它的元素上解析） ---- */
+  --bw: max(100cqw, calc(100cqh * var(--ar)));
+  --vpx: calc(var(--px) * 100cqw + (var(--fx) - var(--px)) * var(--bw));
+  --vpy: calc(var(--py) * 100cqh + (var(--fy) - var(--py)) * var(--bw) / var(--ar));
+}
+/* 竖屏（和 ScenePlate 换 9:16 用同一个条件）：消失点在外白渡桥下，堤线更陡，墙更近 */
+@media (max-aspect-ratio: 4/5) {
+  .flight-scene {
+    --ar: var(--ar-t);
+    --fx: var(--fx-t);
+    --fy: var(--fy-t);
+    --px: 0.8;
+    --bank-l: 15.5deg;
+    --bank-r: 13deg;
+    --persp: 59cqh;
+    --wall-len: 308cqh;
+    --wall-h: 104cqh;
+    --x0l: 35.5cqh;
+    --x0r: 29.6cqh;
+    --caml: 9.8cqh;
+    --camr: 6.8cqh;
+    --z0: -35cqh;
+    --travel: 142cqh;
+    --wx0: 30;
+    --wy0: 49;
+    --gw: 2;
+    --gh: 2.5;
+    --cx: 46;
+    --cy: 66;
+  }
+}
+
+.flight__frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- 世界层 -- */
+.flight__world {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--vpx) var(--vpy);
+  transform: translateX(calc(var(--panx) * 1cqw)) rotate(calc(var(--roll) * 1deg));
+}
+.flight__base {
+  position: absolute;
+  inset: 0;
+}
+.flight__base .plate__box {
+  transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
+  transform: scale(var(--push));
+}
+.tone-flight .plate__media img {
+  filter: brightness(1.1) saturate(1.06);
+}
+
+/*
+ * 两岸压暗：一层整屏暗色，用三层遮罩相乘只留在两岸建筑上：
+ *   conic   以消失点为圆心，两条堤线以上 = 1，以下（江面）透明，交界 ±1.5° 的软边。
+ *           一整层圆锥渐变，没有拼缝（之前两块旋转楔形在消失点上方留了一道竖亮条）
+ *   radial  消失点附近留一个椭圆的洞：远处那一小片还是底图
+ *   linear  顶上略浅一点，云不至于全黑
+ * 往外多铺 6cqh，侧倾的时候角上不露缝。
+ */
+.flight__shade {
+  --o: 6cqh;
+  position: absolute;
+  inset: calc(-1 * var(--o));
+  opacity: var(--shade);
+  background: rgb(3 5 8 / 0.96);
+  -webkit-mask-image:
+    conic-gradient(
+      at calc(var(--vpx) + var(--o)) calc(var(--vpy) + var(--o)),
+      #000 0deg,
+      #000 calc(90deg + var(--bank-r) - 2deg),
+      transparent calc(90deg + var(--bank-r) + 1deg),
+      transparent calc(270deg - var(--bank-l) - 1deg),
+      rgb(0 0 0 / 0.94) calc(270deg - var(--bank-l) + 2deg),
+      rgb(0 0 0 / 0.94) 330deg,
+      #000 360deg
+    ),
+    radial-gradient(15cqw 9cqh at calc(var(--vpx) + var(--o)) calc(var(--vpy) + var(--o)), transparent 0, transparent 30%, #000 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.95) 0, #000 32%);
+  -webkit-mask-composite: source-in, source-in;
+  mask-image:
+    conic-gradient(
+      at calc(var(--vpx) + var(--o)) calc(var(--vpy) + var(--o)),
+      #000 0deg,
+      #000 calc(90deg + var(--bank-r) - 2deg),
+      transparent calc(90deg + var(--bank-r) + 1deg),
+      transparent calc(270deg - var(--bank-l) - 1deg),
+      rgb(0 0 0 / 0.94) calc(270deg - var(--bank-l) + 2deg),
+      rgb(0 0 0 / 0.94) 330deg,
+      #000 360deg
+    ),
+    radial-gradient(15cqw 9cqh at calc(var(--vpx) + var(--o)) calc(var(--vpy) + var(--o)), transparent 0, transparent 30%, #000 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.95) 0, #000 32%);
+  mask-composite: intersect;
+}
+
+/*
+ * 两岸楼群墙：近黑底的楼群带贴在两面几乎和航向平行的墙上（rotateY ±84°），父层的透视原点 = 消失点，
+ * 墙沿 Z 朝镜头推过来，楼一栋栋从远处长大、从屏幕两边掠出去。父层整体 screen 叠到底图上，黑底等于没有。
+ * 只用楼群带里底图没有的那一段：外滩取 55%–100%（不含海关大楼、汇丰、沙逊），陆家嘴取 0–40%（不含东方明珠），
+ * 任何一帧都不会出现两座同样的楼。墙四边都用遮罩淡掉，看不到矩形的边。
+ */
+.flight__bank {
+  position: absolute;
+  inset: 0;
+  perspective: var(--persp);
+  perspective-origin: var(--vpx) var(--vpy);
+  mix-blend-mode: screen;
+  opacity: calc(0.85 * var(--walls));
+}
+.flight__wall {
+  position: absolute;
+  width: var(--wall-len);
+  height: var(--wall-h);
+  background-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.flight__wall--bund {
+  left: calc(var(--vpx) - var(--x0l));
+  top: calc(var(--vpy) + var(--caml) - var(--wall-h) * 0.73);
+  transform-origin: 0 50%;
+  transform: translateZ(calc(var(--z0) + var(--fly) * var(--travel))) rotateY(84deg);
+  background-image: var(--bund);
+  background-size: calc(100% / 0.45) 100%;
+  background-position: 100% 0;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 50%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 50%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+}
+.flight__wall--lujiazui {
+  left: calc(var(--vpx) + var(--x0r) - var(--wall-len));
+  top: calc(var(--vpy) + var(--camr) - var(--wall-h) * 0.8);
+  transform-origin: 100% 50%;
+  transform: translateZ(calc(var(--z0) + var(--fly) * var(--travel))) rotateY(-84deg);
+  background-image: var(--lujiazui);
+  background-size: calc(100% / 0.4) 100%;
+  background-position: 0 0;
+  -webkit-mask-image:
+    linear-gradient(to left, transparent 0, #000 4%, #000 50%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  mask-image:
+    linear-gradient(to left, transparent 0, #000 4%, #000 50%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------- 近景 -- */
+/* 近景的循环动画默认停着，只有在视口里（.is-live，FlightDriver 切）才跑 */
+.flight__mist {
+  position: absolute;
+  inset: -8% -16%;
+  background:
+    radial-gradient(38% 16% at 28% 58%, rgb(150 172 205 / 0.13), transparent 70%),
+    radial-gradient(34% 13% at 74% 62%, rgb(226 192 150 / 0.1), transparent 70%),
+    radial-gradient(60% 10% at 50% 54%, rgb(190 200 220 / 0.08), transparent 75%);
+  opacity: calc((0.55 + var(--fly) * 0.45) * (1 - var(--c1)));
+  animation: flight-mist 24s ease-in-out infinite alternate paused;
+}
+@keyframes flight-mist {
+  from {
+    transform: translate3d(-3%, 0, 0);
+  }
+  to {
+    transform: translate3d(3%, -1%, 0);
+  }
+}
+
+.flight__glints {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--vpx) var(--vpy);
+  transform: scale(calc(1 + var(--fly) * 0.9));
+  opacity: calc((0.55 + var(--fv) * 0.45) * (1 - var(--c1)));
+}
+.flight__glints i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff8e6 0, rgb(255 230 190 / 0.55) 38%, transparent 70%);
+  opacity: 0;
+  animation: flight-glint 2.6s ease-in-out infinite paused;
+}
+@keyframes flight-glint {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  42% {
+    opacity: 0.95;
+    transform: scale(1.25);
+  }
+  60% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+}
+
+/* 掠过的流光：从消失点往外、贴着水面划过去。平时很淡，滚得越快越浓（--fv），慢下来收住 */
+.flight__streaks {
+  position: absolute;
+  left: var(--vpx);
+  top: var(--vpy);
+  width: 0;
+  height: 0;
+  opacity: calc((0.1 + var(--fv) * 0.9) * min(1, calc(var(--fly) * 8 + 0.35)) * (1 - var(--c1)));
+}
+.flight__streaks span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+}
+.flight__streaks i {
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 20cqh;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgb(255 234 200 / 0.8) 55%, transparent);
+  transform-origin: 0 50%;
+  opacity: 0;
+  animation: flight-streak 1.4s linear infinite paused;
+}
+.flight__streaks span:nth-child(3n) i {
+  background: linear-gradient(90deg, transparent, rgb(196 220 255 / 0.75) 55%, transparent);
+}
+@keyframes flight-streak {
+  0% {
+    opacity: 0;
+    transform: translateX(8cqh) scaleX(0.25);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(130cqh) scaleX(1.9);
+  }
+}
+.is-live :is(.flight__mist, .flight__glints i, .flight__streaks i) {
+  animation-play-state: running;
+}
+
+/* ------------------------------------------------------------ 窗户和房间 -- */
+.flight__window {
+  position: absolute;
+  left: calc(var(--wx) * 1cqw);
+  top: calc(var(--wy) * 1cqh);
+  box-sizing: content-box;
+  width: calc(var(--gw) * 2cqh);
+  height: calc(var(--gh) * 2cqh);
+  border: 0.5cqh solid #2c1f16;
+  border-radius: 0.2cqh;
+  translate: -50% -50%;
+  scale: var(--ws);
+  opacity: var(--wo);
+}
+.flight__glass,
+.flight__spill,
+.flight__transom {
+  position: absolute;
+}
+.flight__glass {
+  inset: 0;
+  background: radial-gradient(120% 95% at 42% 62%, #ffe2ae 0, #f3ae58 55%, #b8682c 100%);
+  opacity: clamp(0, calc(1 - var(--cross) * 1.25), 1);
+}
+.flight__transom {
+  left: 0;
+  right: 0;
+  top: 24%;
+  height: 0.35cqh;
+  background: #2c1f16;
+}
+/* 窗里漏出来的一圈暖光（柔的径向渐变，不是发光描边） */
+.flight__spill {
+  inset: -140%;
+  background: radial-gradient(closest-side, rgb(255 196 120 / 0.32), rgb(255 170 90 / 0.1) 55%, transparent);
+  opacity: clamp(0, calc(1 - var(--cross) * 1.6), 1);
+}
+
+/* 窗洞里的房间：clip-path 跟窗玻璃一样大；最后一段（--ce）直接放开到全屏 */
+.flight__room {
+  --hw: max(calc(var(--gw) * var(--ws) * 1cqh), calc(var(--ce) * 70cqw));
+  --hh: max(calc(var(--gh) * var(--ws) * 1cqh), calc(var(--ce) * 70cqh));
+  position: absolute;
+  inset: 0;
+  background: var(--sc-canvas);
+  opacity: min(1, calc(var(--c1) * 14));
+  clip-path: inset(
+    max(0px, calc(var(--wy) * 1cqh - var(--hh)))
+      max(0px, calc(100cqw - var(--wx) * 1cqw - var(--hw)))
+      max(0px, calc(100cqh - var(--wy) * 1cqh - var(--hh)))
+      max(0px, calc(var(--wx) * 1cqw - var(--hw)))
+  );
+}
+.flight__roomzoom {
+  position: absolute;
+  inset: 0;
+  transform-origin: calc(var(--wx) * 1cqw) calc(var(--wy) * 1cqh);
+  transform: scale(calc(1 + 0.55 * (1 - var(--cross))));
+}
+.flight__room :is(.desk__scrim, .flight__roomcopy) {
+  opacity: clamp(0, calc((var(--c1) - 0.8) / 0.18), 1);
+}
+
+/* ------------------------------------------------------------ 小螃蟹 -- */
+/* 画面中下部，飞在镜头前面；转向窗户时先它一步飞进窗里 */
+.flight__crabslot {
+  position: absolute;
+  z-index: 3;
+  left: calc(var(--cx) * 1%);
+  top: calc(var(--cy) * 1%);
+  width: 0;
+  height: 0;
+  transform: translate(calc((var(--wx) - var(--cx)) * var(--dive) * 1cqw), calc((var(--wy) - var(--cy)) * var(--dive) * 1cqh))
+    scale(calc(1 - 0.9 * var(--dive)));
+  opacity: calc(1 - clamp(0, calc((var(--p) - 0.865) / 0.03), 1));
+}
+.flight__crabfloat {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* 鼠标视差（桌面）：FlightDriver 写 --mx / --my（-1..1），这里用 transition 跟过去，不跑逐帧循环 */
+  translate: calc(var(--mx, 0) * 26px) calc(var(--my, 0) * 14px);
+  transition: translate 900ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.flight__crabslot .crab {
+  --crab-size: clamp(66px, 6.6vw, 104px);
+  --crab-focus: var(--sc-accent);
+  --crab-roam-l: 16px;
+  --crab-roam-r: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-left: calc(var(--crab-size) * -0.5);
+  margin-top: calc(var(--crab-size) * -0.35);
+}
+@media (max-width: 860px) {
+  .flight__crabslot .crab {
+    --crab-size: 58px;
+  }
+}
+
+/* ---------------------------------------------------------------- 文字 -- */
+.flight__scrim {
+  z-index: 4;
+  opacity: calc(0.8 * (1 - clamp(0, calc((var(--p) - 0.7) / 0.1), 1)));
+}
+.flight__copy {
+  z-index: 5;
+  display: grid;
+  gap: 0.4rem;
+}
+.flight__place {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.5rem, 1rem + 1.5vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--sc-ink);
+}
+.flight__coords {
+  font-size: 0.875rem;
+  color: var(--sc-ink);
+  opacity: 0.82;
+}
+
+/* ------------------------------------------------------- 减少动态效果 -- */
+/* 一张静止的江景加地点标签：不推近、不摇、不滑，楼群墙和流光都不出现；房间用淡入接上第 1 幕 */
+@media (prefers-reduced-motion: reduce) {
+  .flight__world,
+  .flight__base .plate__box,
+  .flight__glints,
+  .flight__roomzoom,
+  .flight__crabslot,
+  .flight__crabfloat {
+    transform: none;
+    translate: none;
+    transition: none;
+  }
+  .flight__bank,
+  .flight__shade,
+  .flight__streaks,
+  .flight__window {
+    display: none;
+  }
+  .flight__mist,
+  .flight__glints i {
+    animation: none;
+  }
+  .flight__glints i {
+    opacity: 0.55;
+  }
+  .flight__room {
+    clip-path: none;
+    opacity: clamp(0, calc((var(--p) - 0.7) / 0.25), 1);
+  }
+  .flight__room :is(.desk__scrim, .flight__roomcopy) {
+    opacity: 1;
+  }
+  .flight__crabslot {
+    opacity: calc(1 - clamp(0, calc((var(--p) - 0.6) / 0.1), 1));
+  }
+}
+
+/* ============================================================================
+   第 1 幕开场：小宇航员飞进书房、摘头盔、跳上屏幕变成桌宠（components/about/DeskLanding）
+   ========================================================================== */
+.desk {
+  /* 紧接在第 0 幕钉住的最后一屏下面：第 0 幕 p = 1 的那一刻，这一幕正好钉在同一个位置（画面也一样） */
+  z-index: 1;
+  margin-top: -100vh;
+  margin-top: -100svh;
+}
+/* 桌宠落地之前，窗口顶边是空的（DeskLanding 落好之后打上 data-landed） */
+.desk:not([data-landed]) .desk__far .dscreen__perch {
+  opacity: 0;
+}
+/* 台灯的暖雾和失焦光点在到了之后才浮出来（第 0 幕穿窗的最后一帧里没有它们，交接才对得上） */
+.desk .desk__haze {
+  opacity: calc(0.85 * clamp(0, calc(var(--sc-p, 0) * 14), 1));
+  animation-name: haze-drift;
+}
+@keyframes haze-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(2%, -1.5%, 0);
+  }
+}
+.desk .desk__fore {
+  opacity: clamp(0, calc(var(--sc-p, 0) * 14), 1);
+}
+
+.landing {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.landing__mover,
+.landing__helmet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+.landing__mover {
+  transform-origin: 50% 100%;
+}
+.landing__crab.crab {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: default;
+}
+.landing__helmet {
+  transform-origin: 50% 70%;
+}
+.landing__helmet .crab__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.landing__spark {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.landing__spark i {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  margin: -2px;
+  background: #ffe7a3;
+}
+.landing__spark i:nth-child(1) {
+  translate: 0 -12px;
+}
+.landing__spark i:nth-child(2) {
+  translate: 12px 0;
+}
+.landing__spark i:nth-child(3) {
+  translate: 0 12px;
+}
+.landing__spark i:nth-child(4) {
+  translate: -12px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing {
+    display: none;
+  }
+}

@@ -18,7 +18,8 @@ import type { Variant } from "./art";
  * 轨道：CSS 变量 --crab-roam-l / --crab-roam-r（能往左 / 右离开原位多少，默认 0 = 原地）。
  * 各个位置在自己的样式里给；书桌前那只（roam）的轨道是父元素的整个宽度。
  *
- * 暂停：离屏（IntersectionObserver）、页面隐藏（visibilitychange）时所有计时器停；
+ * 暂停：离屏（IntersectionObserver）、页面隐藏（visibilitychange）、在 inert 的容器里（还没上场）时所有计时器停；
+ * 上场时对按钮发一个 wl:wake 事件重新排计时器；
  * 减少动态效果：什么都不做。手机 / 粗指针：节奏更慢、走得更短，不做「好奇」。
  * 走动时不会去抢焦点：它正被聚焦、被鼠标悬着、或气泡在冒时，只做原地的小动作，不挪位置。
  */
@@ -204,7 +205,8 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
       root.classList.add(name);
       after(ms, () => root.classList.remove(name));
     };
-    const running = () => visible && !document.hidden;
+    // 放在 inert 的地方（书桌上的桌宠在小宇航员落地之前）= 还没上场：不想事、不走动，被叫醒（wl:wake）再开始
+    const running = () => visible && !document.hidden && !root.closest("[inert]");
     const pinned = () =>
       document.activeElement === root || root.matches(":hover") || Boolean(root.querySelector(".crab__say.is-on"));
     const setDir = (d: number) => {
@@ -485,11 +487,13 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
     io.observe(root);
     const onVisibility = () => sync();
     document.addEventListener("visibilitychange", onVisibility);
+    root.addEventListener("wl:wake", onVisibility);
     const leave = joinWorld({ wake: () => endSleep(true), pointer: fine ? onPointer : () => {} });
 
     return () => {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      root.removeEventListener("wl:wake", onVisibility);
       leave();
       [thinkTimer, blinkTimer, sleepTimer, walkTimer, curiousTimer, actTimer, ...timers].forEach((id) =>
         window.clearTimeout(id),
