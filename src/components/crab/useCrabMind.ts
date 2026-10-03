@@ -257,7 +257,7 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
       root.style.setProperty("--walk-ease", "ease-in-out");
       x = to;
       setX(x);
-      root.style.setProperty("--y", `${rand(-9, 5).toFixed(1)}px`);
+      root.style.setProperty("--y", `${rand(-12, 6).toFixed(1)}px`);
       root.style.setProperty("--rot", `${rand(-7, 7).toFixed(1)}deg`);
     };
     const wander = () => {
@@ -462,8 +462,11 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
     const io = new IntersectionObserver(
       (entries) => {
         const e = entries[entries.length - 1];
-        visible = e.isIntersecting;
-        sync();
+        // 阈值每被穿过一次回调一次（漂浮的宇航员贴着边时会连着触发）：只有「在不在视口」变了才重排计时器
+        if (e.isIntersecting !== visible) {
+          visible = e.isIntersecting;
+          sync();
+        }
         if (visible && !greeted && e.intersectionRatio >= 0.5) {
           greeted = true;
           after(450, () => running() && act());
@@ -471,6 +474,7 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
       },
       { threshold: [0, 0.5, 1] },
     );
+    root.classList.add("is-off");
     io.observe(root);
     const onVisibility = () => sync();
     document.addEventListener("visibilitychange", onVisibility);

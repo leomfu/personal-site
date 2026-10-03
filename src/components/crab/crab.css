@@ -919,7 +919,7 @@
   }
   100% {
     opacity: 0;
-    transform: translate(5px, -12px) scale(1.1);
+    transform: translate(3px, -4px) scale(1.05);
   }
 }
 
@@ -980,8 +980,8 @@
 }
 .crab__zzz {
   position: absolute;
-  left: 58%;
-  bottom: 86%;
+  left: 84%;
+  bottom: 50%;
   z-index: 3;
   width: 3em;
   height: 3em;
@@ -1005,14 +1005,14 @@
   opacity: 0;
 }
 .crab__zzz i:nth-child(2) {
-  left: 0.7em;
-  bottom: 0.7em;
-  font-size: 1.2em;
+  left: 0.6em;
+  bottom: 0.5em;
+  font-size: 1.1em;
 }
 .crab__zzz i:nth-child(3) {
-  left: 1.5em;
-  bottom: 1.5em;
-  font-size: 1.45em;
+  left: 1.25em;
+  bottom: 1.05em;
+  font-size: 1.25em;
 }
 .crab.is-sleep .crab__zzz i {
   animation: crab-zzz 2800ms ease-out infinite;
