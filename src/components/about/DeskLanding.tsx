@@ -205,13 +205,13 @@ export function DeskLanding() {
     /** 衣服落地后碎成几颗像素点，往四周弹开、落下、淡掉（不留在桌上） */
     const shatter = (el: HTMLElement, c: Spot, colors: string[], g: Geo, group: number) => {
       el.style.opacity = "0";
-      const size = Math.max(3, (g.S * DS * 3.5) / 112);
+      const size = Math.max(6, (g.S * DS * 3.5 * 2.2) / 112);
       bits.slice(group * BITS, (group + 1) * BITS).forEach((b, i) => {
         b.style.width = `${size}px`;
         b.style.height = `${size}px`;
         b.style.background = colors[i % colors.length];
         const ang = ((i * 137.5 + group * 40) * Math.PI) / 180;
-        const dist = size * (3.5 + (i % 4) * 2.4);
+        const dist = size * (2.6 + (i % 4) * 1.7);
         const x = c.x - size / 2;
         const y = c.y - size / 2;
         const dx = Math.cos(ang) * dist;
