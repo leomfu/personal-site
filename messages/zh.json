@@ -86,7 +86,11 @@
     "chatTitle": "新对话",
     "hello": "Hello Claude",
     "reply": "你好！今天想做点什么？",
-    "placeholder": "回复…"
+    "placeholder": "回复…",
+    "helmetLabel": "桌上的宇航员头盔：点一下，它会晃一晃",
+    "helmetSay": "宇航员下班了。",
+    "capeLabel": "桌上的小红斗篷：点一下，它会动一动",
+    "capeSay": "披风先放这儿。"
   },
   "crab": {
     "label": {
@@ -109,7 +113,8 @@
       },
       "flight": {
         "ahead": "他的书桌就在前面。",
-        "river": "下面是黄浦江，左边外滩，右边陆家嘴。"
+        "river": "下面是黄浦江，左边外滩，右边陆家嘴。",
+        "shh": "嘘，他的书桌就在里面。"
       },
       "desk": {
         "hi": "hi！这是他的书桌。",

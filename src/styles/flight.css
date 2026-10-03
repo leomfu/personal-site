@@ -2,11 +2,13 @@
    第 0 幕「沿江飞行」（components/flight/FlightScene，BRIEF R9）。全页的峰值。
    所有运动都从 --sc-p（引擎写在 section 上）算出来，只动 transform / opacity / clip-path，没有自己的 rAF。
    进度分段（和 lib/tour.ts 的说明是同一组数）：
-     0    – 0.84  沿江推进（--fly）：底图朝江面消失点推近，轻微摇移、侧倾
-     0.19 – 0.31  底图两岸压暗（--shade）；0.26 – 0.36 两岸楼群墙淡入（--walls），替换底图两岸，不和它叠成重影
-     0.76 – 0.90  转向那扇亮着暖灯的窗户（--turn）
-     0.80 – 0.97  穿过窗户（--c1 / --cross）：窗户越来越大，房间从窗洞里露出来、慢慢停稳
-     1            最后一帧 = 第 1 幕 p = 0；这一刻整个舞台变透明，下面已经钉住的第 1 幕接手
+     0    – 0.58  沿江推进（--fly）：底图朝江面消失点推近，轻微摇移、侧倾（0.14 起底图两岸压暗，0.19 起楼群墙掠过）
+     0.54 – 0.66  镜头从江面转向岸边，叠化成外墙（--fa），外墙从放大 1.1 倍慢慢停稳
+     0.60 – 0.72  小宇航员减速滑向窗台（--gl），0.66 起收起速度线、站直，落在窗台上
+     0.72 – 0.80  站在窗台上，左看、右看（FlightDriver 切 data-beat）
+     0.80 – 0.87  踮着脚沿窗台走到窗缝（--tp）
+     0.865 – 0.91 缩着身子从窗缝钻进去（--sl）
+     0.915 – 1    镜头推向窗洞，穿过去（--c1 / --ws），书房从窗洞里露出来；最后一帧 = 第 1 幕 p = 0
    俯冲盖层里没有 --sc-p，取 0，就是第一帧。
    原型和参数推导见 scrollcraft/builds/weiliang/lab/r7-flight/（不进 git）。
    ========================================================================== */
@@ -60,42 +62,71 @@
   --camr: 12.4cqh;
   --z0: -44cqh;
   --travel: 200cqh;
-  /* 窗户：出现的位置（cqw / cqh 的数）和窗玻璃的半宽、半高（cqh 的数） */
-  --wx0: 37;
-  --wy0: 47;
-  --gw: 2.3;
-  --gh: 2.9;
-  /* 小螃蟹的位置（百分比的数） */
+  /* 小螃蟹飞在江面上的位置（cqw / cqh 的数） */
   --cx: 44;
   --cy: 69;
+  /* 外墙图（facade）的关键点：窗台上的脚底、窗缝、穿窗推近的中心、窗洞四边（来自 lib/scene.ts，FlightScene 写成内联变量） */
+  --far: var(--far-w);
+  --usx: var(--sill-x-w);
+  --usy: var(--sill-y-w);
+  --ugx: var(--gap-x-w);
+  --ugy: var(--gap-y-w);
+  --uox: var(--org-x-w);
+  --uoy: var(--org-y-w);
+  --ul: var(--hl-w);
+  --ur: var(--hr-w);
+  --ut: var(--ht-w);
+  --ub: var(--hb-w);
+  --zk: var(--zk-w);
+  --csz-k: 0.055;
+  --hop: 0.05;
 
   /* ---- 进度 ---- */
   --p: var(--sc-p, 0);
-  --fly: clamp(0, calc(var(--p) / 0.84), 1);
+  --fly: clamp(0, calc(var(--p) / 0.58), 1);
   --push: calc(1 + var(--fly) * 0.6 + var(--fly) * var(--fly) * 0.25);
-  --shade: clamp(0, calc((var(--p) - 0.19) / 0.12), 1);
-  --walls: clamp(0, calc((var(--p) - 0.26) / 0.1), 1);
-  --t1: clamp(0, calc((var(--p) - 0.76) / 0.14), 1);
-  --turn: calc(var(--t1) * var(--t1) * (3 - 2 * var(--t1)));
-  --c1: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
+  --shade: clamp(0, calc((var(--p) - 0.138) / 0.087), 1);
+  --walls: clamp(0, calc((var(--p) - 0.188) / 0.072), 1);
+  /* 叠化成外墙 */
+  --fa1: clamp(0, calc((var(--p) - 0.54) / 0.12), 1);
+  --fa: calc(var(--fa1) * var(--fa1) * (3 - 2 * var(--fa1)));
+  --fz: calc(1 + 0.1 * (1 - var(--fa1)));
+  /* 小宇航员滑向窗台、踮脚走到窗缝、钻进去 */
+  --gl1: clamp(0, calc((var(--p) - 0.6) / 0.12), 1);
+  --gl: calc(var(--gl1) * var(--gl1) * (3 - 2 * var(--gl1)));
+  --tp1: clamp(0, calc((var(--p) - 0.8) / 0.07), 1);
+  --tp: calc(var(--tp1) * var(--tp1) * (3 - 2 * var(--tp1)));
+  --sl1: clamp(0, calc((var(--p) - 0.865) / 0.045), 1);
+  --sl: calc(var(--sl1) * var(--sl1) * (3 - 2 * var(--sl1)));
+  /* 穿过窗洞 */
+  --c1: clamp(0, calc((var(--p) - 0.915) / 0.085), 1);
   --cross: calc(var(--c1) * var(--c1) * (3 - 2 * var(--c1)));
   --ce: clamp(0, calc((var(--c1) - 0.88) / 0.12), 1);
   /* 匀速靠近一扇窗，它的视大小是 1 / 距离：越到最后长得越快 */
-  --ws: calc(1 / (1 - 0.975 * var(--c1)));
-  --wo: clamp(0, calc((var(--p) - 0.75) / 0.05), 1);
-  --d1: clamp(0, calc((var(--p) - 0.79) / 0.1), 1);
-  --dive: calc(var(--d1) * var(--d1) * (3 - 2 * var(--d1)));
+  --ws: calc(1 / (1 - var(--zk) * var(--c1)));
   --ramp: min(1, calc(var(--fly) * 5));
   --sway: calc(sin(calc(var(--fly) * 3.8)) * 1.1 * var(--ramp));
-  --roll: calc(sin(calc(var(--fly) * 5.3)) * 0.6 * var(--ramp) - var(--turn) * 1.4);
-  --panx: calc(var(--sway) + var(--turn) * 7);
-  --wx: calc(var(--wx0) + (50 - var(--wx0)) * var(--turn));
-  --wy: calc(var(--wy0) + (50 - var(--wy0)) * var(--turn));
+  --roll: calc(sin(calc(var(--fly) * 5.3)) * 0.6 * var(--ramp));
+  --panx: calc(var(--sway) - var(--fa) * 5);
 
   /* ---- 消失点在屏幕上的位置（和 ScenePlate 同一套 cover 算法；cq 单位在用到它的元素上解析） ---- */
   --bw: max(100cqw, calc(100cqh * var(--ar)));
   --vpx: calc(var(--px) * 100cqw + (var(--fx) - var(--px)) * var(--bw));
   --vpy: calc(var(--py) * 100cqh + (var(--fy) - var(--py)) * var(--bw) / var(--ar));
+
+  /* ---- 外墙图的点在屏幕上的位置（外墙图居中 cover） ---- */
+  --fbw: max(100cqw, calc(100cqh * var(--far)));
+  --sx: calc(50cqw + (var(--usx) - 0.5) * var(--fbw));
+  --sy: calc(50cqh + (var(--usy) - 0.5) * var(--fbw) / var(--far));
+  --gx: calc(50cqw + (var(--ugx) - 0.5) * var(--fbw));
+  --gy: calc(50cqh + (var(--ugy) - 0.5) * var(--fbw) / var(--far));
+  --ox: calc(50cqw + (var(--uox) - 0.5) * var(--fbw));
+  --oy: calc(50cqh + (var(--uoy) - 0.5) * var(--fbw) / var(--far));
+  --xl: calc(50cqw + (var(--ul) - 0.5) * var(--fbw));
+  --xr: calc(50cqw + (var(--ur) - 0.5) * var(--fbw));
+  --yt: calc(50cqh + (var(--ut) - 0.5) * var(--fbw) / var(--far));
+  --yb: calc(50cqh + (var(--ub) - 0.5) * var(--fbw) / var(--far));
+  --csz: calc(var(--fbw) * var(--csz-k));
 }
 /* 竖屏（和 ScenePlate 换 9:16 用同一个条件）：消失点在外白渡桥下，堤线更陡，墙更近 */
 @media (max-aspect-ratio: 4/5) {
@@ -115,10 +146,20 @@
     --camr: 6.8cqh;
     --z0: -35cqh;
     --travel: 142cqh;
-    --wx0: 30;
-    --wy0: 49;
-    --gw: 2;
-    --gh: 2.5;
+    --far: var(--far-t);
+    --usx: var(--sill-x-t);
+    --usy: var(--sill-y-t);
+    --ugx: var(--gap-x-t);
+    --ugy: var(--gap-y-t);
+    --uox: var(--org-x-t);
+    --uoy: var(--org-y-t);
+    --ul: var(--hl-t);
+    --ur: var(--hr-t);
+    --ut: var(--ht-t);
+    --ub: var(--hb-t);
+    --zk: var(--zk-t);
+    --csz-k: 0.09;
+    --hop: 0.045;
     --cx: 46;
     --cy: 66;
   }
@@ -255,7 +296,7 @@
     radial-gradient(38% 16% at 28% 58%, rgb(150 172 205 / 0.13), transparent 70%),
     radial-gradient(34% 13% at 74% 62%, rgb(226 192 150 / 0.1), transparent 70%),
     radial-gradient(60% 10% at 50% 54%, rgb(190 200 220 / 0.08), transparent 75%);
-  opacity: calc((0.55 + var(--fly) * 0.45) * (1 - var(--c1)));
+  opacity: calc((0.55 + var(--fly) * 0.45));
   animation: flight-mist 24s ease-in-out infinite alternate paused;
 }
 @keyframes flight-mist {
@@ -272,7 +313,7 @@
   inset: 0;
   transform-origin: var(--vpx) var(--vpy);
   transform: scale(calc(1 + var(--fly) * 0.9));
-  opacity: calc((0.55 + var(--fv) * 0.45) * (1 - var(--c1)));
+  opacity: calc((0.55 + var(--fv) * 0.45));
 }
 .flight__glints i {
   position: absolute;
@@ -307,7 +348,7 @@
   top: var(--vpy);
   width: 0;
   height: 0;
-  opacity: calc((0.1 + var(--fv) * 0.9) * min(1, calc(var(--fly) * 8 + 0.35)) * (1 - var(--c1)));
+  opacity: calc((0.1 + var(--fv) * 0.9) * min(1, calc(var(--fly) * 8 + 0.35)));
 }
 .flight__streaks span {
   position: absolute;
@@ -349,45 +390,79 @@
 }
 
 /* ------------------------------------------------------------ 窗户和房间 -- */
-/* 窗洞里的房间：clip-path 跟窗玻璃一样大；最后一段（--ce）直接放开到全屏 */
+/* ------------------------------------------------------------ 外墙和房间 -- */
+/* 江面那一堆（世界层、薄雾、光点、流光）：外墙叠化进来的时候整体淡出 */
+.flight__river {
+  position: absolute;
+  inset: 0;
+  opacity: calc(1 - var(--fa));
+}
+.flight__river[hidden] {
+  display: none;
+}
+/* 外墙：叠化进来，从放大 1.1 倍慢慢停稳；穿窗时以窗洞中心为圆心整个推近（--ws） */
+.flight__facade {
+  position: absolute;
+  inset: 0;
+  opacity: var(--fa);
+  transform-origin: var(--ox) var(--oy);
+  transform: translate3d(calc((1 - var(--fa1)) * 3cqw), 0, 0) scale(calc(var(--fz) * var(--ws)));
+}
+.tone-facade .plate__media img {
+  filter: brightness(1.12) saturate(1.05);
+}
+
+/* 窗洞里的房间：clip-path 跟着外墙一起推近的窗洞一样大；最后一段（--ce）直接放开到全屏 */
 .flight__room {
-  /* 临时（等 R10 新结尾定稿）：没有窗框了，江景走到头时房间直接淡入，最后一帧仍然 = 第 1 幕 p = 0 */
   position: absolute;
   inset: 0;
   background: var(--sc-canvas);
-  opacity: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
+  opacity: min(1, calc(var(--c1) * 14));
+  clip-path: inset(
+    max(0px, calc((var(--oy) + (var(--yt) - var(--oy)) * var(--ws)) * (1 - var(--ce))))
+      max(0px, calc((100cqw - (var(--ox) + (var(--xr) - var(--ox)) * var(--ws))) * (1 - var(--ce))))
+      max(0px, calc((100cqh - (var(--oy) + (var(--yb) - var(--oy)) * var(--ws))) * (1 - var(--ce))))
+      max(0px, calc((var(--ox) + (var(--xl) - var(--ox)) * var(--ws)) * (1 - var(--ce))))
+  );
 }
 .flight__roomzoom {
   position: absolute;
   inset: 0;
-  transform-origin: 50% 50%;
-  transform: scale(calc(1 + 0.12 * (1 - var(--cross))));
+  transform-origin: 50% 45%;
+  transform: scale(calc(1 + 0.4 * (1 - var(--cross))));
 }
 .flight__room :is(.desk__scrim, .flight__roomcopy) {
   opacity: clamp(0, calc((var(--c1) - 0.8) / 0.18), 1);
 }
 
 /* ------------------------------------------------------------ 小螃蟹 -- */
-/* 画面中下部，飞在镜头前面；转向窗户时先它一步飞进窗里 */
+/*
+ * 江面上它飞在画面中下部；0.60 起减速、滑向外墙窗台（--gl），站直、收起速度线，
+ * 在台面上左看右看，踮着脚走到窗缝（--tp），缩着身子钻进去（--sl）。位置都按外墙图的点算（--sx / --gx）。
+ */
 .flight__crabslot {
   position: absolute;
   z-index: 3;
-  left: calc(var(--cx) * 1%);
-  top: calc(var(--cy) * 1%);
+  left: calc(var(--cx) * 1cqw * (1 - var(--gl)) + var(--sx) * var(--gl) + (var(--gx) - var(--sx)) * var(--tp));
+  top: calc(
+    var(--cy) * 1cqh * (1 - var(--gl)) + var(--sy) * var(--gl) + (var(--gy) - var(--sy)) * var(--tp) -
+      var(--sl) * var(--hop) * var(--fbw) / var(--far)
+  );
   width: 0;
   height: 0;
-  opacity: calc(1 - clamp(0, calc((var(--p) - 0.78) / 0.08), 1));
+  transform: scale(calc(1 - 0.32 * var(--sl)));
+  opacity: calc(1 - clamp(0, calc((var(--sl1) - 0.55) / 0.45), 1));
 }
 .flight__crabfloat {
   position: absolute;
   left: 0;
   top: 0;
-  /* 鼠标视差（桌面）：FlightDriver 写 --mx / --my（-1..1），这里用 transition 跟过去，不跑逐帧循环 */
-  translate: calc(var(--mx, 0) * 26px) calc(var(--my, 0) * 14px);
+  /* 鼠标视差（桌面）：FlightDriver 写 --mx / --my（-1..1），这里用 transition 跟过去，不跑逐帧循环；落到窗台后不再跟 */
+  translate: calc(var(--mx, 0) * 26px * (1 - var(--gl))) calc(var(--my, 0) * 14px * (1 - var(--gl)));
   transition: translate 900ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .flight__crabslot .crab {
-  --crab-size: clamp(66px, 6.6vw, 104px);
+  --crab-size: calc(clamp(66px, 6.6vw, 104px) * (1 - var(--gl)) + var(--csz) * var(--gl));
   --crab-focus: var(--sc-accent);
   --crab-roam-l: 16px;
   --crab-roam-r: 16px;
@@ -395,18 +470,70 @@
   left: 0;
   top: 0;
   margin-left: calc(var(--crab-size) * -0.5);
-  margin-top: calc(var(--crab-size) * -0.35);
+  margin-top: calc(var(--crab-size) * (-0.35 - 0.35 * var(--gl)));
 }
 @media (max-width: 860px) {
   .flight__crabslot .crab {
-    --crab-size: 58px;
+    --crab-size: calc(58px * (1 - var(--gl)) + var(--csz) * var(--gl));
   }
+}
+/* 落到窗台以后（data-ground，FlightDriver 按进度打）：站直、收起速度线，斗篷不再飘（收拢贴在身后） */
+.flight[data-ground] .flight__crabslot .crab--flyer .crab__svg {
+  rotate: 0deg;
+}
+.flight[data-ground] .flight__crabslot .crab--flyer :is(.crab__claw--r, .crab__legs--a, .crab__legs--b) {
+  transform: none;
+}
+.flight[data-ground] .flight__crabslot .crab--flyer .crab__speed {
+  opacity: 0;
+  animation: none;
+}
+.flight[data-ground] .flight__crabslot .crab--flyer :is(.crab__capeA, .crab__capeB, .crab__all, .crab__light) {
+  animation: none;
+}
+.flight[data-ground] .flight__crabslot .crab--flyer .crab__capeA {
+  opacity: 1;
+}
+.flight[data-ground] .flight__crabslot .crab--flyer .crab__capeB {
+  opacity: 0;
+}
+/* 左看、右看：眼睛和身子往那边偏一点 */
+.flight[data-beat="lookl"] .flight__crabslot .crab--flyer .crab__eyes {
+  transform: translateX(-3.5px);
+}
+.flight[data-beat="lookl"] .flight__crabslot .crab--flyer .crab__svg {
+  translate: -3px 0;
+  rotate: -3deg;
+}
+.flight[data-beat="lookr"] .flight__crabslot .crab--flyer .crab__eyes {
+  transform: translateX(3.5px);
+}
+.flight[data-beat="lookr"] .flight__crabslot .crab--flyer .crab__svg {
+  translate: 3px 0;
+  rotate: 3deg;
+}
+/* 踮脚走：腿交替、身子压低一点、一颠一颠的（颠的节奏跟着滚动进度走） */
+.flight[data-beat="tiptoe"] .flight__crabslot .crab--flyer .crab__svg,
+.flight[data-beat="slip"] .flight__crabslot .crab--flyer .crab__svg {
+  translate: 0 calc(sin(calc(var(--tp1) * 70rad)) * sin(calc(var(--tp1) * 70rad)) * -3px + 3px);
+  scale: 1 0.88;
+  transform-origin: 50% 100%;
+}
+.flight[data-beat="tiptoe"] .flight__crabslot .crab--flyer .crab__legs--a {
+  transform: translateY(calc(sin(calc(var(--tp1) * 70rad)) * -3px));
+}
+.flight[data-beat="tiptoe"] .flight__crabslot .crab--flyer .crab__legs--b {
+  transform: translateY(calc(sin(calc(var(--tp1) * 70rad)) * 3px));
+}
+/* 钻缝：头先进去，身子缩成一条（东张西望过了，眼睛看着缝） */
+.flight[data-beat="slip"] .flight__crabslot .crab--flyer .crab__eyes {
+  transform: translateX(-3.5px);
 }
 
 /* ---------------------------------------------------------------- 文字 -- */
 .flight__scrim {
   z-index: 4;
-  opacity: calc(0.8 * (1 - clamp(0, calc((var(--p) - 0.7) / 0.1), 1)));
+  opacity: calc(0.8 * (1 - clamp(0, calc((var(--p) - 0.5) / 0.08), 1)));
 }
 .flight__copy {
   z-index: 5;
@@ -427,13 +554,21 @@
 }
 
 /* ------------------------------------------------------- 减少动态效果 -- */
-/* 一张静止的江景加地点标签：不推近、不摇、不滑，楼群墙和流光都不出现；房间用淡入接上第 1 幕 */
+/* 一张静止的江景加地点标签，然后叠化成窗户亮灯的外墙静帧（小宇航员坐在窗台上）；不推近、不摇、不滑，
+   楼群墙和流光都不出现；房间用淡入接上第 1 幕（那边的桌宠直接在屏幕上，不演变身） */
 @media (prefers-reduced-motion: reduce) {
+  .flight-scene {
+    --tp: 0;
+    --sl: 0;
+    --ws: 1;
+    --fz: 1;
+    --ce: 0;
+  }
   .flight__world,
   .flight__base .plate__box,
   .flight__glints,
   .flight__roomzoom,
-  .flight__crabslot,
+  .flight__facade,
   .flight__crabfloat {
     transform: none;
     translate: none;
@@ -453,13 +588,18 @@
   }
   .flight__room {
     clip-path: none;
-    opacity: clamp(0, calc((var(--p) - 0.7) / 0.25), 1);
+    opacity: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
   }
   .flight__room :is(.desk__scrim, .flight__roomcopy) {
     opacity: 1;
   }
   .flight__crabslot {
-    opacity: calc(1 - clamp(0, calc((var(--p) - 0.6) / 0.1), 1));
+    transform: none;
+    opacity: calc(1 - clamp(0, calc((var(--p) - 0.78) / 0.08), 1));
+  }
+  .flight__crabslot .crab--flyer .crab__svg {
+    translate: none !important;
+    scale: none !important;
   }
 }
 

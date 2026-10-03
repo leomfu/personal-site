@@ -46,6 +46,10 @@ export type SceneManifest = {
   flight: ScenePair;
   /** 两岸楼群带（近黑底，用 screen 叠加）：外滩从左边掠过，陆家嘴从右边掠过 */
   flightBands: { bund: SceneImage; lujiazui: SceneImage };
+  /** 临江住宅楼的外墙近景（第 0 幕结尾，BRIEF R10）：一扇推开的窗，窗台空着 */
+  facade: ScenePair;
+  /** 外墙图上要用到的几个点（归一化坐标，横竖各一组，看图量的，见 lib/scene.ts） */
+  facadeSpots: { wide: FacadeSpots; tall: FacadeSpots };
   /**
    * 彩铅画像（暖色素描纸，不透明）：只用在首页名片上，当作一张真实的画纸。
    * 站主的真人照片全站不出现；第 1 幕也不放人像（2026-10 站主要求）。
@@ -56,4 +60,18 @@ export type SceneManifest = {
     tall: SceneVideo;
     poster: SceneImage;
   };
+};
+
+/** 外墙图上的关键点（归一化坐标） */
+export type FacadeSpots = {
+  /** 小宇航员落在窗台上的脚底位置 */
+  sill: Point;
+  /** 窗缝：它踮着脚走到这里，再钻进去 */
+  gap: Point;
+  /** 镜头穿窗时推近的中心（窗洞中心） */
+  origin: Point;
+  /** 窗洞（亮着灯的那几块玻璃）的四边：左、右、上、下 */
+  hole: { l: number; r: number; t: number; b: number };
+  /** 穿窗时放大到多大时窗洞撑满屏幕（1 / (1 - zk × 进度)） */
+  zk: number;
 };

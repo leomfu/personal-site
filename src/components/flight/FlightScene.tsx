@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { DeskScreen } from "@/components/about/DeskScreen";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import { DESK_LANDING_SHIFT } from "@/lib/tour";
-import type { SceneManifest } from "@/lib/sceneTypes";
+import type { FacadeSpots, SceneManifest } from "@/lib/sceneTypes";
 
 /**
  * 第 0 幕「沿江飞行」的画面（BRIEF R9）。没有 hook：完整介绍页（服务端）和俯冲盖层（客户端）共用同一份，
@@ -52,6 +52,23 @@ const STREAKS: Array<[number, number, number]> = [
   [175, 1.45, 0.5],
 ];
 
+/** 外墙图的关键点 → CSS 变量（w = 横版，t = 竖版） */
+function spotVars(k: "w" | "t", v: FacadeSpots) {
+  return {
+    [`--sill-x-${k}`]: v.sill.x,
+    [`--sill-y-${k}`]: v.sill.y,
+    [`--gap-x-${k}`]: v.gap.x,
+    [`--gap-y-${k}`]: v.gap.y,
+    [`--org-x-${k}`]: v.origin.x,
+    [`--org-y-${k}`]: v.origin.y,
+    [`--hl-${k}`]: v.hole.l,
+    [`--hr-${k}`]: v.hole.r,
+    [`--ht-${k}`]: v.hole.t,
+    [`--hb-${k}`]: v.hole.b,
+    [`--zk-${k}`]: v.zk,
+  };
+}
+
 export function FlightScene({
   scene,
   crab,
@@ -71,7 +88,8 @@ export function FlightScene({
   /** 文字（地点标签），叠在最上面 */
   children?: ReactNode;
 }) {
-  const { flight, flightBands } = scene;
+  const { flight, flightBands, facade, facadeSpots: spots } = scene;
+  const facadeT = facade.tall.exists ? facade.tall : facade.wide;
   const wide = flight.wide;
   const tall = flight.tall.exists ? flight.tall : flight.wide;
   const style = {
@@ -81,6 +99,10 @@ export function FlightScene({
     "--fy-w": wide.focus?.y ?? 0.5,
     "--fx-t": tall.focus?.x ?? 0.5,
     "--fy-t": tall.focus?.y ?? 0.5,
+    "--far-w": (facade.wide.width / facade.wide.height).toFixed(5),
+    "--far-t": (facadeT.width / facadeT.height).toFixed(5),
+    ...spotVars("w", spots.wide),
+    ...spotVars("t", spots.tall),
     "--bund": flightBands.bund.exists ? `url(${flightBands.bund.src})` : "none",
     "--lujiazui": flightBands.lujiazui.exists ? `url(${flightBands.lujiazui.src})` : "none",
   } as CSSProperties;
@@ -88,6 +110,7 @@ export function FlightScene({
   return (
     <div className={["flight-scene", live ? "is-live" : "", className ?? ""].filter(Boolean).join(" ")} style={style}>
       <div className="flight__frame" aria-hidden>
+        <div className="flight__river">
         {/* 世界层：底图 + 两岸压暗 + 两面楼群墙，一起摇移、侧倾 */}
         <div className="flight__world">
           <div className="flight__base">
@@ -117,6 +140,15 @@ export function FlightScene({
             </span>
           ))}
         </div>
+
+        </div>
+
+        {/* 外墙：江面转向岸边，叠化成这面墙，窗户长在楼上（BRIEF R10） */}
+        {room && (
+          <div className="flight__facade">
+            <ScenePlate pair={scene.facade} className="tone-facade" />
+          </div>
+        )}
 
         {/* 结尾：窗洞里的房间 = 第 1 幕 p = 0（远景同样放大 1.05、同样的落地位移；屏幕上还没有桌宠） */}
         {room && (

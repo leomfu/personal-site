@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Point, Quad, SceneImage, SceneManifest, SceneVideo } from "./sceneTypes";
+import type { FacadeSpots, Point, Quad, SceneImage, SceneManifest, SceneVideo } from "./sceneTypes";
 
 /**
  * 场景素材清单（2026-10 改版，scroll-craft）。只在构建时跑（有 node:fs）。
@@ -64,6 +64,30 @@ const SCREEN = {
     { x: 0.35, y: 0.683 },
   ],
 } satisfies Record<string, Quad>;
+
+/**
+ * 外墙图（facade）上的关键点，2026-10-03 对着 facade-16x9 / 9x16 看图量的（BRIEF R10 / R11）：
+ *   横版：左扇推开在外面，缝在左：窗台台面 x 0.30–0.59、y 0.74–0.80，推开的窗扇在 x 0.32–0.40，
+ *         窗扇和中梃之间的缝在 x ≈ 0.42；窗洞（亮灯的玻璃）x 0.335–0.535、y 0.16–0.74。
+ *   竖版：右扇推开在外面，缝在右：窗台台面 x 0.30–0.58、y 0.62–0.67，窗扇铰链在 x ≈ 0.46；
+ *         窗洞 x 0.30–0.62、y 0.26–0.61。
+ */
+const FACADE = {
+  wide: {
+    sill: { x: 0.52, y: 0.757 },
+    gap: { x: 0.425, y: 0.775 },
+    origin: { x: 0.435, y: 0.45 },
+    hole: { l: 0.335, r: 0.535, t: 0.16, b: 0.74 },
+    zk: 0.8,
+  },
+  tall: {
+    sill: { x: 0.34, y: 0.655 },
+    gap: { x: 0.5, y: 0.64 },
+    origin: { x: 0.46, y: 0.435 },
+    hole: { l: 0.3, r: 0.62, t: 0.26, b: 0.61 },
+    zk: 0.72,
+  },
+} satisfies Record<string, FacadeSpots>;
 
 /** 读 webp 文件头拿宽高（VP8 / VP8L / VP8X 三种都认）。读不出来返回 null */
 function webpSize(file: string): { width: number; height: number } | null {
@@ -130,6 +154,11 @@ export function getScene(): SceneManifest {
       bund: image("scene/flight-bund.webp", { width: 3024, height: 1296 }),
       lujiazui: image("scene/flight-lujiazui.webp", { width: 3024, height: 1296 }),
     },
+    facade: {
+      wide: image("scene/facade-16x9.webp", { width: 2560, height: 1440 }),
+      tall: image("scene/facade-9x16.webp", { width: 1440, height: 2560 }),
+    },
+    facadeSpots: FACADE,
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),
     dive: {
       wide: video("scene/dive-16x9.mp4"),

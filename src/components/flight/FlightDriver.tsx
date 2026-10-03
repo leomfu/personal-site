@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
  *               停下来 160ms 后写 0、换成慢的 transition（.is-coast），流光和速度线慢慢收住。不开常驻 rAF
  *   鼠标视差     桌面上写 --mx / --my（-1..1），小螃蟹用 transition 跟过去
  *   飞完了       钉住结束（p = 1）后打上 data-through：透明的舞台不再挡住下面第 1 幕的点击；
- *               小螃蟹飞进窗户以后（p > 0.88）它的按钮 inert，键盘不会停在一个看不见的东西上
+ *               小螃蟹钻进窗缝以后（p > 0.91）它的按钮 inert，键盘不会停在一个看不见的东西上
  * 减少动态效果：只做最后一件。
  */
 export function FlightDriver() {
@@ -29,6 +29,7 @@ export function FlightDriver() {
     let coastTimer = 0;
     let through: boolean | null = null;
     let gone: boolean | null = null;
+    let beat = "";
 
     /** 钉住结束了没有、小螃蟹飞进窗户了没有（都按滚动位置算，不读 CSS） */
     const checkEnds = () => {
@@ -41,7 +42,15 @@ export function FlightDriver() {
         through = nowThrough;
         section.toggleAttribute("data-through", nowThrough);
       }
-      const nowGone = p > (reduce ? 0.68 : 0.88);
+      // 结尾的几个动作（左看、右看、踮脚、钻缝）：小螃蟹的姿势按进度切，往回滚会原样倒着演
+      const nowBeat = p < 0.66 ? "" : p < 0.72 ? "land" : p < 0.76 ? "lookl" : p < 0.8 ? "lookr" : p < 0.865 ? "tiptoe" : "slip";
+      if (nowBeat !== beat) {
+        beat = nowBeat;
+        if (nowBeat && !reduce) section.dataset.beat = nowBeat;
+        else delete section.dataset.beat;
+        section.toggleAttribute("data-ground", Boolean(nowBeat) && (!reduce || p >= 0.6));
+      }
+      const nowGone = p > (reduce ? 0.8 : 0.91);
       if (crabSlot && nowGone !== gone) {
         gone = nowGone;
         crabSlot.inert = nowGone;

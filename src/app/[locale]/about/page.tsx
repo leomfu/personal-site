@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * 彩铅批注和爱好涂鸦随滚动一笔一笔画出来。
  *
  *   幕  地方     device                     span   情绪
- *   0   沿江飞行 pin + 透视分层 + 擦除      3.25   飞起来了（峰值，BRIEF R9）：跟着小宇航员贴着黄浦江飞，
+ *   0   沿江飞行 pin + 透视分层 + 擦除      5      飞起来了（峰值，BRIEF R9）：跟着小宇航员贴着黄浦江飞，
  *                                                  两岸的楼迎面掠过，最后穿过一扇亮灯的窗户
  *   1   书桌前   pin + parallax（四层）      2.6    到了：小宇航员落到书桌、摘下头盔、跳上屏幕变成桌宠
  *   1尾 书桌前   flow（纸盖上来）            自然   他的自述（content/about），速写本第一页
@@ -185,7 +185,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               crab={<Crab variant="flyer" label={crab.label.flyer} lines={crab.lines.flight} side="up" />}
             >
               <div className="sc-scrim sc-scrim--lead flight__scrim" aria-hidden />
-              <div className="sc-copy sc-copy--lead flight__copy" data-sc-cue="0 0.8 0 0.12">
+              <div className="sc-copy sc-copy--lead flight__copy" data-sc-cue="0 0.5 0 0.08">
                 <p id="river-title" className="flight__place">
                   {tFlight("place")}
                 </p>

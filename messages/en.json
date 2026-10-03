@@ -86,7 +86,11 @@
     "chatTitle": "New chat",
     "hello": "Hello Claude",
     "reply": "Hi! What shall we work on today?",
-    "placeholder": "Reply…"
+    "placeholder": "Reply…",
+    "helmetLabel": "The astronaut helmet on the desk: click and it wobbles",
+    "helmetSay": "The astronaut is off duty.",
+    "capeLabel": "The little red cape on the desk: click and it stirs",
+    "capeSay": "The cape can stay here for now."
   },
   "crab": {
     "label": {
@@ -109,7 +113,8 @@
       },
       "flight": {
         "ahead": "His desk is just ahead.",
-        "river": "Below is the Huangpu River: the Bund on the left, Lujiazui on the right."
+        "river": "Below is the Huangpu River: the Bund on the left, Lujiazui on the right.",
+        "shh": "Shh. His desk is right inside."
       },
       "desk": {
         "hi": "Hi! This is his desk.",
