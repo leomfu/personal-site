@@ -55,3 +55,7 @@ scratch-archify/
 # 设计交付包原件（含 26 MB 参考稿和 assets 原图）。规格/token/文案已拷进 docs/design/、图片已拷进 public/，
 # 包本身已从本机删除；规则留着，防止以后再把包解压到仓库根目录时误提交
 /design_handoff_weiliang_redesign/
+
+# 代理的临时副本、scroll-craft 验证截图（不进 git）
+/.claude/worktrees/
+/scrollcraft/builds/*/lab/
