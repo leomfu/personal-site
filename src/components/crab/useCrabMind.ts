@@ -9,7 +9,8 @@ import type { Variant } from "./art";
  * 小状态机（全部由 setTimeout 调度，没有常驻 requestAnimationFrame；动画交给 crab.css）：
  *   待机   眨眼、东张西望（.is-blink / .is-look），隔一阵换成下面某一种
  *   走动   在自己的「轨道」里走一段：位置记在 --x，用 CSS transition 滑过去，腿交替（.is-walk），转向时翻面（--dir）
- *          轨道太窄就原地：转身、踮脚、小跳。宇航员不走，是在光点附近慢慢漂（--x / --y / --rot）
+ *          轨道太窄就原地：转身、踮脚、小跳。宇航员不走，是在光点附近慢慢漂（--x / --y / --rot）；
+ *          沿江飞行的那只（flyer）也一样漂，不打瞌睡，专属动作是回头招手
  *   专属   每只自己的小行为（SPECIAL），不用点击；点击 / 回车的招牌动作（.is-act）和气泡仍是 Crab.tsx 的老规矩
  *   好奇   鼠标进了附近一圈：朝它走几步，停下看着它（只在有鼠标的设备上）
  *   打瞌睡 整页约 30 秒没有任何滚动 / 鼠标 / 键盘 / 触摸：坐下、冒 zzz（.is-sleep）；一有动静醒来、伸懒腰（.is-stretch）
@@ -36,6 +37,7 @@ export type MindOptions = {
 export const ACT_MS: Record<Variant, number> = {
   desk: 1200,
   astronaut: 1500,
+  flyer: 1500,
   builder: 1700,
   reader: 1900,
   director: 1300,
@@ -47,6 +49,7 @@ export const ACT_MS: Record<Variant, number> = {
 /** 待机小动作（is-fidget）要多久 */
 const FIDGET_MS: Partial<Record<Variant, number>> = {
   astronaut: 900,
+  flyer: 900,
   builder: 700,
   reader: 800,
   director: 650,
@@ -59,6 +62,8 @@ const FIDGET_MS: Partial<Record<Variant, number>> = {
 const SPECIAL: Record<Variant, { cls: string; ms: number; edge?: "l" | "r" }> = {
   desk: { cls: "is-hop", ms: 700 },
   astronaut: { cls: "is-roll", ms: 2800 },
+  /** 沿江飞行那只：不时回头招手，示意你跟上（BRIEF R9）。就是它的招牌动作 */
+  flyer: { cls: "is-act", ms: ACT_MS.flyer },
   builder: { cls: "is-knock", ms: 1100, edge: "r" },
   reader: { cls: "is-write", ms: 2000 },
   director: { cls: "is-act", ms: ACT_MS.director },
@@ -162,7 +167,8 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
     // 手机 / 粗指针 / 窄屏：节奏慢一半、走得短、不做好奇
     const calm = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 640 ? 1.9 : 1;
     const speed = calm > 1 ? 0.03 : 0.042; // px / ms
-    const drift = variant === "astronaut";
+    // 宇航员和飞行的那只都不走路，是在原地附近慢慢漂
+    const drift = variant === "astronaut" || variant === "flyer";
     const spec = SPECIAL[variant];
 
     let visible = false;
@@ -351,7 +357,8 @@ export function useCrabMind(rootRef: RefObject<HTMLElement | null>, o: MindOptio
     // ---- 打瞌睡 ----
     const armSleep = () => {
       window.clearTimeout(sleepTimer);
-      if (!running() || asleep) return;
+      // 飞在半空的那只不打瞌睡
+      if (!running() || asleep || variant === "flyer") return;
       sleepLimit = SLEEP_AFTER + rand(0, 4000);
       const due = world.last + sleepLimit - Date.now();
       sleepTimer = window.setTimeout(fireSleep, Math.max(600, due));

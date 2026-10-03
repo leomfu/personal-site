@@ -78,6 +78,10 @@
     "skip": "Skip",
     "status": "Landing in Shanghai"
   },
+  "flight": {
+    "label": "Flight along the river",
+    "place": "Huangpu River · The Bund"
+  },
   "desk": {
     "chatTitle": "New chat",
     "hello": "Hello Claude",
@@ -88,6 +92,7 @@
     "label": {
       "desk": "Claude's little crab on the screen: click and it hops and waves",
       "astronaut": "Little crab in a space helmet: click and it waves toward the “{cta}” button",
+      "flyer": "Little crab in a red cape, flying ahead: click and it turns back to wave",
       "builder": "Little crab in a hard hat: click and it gets to work with its wrench",
       "reader": "Little crab in round glasses: click and it turns the page and writes",
       "director": "Little crab in a director's cap: click and it snaps the clapperboard",
@@ -101,6 +106,10 @@
         "here": "This is Shanghai. He's right here.",
         "who": "His name is {name}. He's {age} and studied {major}.",
         "go": "Tap “{cta}” to land at his desk."
+      },
+      "flight": {
+        "ahead": "His desk is just ahead.",
+        "river": "Below is the Huangpu River: the Bund on the left, Lujiazui on the right."
       },
       "desk": {
         "hi": "Hi! This is his desk.",
@@ -155,6 +164,10 @@
     "open": "Open the floor plan",
     "close": "Close the floor plan",
     "now": "You are at",
+    "outside": {
+      "name": "Outside",
+      "title": "Huangpu River"
+    },
     "city": "Shanghai",
     "goto": "Go to {place}: {title}"
   },

@@ -9,8 +9,8 @@ import type { Point, Quad, SceneImage, SceneManifest, SceneVideo } from "./scene
  * 然后重新构建。每个文件的用途、尺寸要求、当前是占位还是正式、替换步骤，
  * 见 scrollcraft/builds/weiliang/ASSETS.md。
  *
- * - 文件不在：exists=false，页面走后备（没有俯冲视频时用三段推进「地球 → 航拍 → 书房」代替，
- *   航拍也不在就只剩「地球 → 书房」两段）。
+ * - 文件不在：exists=false，页面走后备（俯冲是「地球 → 航拍 → 江面起点」，航拍不在就跳过那一段；
+ *   2026-10-03 起俯冲不再用视频，也不再落到书房，BRIEF R9）。
  * - 宽高：构建时直接读 webp 文件头，换了尺寸不用改这里。
  * - focus（上海在地球图上的位置、窗户在房间图上的位置）**要人看图量出来**，
  *   换了图之后改下面 FOCUS 这几个数。量法见 ASSETS.md。
@@ -32,6 +32,14 @@ const FOCUS = {
   roomWide: { x: 0.51, y: 0.27 },
   /** 房间 9:16：窗户玻璃的中心 */
   roomTall: { x: 0.6, y: 0.22 },
+  /**
+   * 沿江飞行 21:9：江面的消失点（两岸堤线延长后交在一起的地方）。2026-10-03 看图量的：
+   * 外滩堤线过 (0.40, 0.60)、(0.54, 0.545)，陆家嘴堤线过 (0.70, 0.575)、(0.585, 0.545)，交点约 (0.56, 0.55)。
+   * 第 0 幕的推镜、两侧楼群带的透视、江面流光都以它为中心。
+   */
+  flightWide: { x: 0.56, y: 0.55 },
+  /** 沿江飞行 9:16：江面从外白渡桥下穿过去的地方（桥的中墩，水面上沿） */
+  flightTall: { x: 0.63, y: 0.55 },
 } satisfies Record<string, Point>;
 
 /**
@@ -114,6 +122,14 @@ export function getScene(): SceneManifest {
       tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }, FOCUS.roomTall),
     },
     screen: { wide: SCREEN.roomWide, tall: SCREEN.roomTall },
+    flight: {
+      wide: image("scene/flight-21x9.webp", { width: 3024, height: 1296 }, FOCUS.flightWide),
+      tall: image("scene/flight-9x16.webp", { width: 1440, height: 2560 }, FOCUS.flightTall),
+    },
+    flightBands: {
+      bund: image("scene/flight-bund.webp", { width: 3024, height: 1296 }),
+      lujiazui: image("scene/flight-lujiazui.webp", { width: 3024, height: 1296 }),
+    },
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),
     dive: {
       wide: video("scene/dive-16x9.mp4"),

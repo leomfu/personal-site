@@ -10,7 +10,7 @@ import { siteConfig } from "~/site.config";
  * 内容改了气泡跟着变；取不到的那句直接不说（不会冒出空占位）。只在构建时跑（读 content/ 要 node:fs）。
  */
 
-export type CrabPlace = "home" | "desk" | "screen" | "shelf" | "projector" | "darkroom" | "records" | "tools" | "window";
+export type CrabPlace = "home" | "flight" | "desk" | "screen" | "shelf" | "projector" | "darkroom" | "records" | "tools" | "window";
 
 export type CrabCopy = {
   /** 每种造型按钮的读屏文字 */
@@ -19,7 +19,7 @@ export type CrabCopy = {
   lines: Record<CrabPlace, string[]>;
 };
 
-const VARIANT_KEYS: Variant[] = ["desk", "astronaut", "builder", "reader", "director", "photographer", "dj", "mail", "boxer"];
+const VARIANT_KEYS: Variant[] = ["desk", "astronaut", "flyer", "builder", "reader", "director", "photographer", "dj", "mail", "boxer"];
 
 export async function getCrabCopy(locale: string): Promise<CrabCopy> {
   const t = await getTranslations({ locale, namespace: "crab" });
@@ -68,6 +68,7 @@ export async function getCrabCopy(locale: string): Promise<CrabCopy> {
         t("lines.home.who", { name, age: profile.age, major: en ? profile.majorEn : profile.major }),
         t("lines.home.go", { cta }),
       ]),
+      flight: keep([t("lines.flight.ahead"), t("lines.flight.river")]),
       desk: keep([t("lines.desk.hi"), t("lines.desk.kb"), t("lines.desk.learn")]),
       screen: keep([
         daily && t("lines.screen.daily", { name: L(daily.name, daily.name_en) }),

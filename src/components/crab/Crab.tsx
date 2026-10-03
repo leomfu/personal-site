@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { CLAWD, LOOKS, type Part, type Rect, type Variant } from "./art";
+import { CLAWD, HELMET_BOX, HELMET_PARTS, LOOKS, type Part, type Rect, type Variant } from "./art";
 import { useCrabMind } from "./useCrabMind";
 import "./crab.css";
 
@@ -81,6 +81,18 @@ export function CrabArt({ variant }: { variant: Variant }) {
         {on("front")}
         {on("fx")}
       </g>
+    </svg>
+  );
+}
+
+/** 摘下来的头盔（落到书桌时用）：和 flyer 同一套坐标，画框是宇航员那一套 */
+export function HelmetArt() {
+  const [x, y, w, h] = HELMET_BOX;
+  return (
+    <svg className="crab__svg" viewBox={`${x} ${y} ${w} ${h}`} shapeRendering="crispEdges" aria-hidden focusable="false">
+      {HELMET_PARTS.map((p) => (
+        <PartG key={p.name} part={p} />
+      ))}
     </svg>
   );
 }

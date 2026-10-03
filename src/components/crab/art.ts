@@ -75,7 +75,7 @@ export type Part = {
 };
 export type Look = { box: [number, number, number, number]; parts: Part[] };
 
-export const VARIANTS = ["desk", "astronaut", "builder", "reader", "director", "photographer", "dj", "mail", "boxer"] as const;
+export const VARIANTS = ["desk", "astronaut", "flyer", "builder", "reader", "director", "photographer", "dj", "mail", "boxer"] as const;
 export type Variant = (typeof VARIANTS)[number];
 
 /* ------------------------------------------------------------ 宇航员头盔（首页） */
@@ -165,6 +165,88 @@ const astronaut: Look = {
     },
   ],
 };
+
+/* ------------------------------------------------------------ 超人飞行（俯冲、沿江飞行、落到书桌，BRIEF R9） */
+
+/**
+ * 还是那只戴宇航员头盔的小螃蟹，多一件小红斗篷和身后的速度线（像素风，**没有 S 标志**）。
+ * 飞行姿势（身体放平前倾、一只钳子朝前、腿往后收）在 crab.css 里用 transform 摆，像素图本身不改形状。
+ * 斗篷两帧（A / B）轮流显示，就是在风里抖。头盔各块单独成组：落到书桌后「摘下头盔」时把它们藏起来，
+ * 换成一个单独的头盔道具（HelmetArt），身体就是原样的桌宠。
+ *
+ * box 用身体那一截（0 0 112 78），斗篷、速度线、头盔都画在外面（SVG overflow: visible）：
+ * 这样它和书桌上的桌宠一样大小、一样的定位基准，变身时两个能严丝合缝地对上。
+ */
+const CAPE = { R: "#C8343C", H: "#E8646C", D: "#8E1F26" };
+
+const flyer: Look = {
+  box: [0, 0, 112, 78],
+  parts: [
+    {
+      name: "speed",
+      layer: "back",
+      rects: pix(
+        [
+          "WWWWWWW......WWW......",
+          "......................",
+          "...WWWWWWWWW..........",
+          "......................",
+          "WWWW....WWWWWW........",
+          "......................",
+          "......WWWWW...........",
+        ],
+        -112,
+        10.5,
+        { W: "rgba(236, 243, 255, 0.78)" },
+      ),
+    },
+    {
+      name: "capeA",
+      layer: "back",
+      rects: pix(
+        [
+          ".............DDDD",
+          "..........DDRRRRR",
+          "......DDDRRRRRRRR",
+          "..DDDRRRRRRHHRRRR",
+          "DDRRRRRRHHHRRRRRR",
+          ".DRRRRRHHRRRRRRRD",
+          "..DDRRRRRRRRRDDD.",
+          "D...DDDRRRRDD....",
+          ".......DDDD......",
+        ],
+        -59.5,
+        38.5,
+        CAPE,
+      ),
+    },
+    {
+      name: "capeB",
+      layer: "back",
+      rects: pix(
+        [
+          "...............DD",
+          "............DDRRR",
+          "........DDDRRRRRR",
+          "...DDDDRRRRRRRRRR",
+          ".DDRRRRRRRHHRRRRR",
+          "DRRRRRRHHHRRRRRRR",
+          ".DDRRRRRRRRRRRDDD",
+          "...DDRRRRRDDDD...",
+          "D.....DDDD.......",
+        ],
+        -59.5,
+        38.5,
+        CAPE,
+      ),
+    },
+    ...astronaut.parts,
+  ],
+};
+
+/** 只有头盔（玻璃罩、边框、领圈、天线、灯）：摘下来放在桌上的那一个。坐标和 flyer 一样 */
+export const HELMET_PARTS = astronaut.parts;
+export const HELMET_BOX = astronaut.box;
 
 /* ------------------------------------------------------------ 安全帽 + 扳手（在做的东西） */
 
@@ -499,6 +581,7 @@ const desk: Look = { box: [0, 0, 112, 78], parts: [] };
 export const LOOKS: Record<Variant, Look> = {
   desk,
   astronaut,
+  flyer,
   builder,
   reader,
   director,
