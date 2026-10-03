@@ -103,13 +103,6 @@ function hiResArtwork(url) {
   return url ? url.replace(/\d+x\d+bb(\.\w+)$/, `600x600bb$1`) : null;
 }
 
-function slugFromQuery(q) {
-  return q
-    .toLowerCase()
-    .replace(/[^\w一-鿿]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 // ---- 解析 scripts/music-chart.txt ----
 const raw = await readFile(LIST, "utf8");
 const scenes = [];

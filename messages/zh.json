@@ -82,8 +82,7 @@
     "chatTitle": "新对话",
     "hello": "Hello Claude",
     "reply": "你好！今天想做点什么？",
-    "placeholder": "回复…",
-    "send": "发送"
+    "placeholder": "回复…"
   },
   "crab": {
     "label": {
@@ -206,17 +205,14 @@
     "youtube": "YouTube",
     "published": "{date} 发布",
     "projectorAll": "查看全部视频",
-    "printAria": "{title}：{caption}。打开这一辑",
     "albumMeta": "{year} · {count} 张",
     "darkroomAll": "查看全部影集",
-    "recordsHint": "点一张唱片，放进唱机试听。",
     "recordsAll": "去唱机",
     "toolsTitle": "常用工具",
     "toolsAll": "查看全部工具",
     "nowPlaying": "正在放",
     "playSleeve": "播放：{title} · {artist}",
     "pauseSleeve": "暂停：{title}",
-    "windowLabel": "联系 · {year} · 邮件和社交账号 · 一般两三天内回",
     "windowLead": "想说点什么，写封邮件就好。",
     "notes": {
       "self": "2026 年 7 月毕业",

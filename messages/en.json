@@ -82,8 +82,7 @@
     "chatTitle": "New chat",
     "hello": "Hello Claude",
     "reply": "Hi! What shall we work on today?",
-    "placeholder": "Reply…",
-    "send": "Send"
+    "placeholder": "Reply…"
   },
   "crab": {
     "label": {
@@ -206,17 +205,14 @@
     "youtube": "YouTube",
     "published": "Published {date}",
     "projectorAll": "All videos",
-    "printAria": "{title}: {caption}. Open the album",
     "albumMeta": "{year} · {count, plural, =1 {# photo} other {# photos}}",
     "darkroomAll": "All albums",
-    "recordsHint": "Pick a record to put it on the turntable.",
     "recordsAll": "To the turntable",
     "toolsTitle": "Tools I use",
     "toolsAll": "All tools",
     "nowPlaying": "Playing",
     "playSleeve": "Play {title} by {artist}",
     "pauseSleeve": "Pause {title}",
-    "windowLabel": "Contact · {year} · Email and social accounts · Usually replies within two or three days",
     "windowLead": "If you want to say something, just send an email.",
     "notes": {
       "self": "Graduated July 2026",

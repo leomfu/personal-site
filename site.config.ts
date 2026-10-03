@@ -66,9 +66,6 @@ export const siteConfig = {
   locales: ["zh", "en"] as const,
   defaultLocale: "zh" as const,
 
-  /* --- 资源 --- */
-  logo: "/logo/wl-logo.png",
-
   /* --- 社交平台：只留这三个（2026-10 站主要求，小红书、YouTube、抖音都不再显示）--- */
   socials: [
     {
