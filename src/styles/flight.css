@@ -349,63 +349,19 @@
 }
 
 /* ------------------------------------------------------------ 窗户和房间 -- */
-.flight__window {
-  position: absolute;
-  left: calc(var(--wx) * 1cqw);
-  top: calc(var(--wy) * 1cqh);
-  box-sizing: content-box;
-  width: calc(var(--gw) * 2cqh);
-  height: calc(var(--gh) * 2cqh);
-  border: 0.5cqh solid #2c1f16;
-  border-radius: 0.2cqh;
-  translate: -50% -50%;
-  scale: var(--ws);
-  opacity: var(--wo);
-}
-.flight__glass,
-.flight__spill,
-.flight__transom {
-  position: absolute;
-}
-.flight__glass {
-  inset: 0;
-  background: radial-gradient(120% 95% at 42% 62%, #ffe2ae 0, #f3ae58 55%, #b8682c 100%);
-  opacity: clamp(0, calc(1 - var(--cross) * 1.25), 1);
-}
-.flight__transom {
-  left: 0;
-  right: 0;
-  top: 24%;
-  height: 0.35cqh;
-  background: #2c1f16;
-}
-/* 窗里漏出来的一圈暖光（柔的径向渐变，不是发光描边） */
-.flight__spill {
-  inset: -140%;
-  background: radial-gradient(closest-side, rgb(255 196 120 / 0.32), rgb(255 170 90 / 0.1) 55%, transparent);
-  opacity: clamp(0, calc(1 - var(--cross) * 1.6), 1);
-}
-
 /* 窗洞里的房间：clip-path 跟窗玻璃一样大；最后一段（--ce）直接放开到全屏 */
 .flight__room {
-  --hw: max(calc(var(--gw) * var(--ws) * 1cqh), calc(var(--ce) * 70cqw));
-  --hh: max(calc(var(--gh) * var(--ws) * 1cqh), calc(var(--ce) * 70cqh));
+  /* 临时（等 R10 新结尾定稿）：没有窗框了，江景走到头时房间直接淡入，最后一帧仍然 = 第 1 幕 p = 0 */
   position: absolute;
   inset: 0;
   background: var(--sc-canvas);
-  opacity: min(1, calc(var(--c1) * 14));
-  clip-path: inset(
-    max(0px, calc(var(--wy) * 1cqh - var(--hh)))
-      max(0px, calc(100cqw - var(--wx) * 1cqw - var(--hw)))
-      max(0px, calc(100cqh - var(--wy) * 1cqh - var(--hh)))
-      max(0px, calc(var(--wx) * 1cqw - var(--hw)))
-  );
+  opacity: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
 }
 .flight__roomzoom {
   position: absolute;
   inset: 0;
-  transform-origin: calc(var(--wx) * 1cqw) calc(var(--wy) * 1cqh);
-  transform: scale(calc(1 + 0.55 * (1 - var(--cross))));
+  transform-origin: 50% 50%;
+  transform: scale(calc(1 + 0.12 * (1 - var(--cross))));
 }
 .flight__room :is(.desk__scrim, .flight__roomcopy) {
   opacity: clamp(0, calc((var(--c1) - 0.8) / 0.18), 1);
@@ -420,9 +376,7 @@
   top: calc(var(--cy) * 1%);
   width: 0;
   height: 0;
-  transform: translate(calc((var(--wx) - var(--cx)) * var(--dive) * 1cqw), calc((var(--wy) - var(--cy)) * var(--dive) * 1cqh))
-    scale(calc(1 - 0.9 * var(--dive)));
-  opacity: calc(1 - clamp(0, calc((var(--p) - 0.865) / 0.03), 1));
+  opacity: calc(1 - clamp(0, calc((var(--p) - 0.78) / 0.08), 1));
 }
 .flight__crabfloat {
   position: absolute;
@@ -487,8 +441,7 @@
   }
   .flight__bank,
   .flight__shade,
-  .flight__streaks,
-  .flight__window {
+  .flight__streaks {
     display: none;
   }
   .flight__mist,

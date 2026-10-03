@@ -138,12 +138,6 @@ export function FlightScene({
           </div>
         )}
 
-        {/* 那扇亮着暖灯的窗户（自己画的：窗框、一道横档、暖光） */}
-        <div className="flight__window">
-          <i className="flight__spill" />
-          <i className="flight__glass" />
-          <i className="flight__transom" />
-        </div>
       </div>
 
       {crab && (

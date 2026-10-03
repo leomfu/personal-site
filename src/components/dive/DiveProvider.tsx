@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -12,70 +13,82 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { DeskScreen } from "@/components/about/DeskScreen";
+import { Crab } from "@/components/crab/Crab";
+import { FlightScene } from "@/components/flight/FlightScene";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import type { SceneManifest } from "@/lib/sceneTypes";
-import { DESK_LANDING_SHIFT } from "@/lib/tour";
 
 /**
- * 峰值的前半段：「从太空俯冲到你桌前」（BRIEF §3 及其修订）。
+ * 开场：「小宇航员带你飞下来」（BRIEF R9 第 1 条第 1、2 点）。
  *
- * 首页点上海的光点或主按钮 → 这里接管：
- *   lock   （只在有俯冲视频时）0.4 秒「锁定上海」：盖住首页，地球朝上海放大一点，准星收拢，同时给视频缓冲
- *   video  有俯冲视频（public/scene/dive-16x9.mp4）就全屏放，静音，最长 6 秒，只留一个「跳过」
- *   fall   没有视频时的后备，点下去立刻开始，先快后慢，一共约 1.7 秒，三段：
- *            地球朝上海推进 → 叠化成上海航拍、推向陆家嘴 → 叠化成书房：从窗户拉回到书桌前，停稳
- *          航拍图（public/scene/aerial-*.webp）不在时退回两段：地球 → 书房，约 1.3 秒
- *   land   画面停在书房（= 第 1 幕的远景，连 MacBook 屏幕里的画面和桌宠都一样），这时才跳到 /about/
- *   out    等落地页的引擎挂好（`wl:engine` 事件），盖层淡出，露出第 1 幕
+ * 首页点上海的光点或「降落，进来看看」→ 这里接管：
+ *   fall   点下去立刻开始，一共约 1.3 秒，自动播放：
+ *            首页那只宇航员小螃蟹原地换成超人飞行姿势（斗篷、速度线），先往后一缩、再冲出去，跟着镜头往下飞；
+ *            地球朝上海推进 → 叠化成上海航拍、继续往下 → 叠化成黄浦江上的起点（第 0 幕「沿江飞行」的第一帧），
+ *            小螃蟹正好落在它在第 0 幕里的位置上
+ *          航拍图（public/scene/aerial-*.webp）不在时跳过中间那段，约 1 秒
+ *   land   画面停在江面起点（= 第 0 幕 p = 0），这时才跳到 /about/
+ *   out    等落地页的引擎挂好（`wl:engine` 事件），盖层淡出，露出一模一样的第 0 幕
  *
  * 随时能跳过：点击、按键、滚轮、手指滑动都直接落地。减少动态效果时什么都不放，直接跳转。
- * 只有从首页点进来才会走这一套；直接打开 /about/、从子页回来，都直接从第 1 幕开始。
+ * 只有从首页点进来才会走这一套；直接打开 /about/ 也是从第 0 幕开始，只是没有这段下降。
+ * 2026-10-03 起不再落到书房（书房在第 0 幕的结尾穿窗进去），也不再用俯冲视频。
  *
  * 这一层挂在 [locale]/layout 上（跳页时不卸载），所以盖层能跨过路由切换一直留在屏幕上，
- * 两头才接得上：开头是首页的那张地球，结尾是第 1 幕的那张房间。
+ * 两头才接得上：开头是首页的那张地球，结尾是第 0 幕的第一帧。
+ * 点下去的那一刻顺手预加载飞行图（光标移到入口上时也会先预加载一次）。
  */
 
-type Phase = "idle" | "lock" | "video" | "fall" | "land" | "out";
+type Phase = "idle" | "fall" | "land" | "out";
 type Origin = { x: number; y: number };
+/** 首页那只小螃蟹：身体中心和身体宽度（屏幕像素） */
+type HeroFrom = { x: number; y: number; w: number } | null;
 
-const DiveContext = createContext<{ dive: (href: string, origin?: Origin) => void } | null>(null);
+const DiveContext = createContext<{ dive: (href: string, origin?: Origin) => void; preload: () => void } | null>(null);
 
 export function useDive() {
   return useContext(DiveContext);
 }
 
-/** 6 秒封顶：视频再长也在这里落地 */
-const VIDEO_CAP = 6000;
-const LOCK = 400;
-/** 后备推进的总长（和 dive.css 里的关键帧时间对齐）：三段 / 两段 */
-const FALL = { three: 1720, two: 1320 } as const;
+/** 下降的总长（和 dive.css 里的关键帧时间对齐）：有航拍 / 没有航拍 */
+const FALL = { three: 1320, two: 1000 } as const;
+const TALL_QUERY = "(max-aspect-ratio: 4/5)";
 
 export function DiveProvider({ scene, children }: { scene: SceneManifest; children: ReactNode }) {
   const router = useRouter();
   const t = useTranslations("dive");
   const [phase, setPhase] = useState<Phase>("idle");
   const [origin, setOrigin] = useState<Origin>({ x: 0, y: 0 });
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [from, setFrom] = useState<HeroFrom>(null);
 
   const target = useRef<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const skipRef = useRef<HTMLButtonElement | null>(null);
   const phaseRef = useRef<Phase>("idle");
+  const heroRef = useRef<HTMLSpanElement | null>(null);
+  const heroAnim = useRef<Animation | null>(null);
+  const preloaded = useRef(false);
 
   const go = useCallback((next: Phase) => {
     phaseRef.current = next;
     setPhase(next);
   }, []);
 
-  /** 落地：画面换成书房，然后才跳页 */
-  const land = useCallback(() => {
-    if (!["lock", "video", "fall"].includes(phaseRef.current)) return;
-    try {
-      videoRef.current?.pause();
-    } catch {
-      // 视频可能已经没了
+  /** 预加载第 0 幕要用的图：这一台设备用的那张底图 + 两条楼群带 */
+  const preload = useCallback(() => {
+    if (preloaded.current) return;
+    preloaded.current = true;
+    const tall = window.matchMedia(TALL_QUERY).matches && scene.flight.tall.exists;
+    const srcs = [tall ? scene.flight.tall.src : scene.flight.wide.src, scene.flightBands.bund.src, scene.flightBands.lujiazui.src];
+    for (const src of srcs) {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
     }
+  }, [scene.flight, scene.flightBands]);
+
+  /** 落地：画面停在江面起点，然后才跳页 */
+  const land = useCallback(() => {
+    if (phaseRef.current !== "fall") return;
+    heroAnim.current?.cancel();
     go("land");
     const href = target.current;
     if (href) router.push(href);
@@ -88,59 +101,44 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
         router.push(href);
         return;
       }
+      preload();
       target.current = href;
       setOrigin(at ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 });
-
-      const tall = window.matchMedia("(max-aspect-ratio: 4/5)").matches;
-      const clip = tall && scene.dive.tall.exists ? scene.dive.tall : scene.dive.wide.exists ? scene.dive.wide : null;
-      setVideoSrc(clip ? clip.src : null);
-      // 有视频才需要那 0.4 秒去缓冲；没有视频，点下去立刻开始往下冲
-      go(clip ? "lock" : "fall");
+      // 首页那只宇航员（box -10.5 -42 133 120：身体中心在宽的 50%、高的 60%，身体宽 = 112 / 133）
+      const home = document.querySelector<HTMLElement>(".crab-slot--home .crab")?.getBoundingClientRect();
+      setFrom(home && home.width > 0 ? { x: home.left + home.width * 0.5, y: home.top + home.height * 0.6, w: (home.width * 112) / 133 } : null);
+      document.documentElement.dataset.dive = "on";
+      go("fall");
     },
-    [go, router, scene.dive.tall, scene.dive.wide],
+    [go, router, preload],
   );
 
-  /** lock：0.4 秒之后，视频能放就放，放不了走后备 */
-  useEffect(() => {
-    if (phase !== "lock") return;
-    const video = videoRef.current;
-    if (videoSrc && video) {
-      video.muted = true;
-      video.load();
-    }
-    let waited = 0;
-    let id = 0;
-    const decide = () => {
-      if (phaseRef.current !== "lock") return;
-      if (!videoSrc || !video) {
-        go("fall");
-        return;
-      }
-      // 视频还没缓冲出画面：最多再等 1.2 秒，等不到就走后备，不让人对着黑屏
-      if (video.readyState >= 2) {
-        go("video");
-        void video.play().catch(() => {
-          if (phaseRef.current === "video") go("fall");
-        });
-        return;
-      }
-      waited += 100;
-      if (waited > 1200) go("fall");
-      else id = window.setTimeout(decide, 100);
-    };
-    id = window.setTimeout(decide, LOCK);
-    return () => window.clearTimeout(id);
-  }, [phase, videoSrc, go]);
+  /** 起飞：盖层第一帧画出来之前，把超人姿势的那只摆到首页那只的位置上，再让它飞到第 0 幕里它该在的地方 */
+  useLayoutEffect(() => {
+    if (phase !== "fall") return;
+    const hero = heroRef.current;
+    if (!hero) return;
+    const end = hero.getBoundingClientRect();
+    const body = hero.querySelector<HTMLElement>(".crab")?.getBoundingClientRect();
+    const start = from ?? { x: origin.x, y: origin.y, w: body?.width ?? 60 };
+    const dx = start.x - end.left;
+    const dy = start.y - end.top;
+    const s0 = body && body.width > 0 ? start.w / body.width : 0.8;
+    const tf = (x: number, y: number, s: number) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s.toFixed(3)})`;
+    const total = scene.aerial.wide.exists || scene.aerial.tall.exists ? FALL.three : FALL.two;
+    heroAnim.current = hero.animate(
+      [
+        { transform: tf(dx, dy, s0) },
+        { transform: tf(dx - 12, dy + 7, s0 * 1.04), offset: 0.1 },
+        { transform: tf(dx * 0.72 + 36, dy * 0.72 - 64, s0 * 1.3), offset: 0.32 },
+        { transform: tf(dx * 0.28, dy * 0.25 - 40, 0.8), offset: 0.66 },
+        { transform: tf(0, 0, 1) },
+      ],
+      { duration: total, easing: "cubic-bezier(0.45, 0.05, 0.3, 1)", fill: "forwards" },
+    );
+  }, [phase, from, origin, scene.aerial]);
 
-  /** video：6 秒封顶；视频开始放时焦点给「跳过」 */
-  useEffect(() => {
-    if (phase !== "video") return;
-    skipRef.current?.focus({ preventScroll: true });
-    const id = window.setTimeout(land, VIDEO_CAP);
-    return () => window.clearTimeout(id);
-  }, [phase, land]);
-
-  /** fall（没有视频的后备）：三段（或两段）推进放完就落地 */
+  /** fall：放完就落地 */
   const threeStage = scene.aerial.wide.exists || scene.aerial.tall.exists;
   useEffect(() => {
     if (phase !== "fall") return;
@@ -150,7 +148,7 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
 
   /** 随时能跳过：点、按键、滚轮、手指滑动 */
   useEffect(() => {
-    if (phase !== "lock" && phase !== "video" && phase !== "fall") return;
+    if (phase !== "fall") return;
     const skip = (event: Event) => {
       if (event.type === "keydown") {
         const key = (event as KeyboardEvent).key;
@@ -176,7 +174,7 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
     if (phase !== "land") return;
     let frame = 0;
     const reveal = () => {
-      // 再等两帧，让第 1 幕的各层先按 p = 0 摆好
+      // 再等两帧，让第 0 幕的各层先按 p = 0 摆好
       frame = requestAnimationFrame(() => {
         frame = requestAnimationFrame(() => go("out"));
       });
@@ -200,61 +198,49 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
     if (phase !== "out") return;
     const id = window.setTimeout(() => {
       target.current = null;
-      setVideoSrc(null);
+      heroAnim.current = null;
+      delete document.documentElement.dataset.dive;
       go("idle");
     }, 520);
     return () => window.clearTimeout(id);
   }, [phase, go]);
 
-  const style = {
-    "--ox": `${origin.x}px`,
-    "--oy": `${origin.y}px`,
-    "--land-shift": `${DESK_LANDING_SHIFT}px`,
-  } as CSSProperties;
+  const style = { "--ox": `${origin.x}px`, "--oy": `${origin.y}px` } as CSSProperties;
 
   return (
-    <DiveContext.Provider value={{ dive }}>
+    <DiveContext.Provider value={{ dive, preload }}>
       {children}
       {phase !== "idle" && (
         <div className={`dive is-${phase}${threeStage ? " has-aerial" : ""}`} style={style} data-dive={phase}>
-          <div className="dive__earth">
-            <ScenePlate pair={scene.earth} eager className="tone-earth" />
-          </div>
-          {threeStage && (
-            <div className="dive__aerial">
-              <ScenePlate pair={scene.aerial} eager className="tone-aerial" />
+          <div className="dive__bg">
+            <div className="dive__earth">
+              <ScenePlate pair={scene.earth} eager className="tone-earth" />
             </div>
-          )}
-          <div className="dive__room room-far">
-            <ScenePlate pair={scene.room} eager className="tone-room">
-              <DeskScreen quads={scene.screen} still />
-            </ScenePlate>
+            {threeStage && (
+              <div className="dive__aerial">
+                <ScenePlate pair={scene.aerial} eager className="tone-aerial" />
+              </div>
+            )}
+            <div className="dive__flight">
+              <FlightScene scene={scene} live />
+            </div>
+            <div className="dive__reticle" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
           </div>
-          {videoSrc && (
-            <video
-              ref={videoRef}
-              className="dive__video"
-              src={videoSrc}
-              muted
-              playsInline
-              preload="auto"
-              poster={scene.dive.poster.exists ? scene.dive.poster.src : undefined}
-              onEnded={land}
-              onError={() => (phaseRef.current === "video" ? land() : undefined)}
-              aria-hidden
-            />
-          )}
-          <div className="dive__reticle" aria-hidden>
-            <span />
-            <span />
-            <span />
-            <span />
+          {/* 超人姿势的那只：和第 0 幕里那只用同一个位置（.flight__crabslot），飞完正好停在那里 */}
+          <div className="flight-scene dive__heroscene" aria-hidden>
+            <div className="flight__crabslot">
+              <div className="flight__crabfloat">
+                <span ref={heroRef} className="dive__hero">
+                  <Crab variant="flyer" still />
+                </span>
+              </div>
+            </div>
           </div>
-          {phase === "video" && (
-            <button ref={skipRef} type="button" className="dive__skip" onClick={land}>
-              {t("skip")}
-            </button>
-          )}
           <p className="sr-only" role="status">
             {t("status")}
           </p>

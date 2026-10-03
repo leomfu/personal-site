@@ -7,7 +7,7 @@ import { useDive } from "@/components/dive/DiveProvider";
 /**
  * 首页的两个入口（上海的光点、主按钮）都是它：本质是一个去 /about/ 的普通链接
  * （中键、新标签页、没有脚本都照常能用），普通的左键点击才交给俯冲过渡。
- * 俯冲的放大中心对准首页上那颗光点（data-home-dot）。
+ * 俯冲的放大中心对准首页上那颗光点（data-home-dot）。光标移上来或键盘聚焦时先预加载飞行图。
  */
 export function DiveLink({
   href,
@@ -34,8 +34,19 @@ export function DiveLink({
     ctx.dive(href, rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : undefined);
   };
 
+  // 光标移上来、或者键盘停在入口上：先把第 0 幕的飞行图拿下来
+  const warm = () => ctx?.preload();
+
   return (
-    <Link href={href} className={className} onClick={onClick} aria-label={ariaLabel} data-home-dot={dot ? "" : undefined}>
+    <Link
+      href={href}
+      className={className}
+      onClick={onClick}
+      onPointerEnter={warm}
+      onFocus={warm}
+      aria-label={ariaLabel}
+      data-home-dot={dot ? "" : undefined}
+    >
       {children}
     </Link>
   );
