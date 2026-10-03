@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Crab } from "@/components/crab/Crab";
 import { routing } from "@/i18n/routing";
@@ -45,7 +46,14 @@ export default function NotFound() {
           data-crab-slot="404"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", width: 96, height: 80 }}
         >
-          <Crab variant="boxer" size={60} label={crabLabel} lines={crabLines} side="up" />
+          <Crab
+            variant="boxer"
+            size={60}
+            label={crabLabel}
+            lines={crabLines}
+            side="up"
+            style={{ "--crab-roam-l": "70px", "--crab-roam-r": "70px" } as CSSProperties}
+          />
         </span>
         <span
           style={{

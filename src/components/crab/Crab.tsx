@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { CLAWD, LOOKS, type Part, type Rect, type Variant } from "./art";
+import { useCrabMind } from "./useCrabMind";
 import "./crab.css";
 
 /**
@@ -9,7 +10,8 @@ import "./crab.css";
  * 每个区域一只，穿不同的衣服、做不同的招牌动作。像素图在 ./art.ts，动作在 ./crab.css。
  *
  *   进入视口      做一次招牌动作（desk 那只例外：等屏幕里的「Hello Claude」发出去，由 actKey 触发）
- *   之后          偶尔眨眼，隔一阵做个待机小动作；鼠标靠近，眼睛看过去
+ *   之后          自主意识（useCrabMind.ts）：在自己的轨道里走动、东张西望、做专属小动作、
+ *                鼠标靠近会走过来看、整页 30 秒没动静会坐下打瞌睡
  *   点 / 回车 / 轻点   招牌动作 + 冒一个气泡（lines 轮换，第三人称介绍站主，只写事实）
  *   减少动态效果   静态姿势；点一下只换姿势、出气泡（气泡只淡入淡出，不位移）
  *   离屏 / 页面隐藏 所有循环暂停（.is-off），计时器也停
@@ -20,32 +22,6 @@ import "./crab.css";
  */
 
 export type CrabSide = "up" | "up-left" | "up-right" | "left" | "right" | "auto";
-
-/** 招牌动作要多久（和 crab.css 里的关键帧对齐） */
-const ACT_MS: Record<Variant, number> = {
-  desk: 1200,
-  astronaut: 1500,
-  builder: 1700,
-  reader: 1900,
-  director: 1300,
-  photographer: 1000,
-  dj: 2000,
-  mail: 1900,
-  boxer: 1250,
-};
-/** 待机小动作（is-fidget）要多久；desk 那只的待机是「走几步」，另算 */
-const FIDGET_MS: Partial<Record<Variant, number>> = {
-  astronaut: 900,
-  builder: 700,
-  reader: 800,
-  director: 650,
-  photographer: 900,
-  dj: 900,
-  mail: 700,
-  boxer: 700,
-};
-
-const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 function Rects({ rects }: { rects: Rect[] }) {
   return (
@@ -146,8 +122,7 @@ export function Crab({
   style?: CSSProperties;
 }) {
   const rootRef = useRef<HTMLElement | null>(null);
-  const actRef = useRef<() => void>(() => {});
-  const reduceRef = useRef(false);
+  const playingRef = useRef(playing);
   /** 气泡：n 每说一句加一（换一句就重新冒一次），on 是现在看不看得见（收起时字留着，好淡出） */
   const [say, setSay] = useState({ text: "", n: 0, on: false });
   const [pose, setPose] = useState(false);
@@ -167,182 +142,21 @@ export function Crab({
     .filter(Boolean)
     .join(" ");
 
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    // 会走路的那只，起点在父元素 72% 处（不动的那只也摆在这儿，俯冲最后一帧和落地后的第一帧才对得上）
-    const range = () => {
-      const floor = root.parentElement;
-      return floor ? Math.max(0, floor.clientWidth - root.offsetWidth) : 0;
-    };
-    if (roam) root.style.setProperty("--x", `${(range() * 0.72).toFixed(1)}px`);
-    if (still) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    reduceRef.current = reduce;
-
-    let visible = false;
-    let greeted = !greet;
-    let actTimer = 0;
-    let blinkTimer = 0;
-    let fidgetTimer = 0;
-    let greetTimer = 0;
-    let raf = 0;
-    const later: number[] = [];
-
-    // 走路（只有 roam 的那只）：位置记在 --x 上，用 translate 走，不碰 left
-    let x = range() * 0.72;
-    let target = 0;
-    let lastT = 0;
-    const place = () => root.style.setProperty("--x", `${x.toFixed(1)}px`);
-
-    const flash = (name: string, ms: number) => {
-      root.classList.remove(name);
-      void root.getBoundingClientRect();
-      root.classList.add(name);
-      later.push(window.setTimeout(() => root.classList.remove(name), ms));
-    };
-
-    const act = () => {
-      window.clearTimeout(actTimer);
-      stopWalk();
-      root.classList.remove("is-act", "is-fidget");
-      void root.getBoundingClientRect();
-      root.classList.add("is-act");
-      actTimer = window.setTimeout(() => root.classList.remove("is-act"), ACT_MS[variant]);
-    };
-    actRef.current = act;
-
-    const walkStep = (now: number) => {
-      raf = 0;
-      const dt = Math.min(64, now - (lastT || now));
-      lastT = now;
-      const dir = Math.sign(target - x);
-      x += dir * dt * 0.06;
-      if ((dir > 0 && x >= target) || (dir < 0 && x <= target) || dir === 0) {
-        x = target;
-        place();
-        stopWalk();
-        return;
-      }
-      place();
-      raf = requestAnimationFrame(walkStep);
-    };
-    function stopWalk() {
-      cancelAnimationFrame(raf);
-      raf = 0;
-      root?.classList.remove("is-walk");
-    }
-    const stroll = () => {
-      const max = range();
-      if (max < 8) return;
-      // 走一小段：离现在的位置 20%–45% 的距离，碰到边就往回
-      const span = max * rand(0.2, 0.45);
-      target = Math.max(0, Math.min(max, x + (Math.random() < 0.5 ? -span : span)));
-      if (Math.abs(target - x) < 4) target = x > max / 2 ? x - span : x + span;
-      lastT = 0;
-      root.classList.add("is-walk");
-      raf = requestAnimationFrame(walkStep);
-    };
-
-    const scheduleBlink = () => {
-      window.clearTimeout(blinkTimer);
-      blinkTimer = window.setTimeout(() => {
-        if (!running()) return;
-        flash("is-blink", 160);
-        scheduleBlink();
-      }, rand(2400, 5600));
-    };
-    const scheduleFidget = () => {
-      window.clearTimeout(fidgetTimer);
-      fidgetTimer = window.setTimeout(() => {
-        if (!running()) return;
-        if (!root.classList.contains("is-act")) {
-          if (roam) stroll();
-          else if (FIDGET_MS[variant]) flash("is-fidget", FIDGET_MS[variant] as number);
-        }
-        scheduleFidget();
-      }, rand(7000, 13000));
-    };
-
-    const running = () => visible && !document.hidden && !reduce;
-    const sync = () => {
-      const on = visible && !document.hidden;
-      root.classList.toggle("is-on", on);
-      root.classList.toggle("is-off", !on);
-      if (running()) {
-        scheduleBlink();
-        scheduleFidget();
-      } else {
-        window.clearTimeout(blinkTimer);
-        window.clearTimeout(fidgetTimer);
-        stopWalk();
-      }
-    };
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const e = entries[entries.length - 1];
-        visible = e.isIntersecting;
-        sync();
-        if (visible && !greeted && !reduce && e.intersectionRatio >= 0.5) {
-          greeted = true;
-          greetTimer = window.setTimeout(() => running() && act(), 450);
-        }
-      },
-      { threshold: [0, 0.5, 1] },
-    );
-    io.observe(root);
-    const onVisibility = () => sync();
-    document.addEventListener("visibilitychange", onVisibility);
-
-    // 鼠标靠近：眼睛往那边挪一格（只在有鼠标的设备上）
-    let lookRaf = 0;
-    let pointer: { x: number; y: number } | null = null;
-    const updateLook = () => {
-      lookRaf = 0;
-      if (!pointer || !visible) return;
-      const r = root.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const dx = pointer.x - cx;
-      const dy = pointer.y - cy;
-      const near = Math.hypot(dx, dy) < Math.max(220, r.width * 2.5);
-      const lx = near && Math.abs(dx) > r.width * 0.25 ? Math.sign(dx) : 0;
-      const ly = near && Math.abs(dy) > r.height * 0.4 ? Math.sign(dy) : 0;
-      root.style.setProperty("--lx", String(lx));
-      root.style.setProperty("--ly", String(ly));
-    };
-    const onMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-      pointer = { x: event.clientX, y: event.clientY };
-      if (!lookRaf) lookRaf = requestAnimationFrame(updateLook);
-    };
-    if (fine && !reduce) window.addEventListener("pointermove", onMove, { passive: true });
-
-    return () => {
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(lookRaf);
-      stopWalk();
-      [actTimer, blinkTimer, fidgetTimer, greetTimer, ...later].forEach((id) => window.clearTimeout(id));
-      actRef.current = () => {};
-    };
-  }, [variant, still, roam, greet]);
+  const { actRef, reduceRef } = useCrabMind(rootRef, { variant, roam, still, greet, playingRef });
 
   // 外部触发（屏幕里的消息发出去了）：做一次招牌动作
   useEffect(() => {
     if (!actKey || still || reduceRef.current) return;
     actRef.current();
-  }, [actKey, still]);
+  }, [actKey, still, actRef, reduceRef]);
 
   // 正在放歌：戴耳机那只跟着点头（减少动态效果时不点）
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
+    playingRef.current = playing;
     root.classList.toggle("is-groove", playing && !reduceRef.current);
-  }, [playing]);
+  }, [playing, reduceRef]);
 
   // 气泡：字越多停得越久
   const { n: sayN, on: sayOn, text: sayText } = say;
@@ -398,6 +212,11 @@ export function Crab({
         onClick={onClick}
       >
         <CrabArt variant={variant} />
+        <span className="crab__zzz" aria-hidden>
+          <i>z</i>
+          <i>z</i>
+          <i>Z</i>
+        </span>
         {sayN > 0 && (
           <span key={sayN} className={`crab__say${sayOn ? " is-on" : ""}`} aria-hidden>
             {sayText}

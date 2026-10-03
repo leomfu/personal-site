@@ -304,6 +304,7 @@
 .rail__crab {
   justify-self: start;
   margin-top: 0.4rem;
+  --crab-roam-r: 7rem; /* 在说明下面这一行的纸上，朝展品那边走走、敲敲卡片的角 */
 }
 .exhibit {
   position: relative;
@@ -755,12 +756,14 @@
   height: 0;
 }
 .shelf__crab .crab {
+  --crab-roam-l: 10rem; /* 沿横格本第一条线往左走 */
   position: absolute;
   right: clamp(0.5rem, 3vw, 2.5rem);
   bottom: -1px;
 }
 /* 投影：坐在黑卡纸上沿，右边胶带的里侧 */
 .projector__crab {
+  --crab-roam-l: 8rem; /* 沿黑卡纸上沿往左走，右边是胶带 */
   position: absolute;
   z-index: 2;
   right: 16%;
@@ -1034,6 +1037,7 @@
 }
 /* 戴邮差帽的小螃蟹：站在明信片左下角，递信封、挥手告别 */
 .postcard__crab {
+  --crab-roam-r: 5rem; /* 沿明信片下沿往右走，到头敲一敲 */
   position: absolute;
   left: 0;
   bottom: 0;
@@ -1328,6 +1332,8 @@
   }
   /* 手机：小螃蟹站在批注右边（邮票下面那块空地上） */
   .postcard__crab {
+    --crab-roam-r: 0px;
+    --crab-roam-l: 3rem;
     left: auto;
     right: -0.2rem;
     bottom: -0.4rem;

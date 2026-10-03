@@ -13,6 +13,9 @@
      .is-walk          走路（腿交替上下）
      .is-groove        迷你播放器在放歌（戴耳机那只点头）
      .is-pose          减少动态效果时点一下换的姿势
+     以下是自主意识（useCrabMind.ts）加的：
+     .is-look .is-tiptoe .is-hop .is-roll .is-knock .is-write .is-hum   待机 / 专属小动作
+     .is-sleep .is-stretch                                              打瞌睡 / 醒来伸懒腰
    ========================================================================== */
 
 .crab {
@@ -37,7 +40,12 @@
   line-height: 1;
   vertical-align: bottom;
   cursor: pointer;
-  translate: var(--x, 0) 0;
+  /* 自主走动（useCrabMind）：--x / --y / --rot 由脚本设，用 transition 滑过去，不跑逐帧循环 */
+  translate: var(--x, 0px) var(--y, 0px);
+  rotate: var(--rot, 0deg);
+  transition:
+    translate var(--walk-ms, 0ms) var(--walk-ease, linear),
+    rotate var(--walk-ms, 0ms) ease-in-out;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
@@ -52,6 +60,7 @@
   outline: none;
 }
 .crab__svg {
+  scale: var(--dir, 1) 1; /* 转向：水平翻面 */
   display: block;
   width: 100%;
   height: 100%;
@@ -61,6 +70,18 @@
   .crab:active .crab__svg {
     transform: translateY(1px);
   }
+}
+
+/* 轨道：能往左 / 往右离开原位多少。各个位置在自己的样式里给，默认原地 */
+@property --crab-roam-l {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --crab-roam-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
 }
 
 /* 会动的几块：转动 / 翻转的支点用 clawd 坐标（Part.origin 写在行内） */
@@ -842,6 +863,174 @@
   transform: translateX(14px);
 }
 
+/* ------------------------------------------------------------ 自主意识 -- */
+@keyframes crab-roll {
+  0% {
+    transform: none;
+  }
+  12% {
+    transform: translateY(-3.5px) rotate(-10deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes crab-breathe {
+  0%,
+  100% {
+    transform: translateY(7px) scaleY(0.94);
+  }
+  50% {
+    transform: translateY(7px) scaleY(0.97);
+  }
+}
+@keyframes crab-stretch {
+  0% {
+    transform: none;
+  }
+  30%,
+  70% {
+    transform: translateY(-3.5px) scaleY(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-arms-up {
+  0% {
+    transform: none;
+  }
+  30%,
+  70% {
+    transform: translateY(-10.5px);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes crab-zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px) scale(0.7);
+  }
+  20%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(5px, -12px) scale(1.1);
+  }
+}
+
+/* 东张西望（所有造型通用） */
+.crab.is-look .crab__eyes {
+  animation: crab-glance 1200ms step-end;
+}
+/* 原地：踮脚、小跳（轨道太窄时代替走路） */
+.crab.is-tiptoe .crab__all {
+  animation: crab-bob 260ms step-end 4;
+}
+.crab.is-tiptoe .crab__legs--a {
+  animation: crab-leg-a 260ms step-end 4;
+}
+.crab.is-tiptoe .crab__legs--b {
+  animation: crab-leg-b 260ms step-end 4;
+}
+.crab.is-hop .crab__all {
+  animation: crab-hop 620ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+/* 宇航员：慢慢翻个身 */
+.crab--astronaut.is-roll .crab__all {
+  transform-origin: 56px 36px;
+  animation: crab-roll 2800ms ease-in-out;
+}
+/* 安全帽：敲卡片的角；邮差：敲邮箱 */
+.crab--builder.is-knock .crab__claw--r,
+.crab--mail.is-knock .crab__claw--r {
+  animation: crab-knock 1000ms step-end;
+}
+/* 圆眼镜：在纸边写写画画 */
+.crab--reader.is-write .crab__claw--r {
+  animation: crab-scribble-1 500ms step-end 4;
+}
+.crab--reader.is-write .crab__all {
+  animation: crab-bob 500ms step-end 4;
+}
+/* 大耳机：不放歌时偶尔哼两声，冒音符 */
+.crab--dj.is-hum .crab__all {
+  animation: crab-nod 450ms step-end 5;
+}
+.crab--dj.is-hum .crab__note1 {
+  animation: crab-note 1200ms steps(6) 100ms;
+}
+.crab--dj.is-hum .crab__note2 {
+  animation: crab-note 1200ms steps(6) 900ms;
+}
+
+/* 打瞌睡：坐下（腿收进身体、身子落一截、眼睛闭上），头顶冒 zzz */
+.crab.is-sleep .crab__all {
+  animation: crab-breathe 3200ms ease-in-out infinite !important;
+}
+.crab.is-sleep .crab__legs {
+  transform: translateY(-9px);
+}
+.crab.is-sleep .crab__eye {
+  transform: scaleY(0.12);
+}
+.crab__zzz {
+  position: absolute;
+  left: 58%;
+  bottom: 86%;
+  z-index: 3;
+  width: 3em;
+  height: 3em;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: calc(var(--crab-size) * 0.2);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--crab-say-ink, #2b2420);
+  text-shadow:
+    1px 0 var(--crab-say-bg, #fffaf0),
+    -1px 0 var(--crab-say-bg, #fffaf0),
+    0 1px var(--crab-say-bg, #fffaf0),
+    0 -1px var(--crab-say-bg, #fffaf0);
+  pointer-events: none;
+}
+.crab__zzz i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-style: normal;
+  opacity: 0;
+}
+.crab__zzz i:nth-child(2) {
+  left: 0.7em;
+  bottom: 0.7em;
+  font-size: 1.2em;
+}
+.crab__zzz i:nth-child(3) {
+  left: 1.5em;
+  bottom: 1.5em;
+  font-size: 1.45em;
+}
+.crab.is-sleep .crab__zzz i {
+  animation: crab-zzz 2800ms ease-out infinite;
+}
+.crab.is-sleep .crab__zzz i:nth-child(2) {
+  animation-delay: 700ms;
+}
+.crab.is-sleep .crab__zzz i:nth-child(3) {
+  animation-delay: 1400ms;
+}
+/* 醒来伸懒腰：身子拉长一点，两只钳子举起 */
+.crab.is-stretch .crab__all {
+  animation: crab-stretch 950ms var(--crab-ease);
+}
+.crab.is-stretch .crab__claw {
+  animation: crab-arms-up 950ms step-end;
+}
+
 /* 离开视口 / 页面隐藏：所有循环停在原地 */
 .crab.is-off,
 .crab.is-off * {
@@ -973,6 +1162,7 @@
   .crab,
   .crab * {
     animation: none !important;
+    transition: none !important;
   }
   .crab:active .crab__svg {
     transform: none;

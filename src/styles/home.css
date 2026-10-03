@@ -203,6 +203,9 @@
 .crab-slot--home .crab {
   --crab-size: 62px;
   --crab-focus: var(--sc-accent);
+  /* 漂浮的宇航员：只在光点附近一小圈里慢慢漂 */
+  --crab-roam-l: 16px;
+  --crab-roam-r: 16px;
 }
 
 .sh__dot {
