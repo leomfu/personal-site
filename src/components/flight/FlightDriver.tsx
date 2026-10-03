@@ -3,11 +3,11 @@
 import { useEffect, useRef } from "react";
 import { AWAY, FLIGHT_MS, introSkipped, markIntro } from "@/lib/intro";
 
-/** 沿江飞行占整段进度的前多少（flight.css 里 --fly = p / 0.58） */
-const FLY_END = 0.58;
+/** 沿江飞行占整段进度的前多少（flight.css 里 --fly = p / 0.425） */
+const FLY_END = 0.425;
 
 /**
- * 第 0 幕「沿江飞行」的播放器（BRIEF R12）。它不再跟着滚动走，而是一段约 10 秒、按时间播的动画：
+ * 第 0 幕「沿江飞行」的播放器（BRIEF R12）。它不再跟着滚动走，而是一段约 4 秒、按时间播的动画：
  *
  *   等着     落到江面（--fp = 0）后画面停住。访客第一次往下滑（滚轮 / 手指 / 方向键 / 空格 / 页面滚动）就开播
  *   播放中   一个 rAF 循环把进度 --fp（0..1）写在覆盖层上，画面全在 flight.css 里从 --fp 算；
@@ -81,7 +81,7 @@ export function FlightDriver() {
       p = v;
       root.style.setProperty("--fp", v.toFixed(4));
       // 结尾的几个动作（落窗台、左看、右看、踮脚、钻缝）：小螃蟹的姿势按进度切
-      const nowBeat = v < 0.66 ? "" : v < 0.72 ? "land" : v < 0.76 ? "lookl" : v < 0.8 ? "lookr" : v < 0.865 ? "tiptoe" : "slip";
+      const nowBeat = v < 0.49 ? "" : v < 0.575 ? "land" : v < 0.6375 ? "lookl" : v < 0.70 ? "lookr" : v < 0.80 ? "tiptoe" : "slip";
       if (nowBeat !== beat) {
         beat = nowBeat;
         if (nowBeat) root.dataset.beat = nowBeat;
@@ -93,9 +93,9 @@ export function FlightDriver() {
         root.toggleAttribute("data-ground", nowGround);
       }
       // 沿江飞的时候流光、速度线浓一点；转向外墙以后收住
-      root.style.setProperty("--fv", v > 0.02 && v < 0.5 ? "0.6" : "0");
+      root.style.setProperty("--fv", v > 0.02 && v < 0.37 ? "0.6" : "0");
       // 小螃蟹钻进窗缝以后，它的按钮 inert，键盘不会停在一个看不见的东西上
-      const nowGone = v > 0.91;
+      const nowGone = v > 0.8625;
       if (crabSlot && nowGone !== gone) {
         gone = nowGone;
         crabSlot.inert = nowGone;

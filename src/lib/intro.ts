@@ -30,5 +30,9 @@ export function introSkipped(): boolean {
   return window.scrollY > window.innerHeight * AWAY;
 }
 
-/** 开场的总长（毫秒）：沿江飞行约 5 秒 + 转向外墙、落窗台、张望、钻窗缝、穿窗约 5 秒 */
-export const FLIGHT_MS = 10500;
+/**
+ * 开场的总长（毫秒，R13 提速到约 4 秒）：沿江飞行约 1.7 秒，转向外墙、落窗台、张望、钻窗缝、穿窗约 2.3 秒。
+ * 想再调快慢只改这一个数：FlightDriver 的进度、楼群墙的合成器动画都按它走。
+ * 各段占总长的比例写在 flight.css 文件头和 FlightDriver 的 beat 切点里，整体快慢不用动它们。
+ */
+export const FLIGHT_MS = 4000;
