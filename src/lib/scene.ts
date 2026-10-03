@@ -151,8 +151,8 @@ export function getScene(): SceneManifest {
       tall: image("scene/flight-9x16.webp", { width: 1440, height: 2560 }, FOCUS.flightTall),
     },
     flightBands: {
-      bund: image("scene/flight-bund.webp", { width: 3024, height: 1296 }),
-      lujiazui: image("scene/flight-lujiazui.webp", { width: 3024, height: 1296 }),
+      bund: image("flight/wall-bund.webp", { width: 1361, height: 1296 }),
+      lujiazui: image("flight/wall-lujiazui.webp", { width: 1209, height: 1296 }),
     },
     facade: {
       wide: image("scene/facade-16x9.webp", { width: 2560, height: 1440 }),

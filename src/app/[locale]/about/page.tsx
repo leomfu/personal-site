@@ -167,35 +167,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <Ground />
 
       <main>
-        {/* ───────────── 0 沿江飞行（峰值，房间外面） ───────────── */}
-        <section
-          id="river"
-          data-plan-outside
-          data-sc-act="pin"
-          data-sc-span={SPAN.flight}
-          data-span-reduce={SPAN.flightReduced}
-          className="act flight"
-          style={{ height: `${SPAN.flight * 100}vh` }}
-          aria-labelledby="river-title"
-        >
-          <div data-sc-stage className="sc-stage flight__stage">
-            <FlightScene
-              scene={scene}
-              room={{ coords: `${coords.text} · ${t("landed")}`, name }}
-              crab={<Crab variant="flyer" label={crab.label.flyer} lines={crab.lines.flight} side="up" />}
-            >
-              <div className="sc-scrim sc-scrim--lead flight__scrim" aria-hidden />
-              <div className="sc-copy sc-copy--lead flight__copy" data-sc-cue="0 0.5 0 0.08">
-                <p id="river-title" className="flight__place">
-                  {tFlight("place")}
-                </p>
-                <p className="flight__coords mono">{coords.text}</p>
-              </div>
-            </FlightScene>
-            <FlightDriver />
-          </div>
-        </section>
-
         {/* ───────────── 1 书桌前 · 我是谁（到了，夜里） ───────────── */}
         <section
           id="desk"
@@ -243,6 +214,27 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <p className="desk__tagline" data-sc-cue="0.12 1 0.3 0">
                 {en ? siteConfig.taglineEn : siteConfig.tagline}
               </p>
+            </div>
+          
+            {/* 开场：沿江飞行（BRIEF R12）。盖在书桌这一幕上，访客第一次往下滑就开播，约 10 秒，穿窗进屋后淡出，
+                底下的书桌就是同一个画面；进屋后那段由 DeskLanding 接着演。页面照常可以往下滑，不锁、不抢 */}
+            <div className="flight" data-flight>
+              <div className="flight__stage">
+                <FlightScene
+                  scene={scene}
+                  room={{ coords: `${coords.text} · ${t("landed")}`, name }}
+                  crab={<Crab variant="flyer" label={crab.label.flyer} lines={crab.lines.flight} side="up" />}
+                >
+                  <div className="sc-scrim sc-scrim--lead flight__scrim" aria-hidden />
+                  <div className="sc-copy sc-copy--lead flight__copy">
+                    <p id="river-title" className="flight__place">
+                      {tFlight("place")}
+                    </p>
+                    <p className="flight__coords mono">{coords.text}</p>
+                  </div>
+                </FlightScene>
+                <FlightDriver />
+              </div>
             </div>
           </div>
         </section>

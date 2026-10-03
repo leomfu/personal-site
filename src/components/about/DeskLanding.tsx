@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { CapeArt, CrabArt, HelmetArt } from "@/components/crab/Crab";
+import { AWAY, introSkipped, markIntro } from "@/lib/intro";
 
 /**
- * 第 1 幕开场：「进屋之后」（BRIEF R11）。第 0 幕里小宇航员悄悄钻进了窗缝；书桌那一幕钉住的那一刻（顶到屏幕顶），
- * 这里自动演一小段（约 4.3 秒走到屏幕里，再加屏幕里打字、回复，一共 9 秒左右）：
- *   从窗户那边落到桌上 → 摘下头盔（弹起，落在桌上滚一下）→ 抖掉小红斗篷（飘落在桌上）
+ * 进屋之后（BRIEF R11 / R12）。第 0 幕的覆盖层播完（FlightDriver 发 wl:flightdone，小螃蟹已经钻进窗缝、镜头穿过窗洞），
+ * 这里自动接着演一小段（约 5 秒走到屏幕里，再加屏幕里打字、回复，一共 9 秒左右）：
+ *   从窗户那边落到桌上 → 摘下头盔（弹起，落在桌上滚一下，然后碎成几颗像素点散掉）→ 抖掉小红斗篷（飘落在桌上，同样碎掉散掉）
  *   → 小碎步走到 MacBook 前、爬上键盘 → 沿屏幕底边往里走、越走越小，跨过屏幕下沿时被屏幕遮住（这只在屏幕图片的下面一层）
  *   → 在 Claude 窗口里重新出现（DeskScreen 里的 .dscreen__walker，小尺寸）→ 走到输入框前，屏幕里打出「Hello Claude」、发送、回复
  *   → 跳到窗口顶边，变回桌宠（桌宠在窗口顶边上继续自主意识）
  * 全程同一时刻只有一只：桌上这只走进屏幕下沿就藏起来，屏幕里那只出现；它跳上顶边，那只藏起来，桌宠出现。
+ * 头盔和斗篷不留在桌上（R12 取消了彩蛋）：落地后碎成像素点散掉。
  *
- * 头盔和斗篷留在桌上当彩蛋：它们是 <button>，点一下（回车也行）晃一晃、冒一句话（字典 desk.helmetSay / desk.capeSay）。
- * 只播一次：同一次访问里看过（sessionStorage）、直接打开 /about/ 的书桌位置、从平面图跳过来、减少动态效果，
- * 都直接是最终状态（桌宠在屏幕上、对话完成、头盔和斗篷在桌上）。点击、按键、滚轮（开演 1.8 秒之后）都能直接跳到最终状态。
+ * 只播一次：同一次访问里看过（lib/intro）、直接打开、恢复了滚动位置、减少动态效果，都直接是最终状态
+ * （桌宠在屏幕上、对话完成）。访客一直往下滑到离开第一屏 0.7 屏以上，也直接完成。不拦滚动，不抢滚动。
  *
  * 这只是 .plate__box 的孩子：坐标用房间图本身的比例，跟着第 1 幕的视差、推镜一起动。
- * 动画用 Web Animations（只动 transform / opacity，播完就停），不开常驻循环；滚动只在 scroll 事件里看一眼位置。
+ * 动画用 Web Animations（只动 transform / opacity，播完就停），不开常驻循环。
  */
 
 type Spot = { x: number; y: number };
@@ -52,18 +52,16 @@ const TALL_QUERY = "(max-aspect-ratio: 4/5)";
 const BODY = 78 / 112;
 /** 落在桌上时比屏幕上的桌宠大一点点（离镜头近一点） */
 const DS = 1.6;
-const SEEN_KEY = "wl-desk-played";
-/** 彩蛋歇脚时的姿势 */
+/** 头盔、斗篷落地后歇脚的姿势（碎掉之前） */
 const HELMET_REST = "rotate(17deg) scale(0.92)";
 const CAPE_REST = "rotate(-8deg) scale(1.9, 1.25)";
+/** 每件衣服碎成几颗像素点 */
+const BITS = 12;
 
 type State = "waiting" | "playing" | "landed";
 
 export function DeskLanding() {
-  const t = useTranslations("desk");
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [say, setSay] = useState<"" | "helmet" | "cape">("");
-  const sayTimer = useRef(0);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -75,15 +73,14 @@ export function DeskLanding() {
     const cape = root?.querySelector<HTMLElement>(".landing__prop--cape");
     const helmetSlot = helmet?.parentElement;
     const capeSlot = cape?.parentElement;
+    const bits = root ? Array.from(root.querySelectorAll<HTMLElement>(".landing__bit")) : [];
     const spark = root?.querySelector<HTMLElement>(".landing__spark");
     if (!root || !box || !section || !mover || !crab || !helmet || !cape || !spark || !helmetSlot || !capeSlot) return;
     const perch = section.querySelector<HTMLElement>(".dscreen__perch");
     const pet = () => section.querySelector<HTMLElement>(".dscreen__crab");
     const walker = () => section.querySelector<HTMLElement>(".dscreen__walker");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let state: State = "waiting";
-    let startedAt = 0;
     const timers: number[] = [];
     const anims: Animation[] = [];
     const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
@@ -91,21 +88,6 @@ export function DeskLanding() {
       const a = el.animate(frames, { fill: "forwards", ...opts });
       anims.push(a);
       return a;
-    };
-
-    const seen = () => {
-      try {
-        return sessionStorage.getItem(SEEN_KEY) === "1";
-      } catch {
-        return false;
-      }
-    };
-    const markSeen = () => {
-      try {
-        sessionStorage.setItem(SEEN_KEY, "1");
-      } catch {
-        // 无痕模式写不了：这一次访问里就可能再播一遍，不碍事
-      }
     };
 
     /* ---------------------------------------------------------------- 几何 -- */
@@ -180,7 +162,7 @@ export function DeskLanding() {
     };
 
     /* ---------------------------------------------------------------- 最终状态 -- */
-    /** 桌宠在屏幕上、对话完成、头盔和斗篷在桌上。instant = 不是演完的而是直接跳到这里（屏幕里也得跟着直接完成） */
+    /** 桌宠在屏幕上、对话完成，桌上什么都不留。instant = 不是演完的而是直接跳到这里（屏幕里也得跟着直接完成） */
     const settle = (instant: boolean) => {
       timers.splice(0).forEach((id) => window.clearTimeout(id));
       anims.splice(0).forEach((a) => a.cancel());
@@ -189,14 +171,10 @@ export function DeskLanding() {
       const w = walker();
       if (w) w.style.opacity = "0";
       layoutRest();
-      helmet.classList.add("is-on");
-      cape.classList.add("is-on");
-      helmet.style.opacity = "1";
-      cape.style.opacity = "1";
-      helmet.style.transform = HELMET_REST;
-      cape.style.transform = CAPE_REST;
+      helmet.style.opacity = "0";
+      cape.style.opacity = "0";
       setPerch(true);
-      markSeen();
+      markIntro();
       removeSkip();
       if (instant) {
         section.setAttribute("data-final", "");
@@ -224,6 +202,32 @@ export function DeskLanding() {
     const at = (g: Geo, x: number, y: number, s: number) =>
       `translate(${(x - g.S / 2).toFixed(1)}px, ${(y - g.S * BODY).toFixed(1)}px) scale(${s.toFixed(3)})`;
 
+    /** 衣服落地后碎成几颗像素点，往四周弹开、落下、淡掉（不留在桌上） */
+    const shatter = (el: HTMLElement, c: Spot, colors: string[], g: Geo, group: number) => {
+      el.style.opacity = "0";
+      const size = Math.max(3, (g.S * DS * 3.5) / 112);
+      bits.slice(group * BITS, (group + 1) * BITS).forEach((b, i) => {
+        b.style.width = `${size}px`;
+        b.style.height = `${size}px`;
+        b.style.background = colors[i % colors.length];
+        const ang = ((i * 137.5 + group * 40) * Math.PI) / 180;
+        const dist = size * (3.5 + (i % 4) * 2.4);
+        const x = c.x - size / 2;
+        const y = c.y - size / 2;
+        const dx = Math.cos(ang) * dist;
+        const dy = Math.sin(ang) * dist * 0.55 - size * 2.5;
+        anim(
+          b,
+          [
+            { transform: `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`, opacity: 1 },
+            { transform: `translate(${(x + dx).toFixed(1)}px, ${(y + dy).toFixed(1)}px)`, opacity: 1, offset: 0.45 },
+            { transform: `translate(${(x + dx * 1.35).toFixed(1)}px, ${(y + dy + size * 4).toFixed(1)}px)`, opacity: 0 },
+          ],
+          { duration: 720 + (i % 3) * 90, easing: "cubic-bezier(0.2, 0.7, 0.4, 1)" },
+        );
+      });
+    };
+
     const play = () => {
       const g = layoutRest();
       if (!g) {
@@ -231,7 +235,6 @@ export function DeskLanding() {
         return;
       }
       state = "playing";
-      startedAt = performance.now();
       addSkip();
       const { bw, bh, S, spots } = g;
       mover.style.width = `${S}px`;
@@ -247,8 +250,6 @@ export function DeskLanding() {
 
       resetCrab();
       crab.classList.add("is-stand");
-      helmet.classList.remove("is-on");
-      cape.classList.remove("is-on");
       helmet.style.opacity = "0";
       cape.style.opacity = "0";
       mover.style.opacity = "1";
@@ -276,7 +277,6 @@ export function DeskLanding() {
         const u = (S * DS) / 112;
         const hx = D.x - (S * DS) / 2 - 10.5 * u;
         const hy = D.y - S * BODY * DS - 42 * u;
-        helmet.classList.add("is-on");
         helmet.style.opacity = "1";
         const off = (x: number, y: number, r: number, s = 1) => `translate(${(x - g.hr.x).toFixed(1)}px, ${(y - g.hr.y).toFixed(1)}px) rotate(${r}deg) scale(${s})`;
         anim(
@@ -292,6 +292,8 @@ export function DeskLanding() {
         );
       });
       later(2050, () => crab.classList.remove("is-stretch"));
+      // 头盔落地、滚一下，歇半拍，碎成像素点散掉
+      later(2750, () => shatter(helmet, { x: g.hr.x + g.hw / 2, y: g.hr.y + g.hh / 2 }, ["#e9f0fb", "#b9c9e0", "#ffffff", "#FF7A4D"], g, 0));
 
       // 3. 抖斗篷：身子左右抖三下，斗篷脱下来飘落到桌上
       later(2150, () => {
@@ -308,7 +310,6 @@ export function DeskLanding() {
         const dx = wx - g.cr.x;
         const dy = wy - g.cr.y;
         const tf = (x: number, y: number, r: number, sx: number, sy: number) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg) scale(${sx}, ${sy})`;
-        cape.classList.add("is-on");
         cape.style.opacity = "1";
         anim(
           cape,
@@ -322,6 +323,8 @@ export function DeskLanding() {
           { duration: 900, easing: "cubic-bezier(0.35, 0.1, 0.4, 1)" },
         );
       });
+      // 斗篷飘落，贴在桌上歇半拍，碎成像素点散掉
+      later(3600, () => shatter(cape, { x: g.cr.x + g.cw / 2, y: g.cr.y + g.ch / 2 }, ["#C8343C", "#E8646C", "#8E1F26"], g, 1));
 
       // 4. 小碎步走到 MacBook 前，爬上键盘，沿屏幕底边往里走、越走越小
       later(3000, () => {
@@ -441,7 +444,7 @@ export function DeskLanding() {
       state = "landed";
       layoutRest();
       setPerch(true);
-      markSeen();
+      markIntro();
       removeSkip();
       pet()?.dispatchEvent(new Event("wl:wake"));
       const r = pet()?.getBoundingClientRect();
@@ -454,48 +457,31 @@ export function DeskLanding() {
       }
     };
 
-    /* ---------------------------------------------------------------- 跳过 -- */
+    /* ---------------------------------------------------------------- 跳过 / 开演 -- */
+    // 点一下舞台、按 Esc 可以跳到最终状态；滚轮、方向键、空格都不算（访客照常往下滑，不拦）。
+    // 一直滑到离开第一屏 0.7 屏以上，就直接完成（离屏的部分不用再演）
     const skip = (event: Event) => {
       if (state !== "playing") return;
-      if (event.type === "wheel" && performance.now() - startedAt < 1800) return;
+      if (event.type === "keydown" && (event as KeyboardEvent).key !== "Escape") return;
       settle(true);
     };
     const addSkip = () => {
       window.addEventListener("pointerdown", skip, true);
       window.addEventListener("keydown", skip, true);
-      window.addEventListener("wheel", skip, { passive: true });
-      window.addEventListener("touchstart", skip, { passive: true });
     };
     function removeSkip() {
       window.removeEventListener("pointerdown", skip, true);
       window.removeEventListener("keydown", skip, true);
-      window.removeEventListener("wheel", skip);
-      window.removeEventListener("touchstart", skip);
     }
-
-    /* ---------------------------------------------------------------- 什么时候开演 -- */
-    // 书桌那一幕钉住了（顶到屏幕顶）、而且刚刚是从第 0 幕滚下来的：开演。其他情况（直接打开、从平面图跳来）直接是最终状态
-    const river = document.getElementById("river");
-    let flightSeen = -1e9;
-    let raf = 0;
-    const read = () => {
-      raf = 0;
-      if (state !== "waiting") return;
-      const vh = window.innerHeight;
-      if (river) {
-        const rr = river.getBoundingClientRect();
-        if (rr.bottom > 0 && rr.top < vh) flightSeen = performance.now();
-      }
-      const r = section.getBoundingClientRect();
-      if (r.top <= 2 && r.bottom > vh * 0.6 && !document.hidden) {
-        if (performance.now() - flightSeen < 2500) play();
-        else settle(true);
-      } else if (r.bottom < vh * 0.5) {
-        settle(true);
-      }
+    const onScroll = () => {
+      if (state !== "landed" && window.scrollY > window.innerHeight * AWAY) settle(true);
     };
-    const schedule = () => {
-      if (!raf) raf = requestAnimationFrame(read);
+    // 覆盖层（沿江飞行）播完：接着演进屋之后那段。它是滑走的才直接完成
+    const onFlightDone = (e: Event) => {
+      if (state !== "waiting") return;
+      const instant = Boolean((e as CustomEvent<{ instant: boolean }>).detail?.instant);
+      if (instant || document.hidden) settle(true);
+      else play();
     };
 
     const ro = new ResizeObserver(() => {
@@ -503,41 +489,20 @@ export function DeskLanding() {
     });
     ro.observe(box);
 
-    if (reduce || seen()) {
-      settle(true);
-    } else {
-      const r = section.getBoundingClientRect();
-      setPerch(false);
-      if (r.top <= 2 || r.bottom < window.innerHeight * 0.5) settle(true);
-    }
-    window.addEventListener("scroll", schedule, { passive: true });
-    document.addEventListener("visibilitychange", schedule);
+    setPerch(false);
+    if (introSkipped()) settle(true);
+    section.addEventListener("wl:flightdone", onFlightDone);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      cancelAnimationFrame(raf);
       ro.disconnect();
       removeSkip();
-      window.removeEventListener("scroll", schedule);
-      document.removeEventListener("visibilitychange", schedule);
+      section.removeEventListener("wl:flightdone", onFlightDone);
+      window.removeEventListener("scroll", onScroll);
       timers.forEach((id) => window.clearTimeout(id));
       anims.forEach((a) => a.cancel());
-      window.clearTimeout(sayTimer.current);
     };
   }, []);
-
-  /** 彩蛋：晃一晃、冒一句话 */
-  const poke = (which: "helmet" | "cape") => (event: ReactMouseEvent<HTMLButtonElement>) => {
-    const el = event.currentTarget.closest<HTMLElement>(".landing__prop") ?? event.currentTarget;
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.animate([{ rotate: "0deg" }, { rotate: "-12deg" }, { rotate: "9deg" }, { rotate: "-6deg" }, { rotate: "3deg" }, { rotate: "0deg" }], {
-        duration: 520,
-        easing: "ease-out",
-      });
-    }
-    setSay(which);
-    window.clearTimeout(sayTimer.current);
-    sayTimer.current = window.setTimeout(() => setSay(""), 2600);
-  };
 
   return (
     <div ref={rootRef} className="landing">
@@ -546,29 +511,19 @@ export function DeskLanding() {
           <CrabArt variant="flyer" />
         </span>
       </span>
-      <span className="landing__slot">
+      <span className="landing__slot" aria-hidden>
         <span className="landing__prop landing__prop--helmet">
-          <button type="button" className="landing__btn" aria-label={t("helmetLabel")} onClick={poke("helmet")}>
-            <HelmetArt />
-          </button>
-        </span>
-        <span className={`landing__say${say === "helmet" ? " is-on" : ""}`} aria-hidden>
-          {t("helmetSay")}
+          <HelmetArt />
         </span>
       </span>
-      <span className="landing__slot">
+      <span className="landing__slot" aria-hidden>
         <span className="landing__prop landing__prop--cape">
-          <button type="button" className="landing__btn" aria-label={t("capeLabel")} onClick={poke("cape")}>
-            <CapeArt />
-          </button>
-        </span>
-        <span className={`landing__say${say === "cape" ? " is-on" : ""}`} aria-hidden>
-          {t("capeSay")}
+          <CapeArt />
         </span>
       </span>
-      <span className="sr-only" role="status">
-        {say === "helmet" ? t("helmetSay") : say === "cape" ? t("capeSay") : ""}
-      </span>
+      {Array.from({ length: BITS * 2 }, (_, i) => (
+        <i key={i} className="landing__bit" aria-hidden />
+      ))}
       <span className="landing__spark" aria-hidden>
         <i />
         <i />

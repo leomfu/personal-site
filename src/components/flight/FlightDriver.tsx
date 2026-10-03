@@ -1,108 +1,198 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { AWAY, FLIGHT_MS, introSkipped, markIntro } from "@/lib/intro";
+
+/** 沿江飞行占整段进度的前多少（flight.css 里 --fly = p / 0.58） */
+const FLY_END = 0.58;
 
 /**
- * 第 0 幕「沿江飞行」页面侧的几件小事（画面本身全在 flight.css 里从 --sc-p 算）：
+ * 第 0 幕「沿江飞行」的播放器（BRIEF R12）。它不再跟着滚动走，而是一段约 10 秒、按时间播的动画：
  *
- *   在不在视口   IntersectionObserver 切 section 上的 .is-live：近景的闪烁、流光、薄雾只在看得见时跑（离屏暂停）
- *   滚动速度     每个 scroll 事件算一次速度，写成 --fv（0..1）；CSS 里 --fv 注册成数字并带 transition，
- *               停下来 160ms 后写 0、换成慢的 transition（.is-coast），流光和速度线慢慢收住。不开常驻 rAF
- *   鼠标视差     桌面上写 --mx / --my（-1..1），小螃蟹用 transition 跟过去
- *   飞完了       钉住结束（p = 1）后打上 data-through：透明的舞台不再挡住下面第 1 幕的点击；
- *               小螃蟹钻进窗缝以后（p > 0.91）它的按钮 inert，键盘不会停在一个看不见的东西上
- * 减少动态效果：只做最后一件。
+ *   等着     落到江面（--fp = 0）后画面停住。访客第一次往下滑（滚轮 / 手指 / 方向键 / 空格 / 页面滚动）就开播
+ *   播放中   一个 rAF 循环把进度 --fp（0..1）写在覆盖层上，画面全在 flight.css 里从 --fp 算；
+ *            同时按进度切小螃蟹的姿势（data-beat：落窗台、左看、右看、踮脚、钻缝）。页面照常可以往下滑，不锁滚动、不抢滚动
+ *   滑走了   滑到离开第一屏 0.7 屏以上，开场直接完成（覆盖层收掉，进屋后的动画也直接是最终状态）
+ *   播完     覆盖层淡出，发 wl:flightdone，进屋后那段（DeskLanding）接着自动演
+ * 直接打开 / 恢复了滚动位置 / 同一次访问里看过 / 减少动态效果：不等不播，覆盖层直接收掉。
+ * 页面隐藏时 rAF 自己会停，回来时每帧最多按 50ms 往前走，不会一下跳很远。
  */
 export function FlightDriver() {
   const ref = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-    const section = ref.current?.closest<HTMLElement>("[data-sc-act]");
-    if (!section) return;
-    const crabSlot = section.querySelector<HTMLElement>(".flight__crabslot");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const root = ref.current?.closest<HTMLElement>("[data-flight]");
+    const desk = root?.closest<HTMLElement>("[data-desk-landing]");
+    if (!root || !desk) return;
+    const crabSlot = root.querySelector<HTMLElement>(".flight__crabslot");
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-    let live = false;
-    let lastY = window.scrollY;
-    let lastT = performance.now();
-    let coastTimer = 0;
-    let through: boolean | null = null;
-    let gone: boolean | null = null;
+    type State = "waiting" | "playing" | "done";
+    let state: State = "waiting";
+    let raf = 0;
+    let p = 0;
+    let last = 0;
     let beat = "";
+    let ground = false;
+    let gone = false;
 
-    /** 钉住结束了没有、小螃蟹飞进窗户了没有（都按滚动位置算，不读 CSS） */
-    const checkEnds = () => {
-      const r = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const travel = Math.max(r.height - vh, 1);
-      const p = Math.min(1, Math.max(0, -r.top / travel));
-      const nowThrough = r.bottom <= vh + 1;
-      if (nowThrough !== through) {
-        through = nowThrough;
-        section.toggleAttribute("data-through", nowThrough);
-      }
-      // 结尾的几个动作（左看、右看、踮脚、钻缝）：小螃蟹的姿势按进度切，往回滚会原样倒着演
-      const nowBeat = p < 0.66 ? "" : p < 0.72 ? "land" : p < 0.76 ? "lookl" : p < 0.8 ? "lookr" : p < 0.865 ? "tiptoe" : "slip";
+    /* 两面楼群墙的行程交给合成器线程（WAAPI 的 transform 动画）：它的 translateZ 在 3D 透视下每帧都会改变屏幕缩放，
+       主线程逐帧改 CSS 变量的话浏览器会一遍遍重新栅格化这两张 4000×1500 的大层，GPU 上来不及铺好就闪黑（R12 量过）。
+       交给合成器后栅格化一次，之后只是 GPU 摆位置。其余层仍由 --fp 驱动 */
+    const walls: Animation[] = [];
+    const startWalls = () => {
+      const dur = FLIGHT_MS * FLY_END;
+      root.querySelectorAll<HTMLElement>(".flight__wall").forEach((el) => {
+        const rot = el.classList.contains("flight__wall--bund") ? "84deg" : "-84deg";
+        const a = el.animate(
+          [
+            { transform: `translateZ(var(--z0)) rotateY(${rot})` },
+            { transform: `translateZ(calc(var(--z0) + var(--travel))) rotateY(${rot})` },
+          ],
+          { duration: dur, easing: "linear", fill: "both" },
+        );
+        a.pause();
+        walls.push(a);
+      });
+    };
+    const seekWalls = (v: number) => walls.forEach((a) => (a.currentTime = Math.min(1, v / FLY_END) * FLIGHT_MS * FLY_END));
+    const playWalls = () => walls.forEach((a) => a.play());
+    const pauseWalls = () => walls.forEach((a) => a.pause());
+
+    const outside = (on: boolean) => window.dispatchEvent(new CustomEvent("wl:outside", { detail: on }));
+
+    const finish = (instant: boolean) => {
+      if (state === "done") return;
+      state = "done";
+      cancelAnimationFrame(raf);
+      removeTrigger();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointer);
+      root.setAttribute("data-done", "");
+      root.classList.remove("is-live");
+      walls.forEach((a) => a.cancel());
+      document.removeEventListener("visibilitychange", onVisible);
+      outside(false);
+      markIntro();
+      desk.dispatchEvent(new CustomEvent("wl:flightdone", { detail: { instant } }));
+    };
+
+    const apply = (v: number) => {
+      p = v;
+      root.style.setProperty("--fp", v.toFixed(4));
+      // 结尾的几个动作（落窗台、左看、右看、踮脚、钻缝）：小螃蟹的姿势按进度切
+      const nowBeat = v < 0.66 ? "" : v < 0.72 ? "land" : v < 0.76 ? "lookl" : v < 0.8 ? "lookr" : v < 0.865 ? "tiptoe" : "slip";
       if (nowBeat !== beat) {
         beat = nowBeat;
-        if (nowBeat && !reduce) section.dataset.beat = nowBeat;
-        else delete section.dataset.beat;
-        section.toggleAttribute("data-ground", Boolean(nowBeat) && (!reduce || p >= 0.6));
+        if (nowBeat) root.dataset.beat = nowBeat;
+        else delete root.dataset.beat;
       }
-      const nowGone = p > (reduce ? 0.8 : 0.91);
+      const nowGround = nowBeat !== "";
+      if (nowGround !== ground) {
+        ground = nowGround;
+        root.toggleAttribute("data-ground", nowGround);
+      }
+      // 沿江飞的时候流光、速度线浓一点；转向外墙以后收住
+      root.style.setProperty("--fv", v > 0.02 && v < 0.5 ? "0.6" : "0");
+      // 小螃蟹钻进窗缝以后，它的按钮 inert，键盘不会停在一个看不见的东西上
+      const nowGone = v > 0.91;
       if (crabSlot && nowGone !== gone) {
         gone = nowGone;
         crabSlot.inert = nowGone;
       }
     };
 
-    const onScroll = () => {
-      checkEnds();
-      if (reduce || !live) return;
-      const now = performance.now();
-      const y = window.scrollY;
-      const dt = Math.max(16, now - lastT);
-      const v = Math.abs(y - lastY) / dt; // px / ms
-      lastY = y;
-      lastT = now;
-      section.classList.remove("is-coast");
-      section.style.setProperty("--fv", Math.min(1, v / 2.4).toFixed(3));
-      window.clearTimeout(coastTimer);
-      coastTimer = window.setTimeout(() => {
-        section.classList.add("is-coast");
-        section.style.setProperty("--fv", "0");
-      }, 160);
+    const tick = (now: number) => {
+      raf = 0;
+      if (state !== "playing") return;
+      const dt = Math.min(50, now - last);
+      last = now;
+      const next = Math.min(1, p + dt / FLIGHT_MS);
+      apply(next);
+      if (next >= 1) finish(false);
+      else raf = requestAnimationFrame(tick);
     };
 
-    const onPointer = (event: PointerEvent) => {
-      if (!live || event.pointerType !== "mouse") return;
-      section.style.setProperty("--mx", ((event.clientX / window.innerWidth) * 2 - 1).toFixed(3));
-      section.style.setProperty("--my", ((event.clientY / window.innerHeight) * 2 - 1).toFixed(3));
-    };
-
-    const io = new IntersectionObserver((entries) => {
-      const e = entries[entries.length - 1];
-      live = e.isIntersecting;
-      section.classList.toggle("is-live", live && !reduce);
-      if (live) {
-        lastY = window.scrollY;
-        lastT = performance.now();
+    // 页面藏起来时墙的动画也停；回来时对齐到当前进度
+    const onVisible = () => {
+      if (state !== "playing") return;
+      if (document.hidden) pauseWalls();
+      else {
+        last = performance.now();
+        seekWalls(p);
+        playWalls();
       }
-    });
-    io.observe(section);
+    };
 
-    checkEnds();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", checkEnds, { passive: true });
-    if (fine && !reduce) window.addEventListener("pointermove", onPointer, { passive: true });
+    const start = () => {
+      if (state !== "waiting") return;
+      state = "playing";
+      markIntro();
+      removeTrigger();
+      root.classList.add("is-live");
+      last = performance.now();
+      seekWalls(p);
+      playWalls();
+      document.addEventListener("visibilitychange", onVisible);
+      raf = requestAnimationFrame(tick);
+    };
+
+    /* 第一次往下滑就开播（只认向下；页面滚动本身不拦） */
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) start();
+    };
+    let touchY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchY - (e.touches[0]?.clientY ?? touchY) > 6) start();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (["ArrowDown", "PageDown", " ", "End", "Spacebar"].includes(e.key)) start();
+    };
+    function removeTrigger() {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
+    }
+
+    const onScroll = () => {
+      if (window.scrollY > window.innerHeight * AWAY) finish(true);
+      else if (window.scrollY > 4) start();
+    };
+
+    /* 鼠标视差（桌面）：写 --mx / --my（-1..1），小螃蟹用 transition 跟过去 */
+    const onPointer = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      root.style.setProperty("--mx", ((event.clientX / window.innerWidth) * 2 - 1).toFixed(3));
+      root.style.setProperty("--my", ((event.clientY / window.innerHeight) * 2 - 1).toFixed(3));
+    };
+
+    if (introSkipped()) {
+      finish(true);
+    } else {
+      startWalls();
+      outside(true);
+      window.addEventListener("wheel", onWheel, { passive: true });
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: true });
+      window.addEventListener("keydown", onKey);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      if (fine) window.addEventListener("pointermove", onPointer, { passive: true });
+      // 页面刚打开时就已经滑过一点了（恢复滚动位置等）
+      onScroll();
+    }
 
     return () => {
-      io.disconnect();
-      window.clearTimeout(coastTimer);
+      cancelAnimationFrame(raf);
+      removeTrigger();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", checkEnds);
       window.removeEventListener("pointermove", onPointer);
+      walls.forEach((a) => a.cancel());
+      document.removeEventListener("visibilitychange", onVisible);
+      if (state !== "done") outside(false);
     };
   }, []);
 

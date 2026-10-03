@@ -1,6 +1,6 @@
 /* ============================================================================
    第 0 幕「沿江飞行」（components/flight/FlightScene，BRIEF R9）。全页的峰值。
-   所有运动都从 --sc-p（引擎写在 section 上）算出来，只动 transform / opacity / clip-path，没有自己的 rAF。
+   所有运动都从 --fp（0..1，FlightDriver 按时间写在覆盖层 .flight 上，约 10.5 秒）算出来，画面本身只动 transform / opacity / clip-path。
    进度分段（和 lib/tour.ts 的说明是同一组数）：
      0    – 0.58  沿江推进（--fly）：底图朝江面消失点推近，轻微摇移、侧倾（0.14 起底图两岸压暗，0.19 起楼群墙掠过）
      0.54 – 0.66  镜头从江面转向岸边，叠化成外墙（--fa），外墙从放大 1.1 倍慢慢停稳
@@ -9,11 +9,16 @@
      0.80 – 0.87  踮着脚沿窗台走到窗缝（--tp）
      0.865 – 0.91 缩着身子从窗缝钻进去（--sl）
      0.915 – 1    镜头推向窗洞，穿过去（--c1 / --ws），书房从窗洞里露出来；最后一帧 = 第 1 幕 p = 0
-   俯冲盖层里没有 --sc-p，取 0，就是第一帧。
+   俯冲盖层里没有 --fp，取 0，就是第一帧。
    原型和参数推导见 scrollcraft/builds/weiliang/lab/r7-flight/（不进 git）。
    ========================================================================== */
 
 /* 滚动速度（0..1，FlightDriver 写）。注册成 <number> 才能用 transition 平滑：滚快了流光、速度线变浓，停下来慢慢收住 */
+@property --fp {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
 @property --fv {
   syntax: "<number>";
   inherits: true;
@@ -21,24 +26,21 @@
 }
 
 .flight {
-  position: relative;
-  z-index: 2;
+  /* 覆盖层：盖在书桌那一幕的舞台上，按时间播（--fp 由 FlightDriver 写），播完淡出、收掉 */
+  position: absolute;
+  inset: 0;
+  z-index: 20;
   transition: --fv 260ms ease-out;
 }
-.flight.is-coast {
-  transition: --fv 1100ms cubic-bezier(0.23, 1, 0.32, 1);
+.flight[data-done] {
+  display: none;
 }
 .flight__stage {
+  position: absolute;
+  inset: 0;
   background: #07090c;
-  /* 到 p = 1 的那一刻整个舞台消失，第 1 幕（已经钉在同一位置、画面一样）接手 */
-  opacity: clamp(0, calc((1 - var(--sc-p, 0)) * 300), 1);
-}
-.flight[data-through] {
-  /* 飞完了：这一幕最后一屏盖在第 1 幕上面，别挡住下面的点击（桌上的头盔和斗篷是按钮） */
-  pointer-events: none;
-}
-.flight[data-through] .flight__stage {
-  visibility: hidden;
+  /* 播到头（--fp 0.96 → 1）整个覆盖层淡出，下面的书桌（已经是同一个画面）接手 */
+  opacity: clamp(0, calc((1 - var(--fp, 0)) * 25), 1);
 }
 
 .flight-scene {
@@ -86,7 +88,7 @@
   --hop: 0.05;
 
   /* ---- 进度 ---- */
-  --p: var(--sc-p, 0);
+  --p: var(--fp, 0);
   --fly: clamp(0, calc(var(--p) / 0.58), 1);
   --push: calc(1 + var(--fly) * 0.6 + var(--fly) * var(--fly) * 0.25);
   --shade: clamp(0, calc((var(--p) - 0.138) / 0.087), 1);
@@ -189,6 +191,9 @@
 .flight__base .plate__box {
   transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
   transform: scale(var(--push));
+  /* 闪黑的根治（R12）：这张 3024px 的底图每帧在放大（最大约 1.85 倍），不固定成一个合成层的话，每个新的缩放倍数
+     都会让浏览器重新栅格化一遍，GPU 上来不及铺好的块就显示成黑的。固定成一层，只让 GPU 缩放它 */
+  will-change: transform;
 }
 .tone-flight .plate__media img {
   filter: brightness(1.1) saturate(1.06);
@@ -239,41 +244,38 @@
 }
 
 /*
- * 两岸楼群墙：近黑底的楼群带贴在两面几乎和航向平行的墙上（rotateY ±84°），父层的透视原点 = 消失点，
- * 墙沿 Z 朝镜头推过来，楼一栋栋从远处长大、从屏幕两边掠出去。父层整体 screen 叠到底图上，黑底等于没有。
- * 只用楼群带里底图没有的那一段：外滩取 55%–100%（不含海关大楼、汇丰、沙逊），陆家嘴取 0–40%（不含东方明珠），
- * 任何一帧都不会出现两座同样的楼。墙四边都用遮罩淡掉，看不到矩形的边。
+ * 两岸楼群墙：楼群带贴在两面几乎和航向平行的墙上（rotateY ±84°），父层的透视原点 = 消失点，
+ * 墙沿 Z 朝镜头推过来，楼一栋栋从远处长大、从屏幕两边掠出去。
+ * 墙的图（public/flight/wall-*.webp）是从 scene/flight-bund、flight-lujiazui 用脚本裁出来的带透明通道的版本：
+ * 只取楼群带里底图没有的那一段（外滩 55%–100%，不含海关大楼、汇丰、沙逊；陆家嘴 0–40%，不含东方明珠，
+ * 任何一帧都不会出现两座同样的楼），黑底换成 alpha（亮度 = 不透明度，和原来的 screen 叠加视觉上等价），
+ * 四边的淡出也烤进 alpha 里。这样墙就是一张普通的带透明图，不用 mix-blend-mode，也不用 mask-image。
+ * （R12 闪黑的根治：原来的 screen 混合 + 4000×1500 大层套遮罩，GPU 上要多开几张离屏纹理，来不及就整面闪黑。）
  */
 .flight__bank {
   position: absolute;
   inset: 0;
   perspective: var(--persp);
   perspective-origin: var(--vpx) var(--vpy);
-  mix-blend-mode: screen;
   opacity: calc(0.85 * var(--walls));
 }
 .flight__wall {
+  will-change: transform;
   position: absolute;
   width: var(--wall-len);
   height: var(--wall-h);
   background-repeat: no-repeat;
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
 }
 .flight__wall--bund {
   left: calc(var(--vpx) - var(--x0l));
   top: calc(var(--vpy) + var(--caml) - var(--wall-h) * 0.73);
   transform-origin: 0 50%;
   transform: translateZ(calc(var(--z0) + var(--fly) * var(--travel))) rotateY(84deg);
-  background-image: var(--bund);
-  background-size: calc(100% / 0.45) 100%;
-  background-position: 100% 0;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 4%, #000 50%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
-  mask-image:
-    linear-gradient(to right, transparent 0, #000 4%, #000 50%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  /* 四边的淡出不用 mask-image（4000×1500 的 3D 墙套遮罩，GPU 上要多开一张离屏纹理，来不及就整面闪黑，R12 量过：
+     去掉这两层遮罩黑帧 = 0）。墙是 screen 叠加，黑底等于透明，所以把「淡到黑」的渐变直接画在墙自己的背景里，效果一样，不多开离屏层 */
+  background-image: var(--wall-fade-h-l), var(--wall-fade-v), var(--bund);
+  background-size: 100% 100%, 100% 100%, calc(100% / 0.45) 100%;
+  background-position: 0 0, 0 0, 100% 0;
 }
 .flight__wall--lujiazui {
   left: calc(var(--vpx) + var(--x0r) - var(--wall-len));
@@ -281,14 +283,7 @@
   transform-origin: 100% 50%;
   transform: translateZ(calc(var(--z0) + var(--fly) * var(--travel))) rotateY(-84deg);
   background-image: var(--lujiazui);
-  background-size: calc(100% / 0.4) 100%;
-  background-position: 0 0;
-  -webkit-mask-image:
-    linear-gradient(to left, transparent 0, #000 4%, #000 50%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
-  mask-image:
-    linear-gradient(to left, transparent 0, #000 4%, #000 50%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  background-size: 100% 100%;
 }
 
 /* ---------------------------------------------------------------- 近景 -- */
@@ -406,6 +401,7 @@
 }
 /* 外墙：叠化进来，从放大 1.1 倍慢慢停稳；穿窗时以窗洞中心为圆心整个推近（--ws） */
 .flight__facade {
+  will-change: transform, opacity;
   position: absolute;
   inset: 0;
   opacity: var(--fa);
@@ -558,64 +554,16 @@
 }
 
 /* ------------------------------------------------------- 减少动态效果 -- */
-/* 一张静止的江景加地点标签，然后叠化成窗户亮灯的外墙静帧（小宇航员坐在窗台上）；不推近、不摇、不滑，
-   楼群墙和流光都不出现；房间用淡入接上第 1 幕（那边的桌宠直接在屏幕上，不演变身） */
+/* 减少动态效果：不播，直接是最终状态（FlightDriver 也会立刻收掉覆盖层，这条只是首屏不闪一下江面） */
 @media (prefers-reduced-motion: reduce) {
-  .flight-scene {
-    --tp: 0;
-    --sl: 0;
-    --ws: 1;
-    --fz: 1;
-    --ce: 0;
-  }
-  .flight__world,
-  .flight__base .plate__box,
-  .flight__glints,
-  .flight__roomzoom,
-  .flight__facade,
-  .flight__crabfloat {
-    transform: none;
-    translate: none;
-    transition: none;
-  }
-  .flight__bank,
-  .flight__shade,
-  .flight__streaks {
+  .flight {
     display: none;
-  }
-  .flight__mist,
-  .flight__glints i {
-    animation: none;
-  }
-  .flight__glints i {
-    opacity: 0.55;
-  }
-  .flight__room {
-    clip-path: none;
-    opacity: clamp(0, calc((var(--p) - 0.8) / 0.17), 1);
-  }
-  .flight__room :is(.desk__scrim, .flight__roomcopy) {
-    opacity: 1;
-  }
-  .flight__crabslot {
-    transform: none;
-    opacity: calc(1 - clamp(0, calc((var(--p) - 0.78) / 0.08), 1));
-  }
-  .flight__crabslot .crab--flyer .crab__svg {
-    translate: none !important;
-    scale: none !important;
   }
 }
 
 /* ============================================================================
    第 1 幕开场：小宇航员飞进书房、摘头盔、跳上屏幕变成桌宠（components/about/DeskLanding）
    ========================================================================== */
-.desk {
-  /* 紧接在第 0 幕钉住的最后一屏下面：第 0 幕 p = 1 的那一刻，这一幕正好钉在同一个位置（画面也一样） */
-  z-index: 1;
-  margin-top: -100vh;
-  margin-top: -100svh;
-}
 /* 桌宠落地之前，窗口顶边是空的（DeskLanding 落好之后打上 data-landed） */
 .desk:not([data-landed]) .desk__far .dscreen__perch {
   opacity: 0;
@@ -668,8 +616,7 @@
   opacity: 0;
   animation: none;
 }
-/* 桌上的头盔和斗篷：彩蛋，是按钮。外面一层（.landing__slot）管位置大小（盒子的百分比，DeskLanding 写），
-   里面 .landing__prop 管姿势和动画，气泡挂在外层，不跟着歪；落地之前藏着 */
+/* 脱下来的头盔和斗篷：落地之后碎成像素点散掉（DeskLanding 摆位置、做动画），位置大小是盒子的百分比，落地之前藏着 */
 .landing__slot {
   position: absolute;
   pointer-events: none;
@@ -678,23 +625,6 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-}
-.landing__btn {
-  display: block;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  pointer-events: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.landing__prop.is-on .landing__btn {
-  pointer-events: auto;
 }
 .landing__prop--helmet {
   transform-origin: 50% 70%;
@@ -708,36 +638,15 @@
   height: 100%;
   overflow: visible;
 }
-.landing__btn:focus-visible {
-  outline: 2px solid #ffe7a3;
-  outline-offset: 4px;
-  border-radius: 4px;
-}
-.landing__say {
+/* 碎出来的像素点：方的，没有圆角，和整只螃蟹一个画风 */
+.landing__bit {
   position: absolute;
-  left: 50%;
-  bottom: 100%;
-  z-index: 3;
-  margin-bottom: 0.5em;
-  padding: 0.35em 0.7em;
-  border: 2px solid #ffe7a3;
-  border-radius: 6px;
-  background: rgb(18 14 10 / 0.88);
-  color: #fff3d6;
-  font-family: var(--sc-font-text);
-  font-size: clamp(0.78rem, 0.7rem + 0.3vw, 0.95rem);
-  line-height: 1.3;
-  white-space: nowrap;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
   opacity: 0;
-  translate: -50% 4px;
-  transition:
-    opacity 180ms var(--sc-ease-out),
-    translate 180ms var(--sc-ease-out);
   pointer-events: none;
-}
-.landing__say.is-on {
-  opacity: 1;
-  translate: -50% 0;
 }
 .landing__spark {
   position: absolute;
@@ -768,16 +677,4 @@
   .landing__mover {
     display: none;
   }
-  .landing__say {
-    transition: none;
-  }
-}
-
-/* 书桌那一幕的名字和坐标压在桌面上，别挡住桌上的头盔和斗篷（它们是按钮）；这块字本身没有可点的东西 */
-.desk .desk__copy,
-.desk .desk__copy * {
-  pointer-events: none !important; /* 引擎会把可读的文字块设成 auto，这里要压过它 */
-}
-.desk .desk__copy :is(a, button) {
-  pointer-events: auto !important;
 }

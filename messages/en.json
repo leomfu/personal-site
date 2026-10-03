@@ -86,11 +86,7 @@
     "chatTitle": "New chat",
     "hello": "Hello Claude",
     "reply": "Hi! What shall we work on today?",
-    "placeholder": "Reply…",
-    "helmetLabel": "The astronaut helmet on the desk: click and it wobbles",
-    "helmetSay": "The astronaut is off duty.",
-    "capeLabel": "The little red cape on the desk: click and it stirs",
-    "capeSay": "The cape can stay here for now."
+    "placeholder": "Reply…"
   },
   "crab": {
     "label": {

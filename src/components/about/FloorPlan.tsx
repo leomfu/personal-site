@@ -13,7 +13,7 @@ import { PLACES, type PlaceKey } from "@/lib/nav";
  * 4. 走到「窗边」，平面图缩小，换回首页那组上海坐标，首尾呼应；
  * 5. 手机上收成一个小按钮，点开是抽屉。减少动态效果时小点直接跳到所在的地方，不走路。
  * 6. 第二版：走进纸面段落之后（<html data-ground="paper">），换成彩铅画在纸上的样子，功能不变（plan.css）。
- * 7. 第 0 幕「沿江飞行」在房间外面（[data-plan-outside]）：小点停在窗外，写「窗外 · 黄浦江」；
+ * 7. 第 0 幕「沿江飞行」在房间外面（开场覆盖层在播 / 在等访客往下滑时，FlightDriver 发 wl:outside；旧的 [data-plan-outside] 章节写法仍认）：小点停在窗外，写「窗外 · 黄浦江」；
  *    穿过窗户那一段，小点从窗口进来、走到书桌前。
  *
  * 小点走在哪儿完全由滚动位置算出来（不是动画）：每一幕的顶部进到屏幕 35% 处算「到了」，
@@ -134,6 +134,12 @@ export function FloorPlan({
     let lastCurrent: PlaceKey | null = null;
     let lastOutside: boolean | null = null;
     const outsideEl = document.querySelector<HTMLElement>("[data-plan-outside]");
+    // 开场的沿江飞行（覆盖层）还在播 / 还在等访客往下滑的时候，小点停在窗外（FlightDriver 发 wl:outside）
+    let flying = false;
+    const onOutside = (e: Event) => {
+      flying = Boolean((e as CustomEvent<boolean>).detail);
+      schedule();
+    };
     let lastVisited = -1;
     let raf = 0;
 
@@ -177,9 +183,11 @@ export function FloorPlan({
       // 第 0 幕：还在房间外面。书桌那一幕的顶离屏幕顶还有三成半屏以上 = 窗外；之后这一段 = 从窗口进来走到书桌
       const deskTop = ranges[0]?.top ?? 0;
       const enter = deskTop - vh * 0.35;
-      const isOutside = Boolean(outsideEl) && y < enter;
+      const isOutside = flying || (Boolean(outsideEl) && y < enter);
       let at: [number, number] | null = null;
-      if (outsideEl && y < deskTop) {
+      if (flying) {
+        at = [OUTSIDE[0], OUTSIDE[1]];
+      } else if (outsideEl && y < deskTop) {
         const k = reduce ? (isOutside ? 0 : 1) : Math.min(1, Math.max(0, (y - enter) / (vh * 0.35)));
         if (k <= 0.35) {
           const t = k / 0.35;
@@ -225,6 +233,7 @@ export function FloorPlan({
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
     window.addEventListener("wl:engine", schedule);
+    window.addEventListener("wl:outside", onOutside);
 
     // 迷你播放器也在右下角：告诉它平面图占了多高，让它摞在上面
     // （手机上平面图收在左下角的小按钮里，和右下角的播放器不打架，就不用摞）
@@ -241,6 +250,7 @@ export function FloorPlan({
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       window.removeEventListener("wl:engine", schedule);
+      window.removeEventListener("wl:outside", onOutside);
       window.removeEventListener("resize", setOffset);
       document.documentElement.style.removeProperty("--plan-offset");
     };
