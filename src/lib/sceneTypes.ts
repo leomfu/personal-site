@@ -18,8 +18,7 @@ export type SceneImage = {
   /**
    * 画面里的关键点。地球图是上海的位置（首页光点、俯冲的放大中心都对准它）；
    * 航拍图是陆家嘴塔群（俯冲第二段推向这里）；
-   * 房间图是窗户玻璃的中心（第 1 幕的推镜、第 7 幕「窗边」都朝这里）；
-   * 沿江飞行图是江面的消失点。
+   * 房间图是窗户玻璃的中心（第 1 幕的推镜、第 7 幕「窗边」都朝这里）。
    */
   focus?: Point;
 };
@@ -40,15 +39,11 @@ export type SceneManifest = {
   /** 书房图上 MacBook 屏幕的四个角（横版、竖版各一组） */
   screen: { wide: Quad; tall: Quad };
   /**
-   * 第 0 幕「沿江飞行」的底图（BRIEF R9）：21:9 给桌面，9:16 给手机。focus 是江面的消失点，
-   * 推镜、楼群带的透视和流光都对准它。
+   * 第 0 幕「沿江飞行」的真视频（BRIEF R14，1280×720、无音轨）：src 是网页用的 mp4，
+   * first / last 是视频的第一帧和最后一帧（下降接第一帧，视频播完停在最后一帧当墙）
    */
-  flight: ScenePair;
-  /** 两岸楼群带（近黑底，用 screen 叠加）：外滩从左边掠过，陆家嘴从右边掠过 */
-  flightBands: { bund: SceneImage; lujiazui: SceneImage };
-  /** 临江住宅楼的外墙近景（第 0 幕结尾，BRIEF R10）：一扇推开的窗，窗台空着 */
-  facade: ScenePair;
-  /** 外墙图上要用到的几个点（归一化坐标，横竖各一组，看图量的，见 lib/scene.ts） */
+  flightVideo: { src: string; first: SceneImage; last: SceneImage };
+  /** 视频最后一帧（一扇推开的窗，窗台空着）上要用到的几个点（归一化坐标，看图量的，见 lib/scene.ts） */
   facadeSpots: { wide: FacadeSpots; tall: FacadeSpots };
   /**
    * 彩铅画像（暖色素描纸，不透明）：只用在首页名片上，当作一张真实的画纸。
@@ -62,7 +57,7 @@ export type SceneManifest = {
   };
 };
 
-/** 外墙图上的关键点（归一化坐标） */
+/** 视频最后一帧上的关键点（归一化坐标） */
 export type FacadeSpots = {
   /** 小宇航员落在窗台上的脚底位置 */
   sill: Point;

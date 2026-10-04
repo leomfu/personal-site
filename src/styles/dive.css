@@ -6,7 +6,7 @@
    超人姿势的小螃蟹（.dive__hero）不在淡入的那一层里：点下去的第一帧它就在首页那只的位置上，
    飞行路径用 Web Animations 写在 DiveProvider 里（起点要量首页那只）。
    --ox / --oy 是上海光点在屏幕上的位置（准星用）。
-   三张图都套着和首页 / 第 0 幕一样的调色（.tone-earth / .tone-aerial / .tone-flight），接缝处才对得上。
+   三张图都套着和首页 / 第 0 幕一样的调色（.tone-earth / .tone-aerial；视频第一帧不调色，视频本身也不调），接缝处才对得上。
    ========================================================================== */
 
 .dive {
@@ -103,7 +103,7 @@ html[data-dive] .crab-slot--home {
 /* 江面起点：叠化进来、从 1.2 倍停到 1。放大中心大约是江面的消失点；停下来是 scale(1)，和第 0 幕第一帧一模一样 */
 .dive__flight {
   opacity: 0;
-  transform-origin: 59% 55%;
+  transform-origin: 50% 50%;
 }
 .is-fall .dive__flight {
   animation:

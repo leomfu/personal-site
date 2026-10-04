@@ -31,8 +31,11 @@ export function introSkipped(): boolean {
 }
 
 /**
- * 开场的总长（毫秒，R13 提速到约 4 秒）：沿江飞行约 1.7 秒，转向外墙、落窗台、张望、钻窗缝、穿窗约 2.3 秒。
- * 想再调快慢只改这一个数：FlightDriver 的进度、楼群墙的合成器动画都按它走。
- * 各段占总长的比例写在 flight.css 文件头和 FlightDriver 的 beat 切点里，整体快慢不用动它们。
+ * 开场的两段时长（毫秒，BRIEF R14：江面飞行换成真视频）。想调快慢只改这两个数：
+ *   VIDEO_MS  视频（原片 10 秒）加速到多长播完，FlightDriver 按视频实际时长算 playbackRate；这一段里小宇航员叠在视频前面飞
+ *   SNEAK_MS  视频停在最后一帧（窗户）以后：落窗台、左右看、踮脚、钻窗缝、镜头穿窗进屋
+ * 各动作占 SNEAK_MS 的比例写在 flight.css 文件头和 FlightDriver 的 beat 切点里，整体快慢不用动它们。
+ * 进屋后那段（DeskLanding）的时长不在这里，不受影响。
  */
-export const FLIGHT_MS = 4000;
+export const VIDEO_MS = 3500;
+export const SNEAK_MS = 1500;

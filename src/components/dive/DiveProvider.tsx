@@ -24,7 +24,7 @@ import type { SceneManifest } from "@/lib/sceneTypes";
  * 首页点上海的光点或「降落，进来看看」→ 这里接管：
  *   fall   点下去立刻开始，一共约 1.3 秒，自动播放：
  *            首页那只宇航员小螃蟹原地换成超人飞行姿势（斗篷、速度线），先往后一缩、再冲出去，跟着镜头往下飞；
- *            地球朝上海推进 → 叠化成上海航拍、继续往下 → 叠化成黄浦江上的起点（第 0 幕「沿江飞行」的第一帧），
+ *            地球朝上海推进 → 叠化成上海航拍、继续往下 → 叠化成黄浦江上的起点（第 0 幕「沿江飞行」的第一帧 = 视频第一帧的静帧），
  *            小螃蟹正好落在它在第 0 幕里的位置上
  *          航拍图（public/scene/aerial-*.webp）不在时跳过中间那段，约 1 秒
  *   land   画面停在江面起点（= 第 0 幕 p = 0），这时才跳到 /about/
@@ -36,7 +36,7 @@ import type { SceneManifest } from "@/lib/sceneTypes";
  *
  * 这一层挂在 [locale]/layout 上（跳页时不卸载），所以盖层能跨过路由切换一直留在屏幕上，
  * 两头才接得上：开头是首页的那张地球，结尾是第 0 幕的第一帧。
- * 点下去的那一刻顺手预加载飞行图（光标移到入口上时也会先预加载一次）。
+ * 点下去的那一刻顺手预加载视频和它的首尾帧（光标移到入口上、键盘聚焦到入口时也会先预加载一次）。
  */
 
 type Phase = "idle" | "fall" | "land" | "out";
@@ -52,7 +52,6 @@ export function useDive() {
 
 /** 下降的总长（和 dive.css 里的关键帧时间对齐）：有航拍 / 没有航拍 */
 const FALL = { three: 1320, two: 1000 } as const;
-const TALL_QUERY = "(max-aspect-ratio: 4/5)";
 
 export function DiveProvider({ scene, children }: { scene: SceneManifest; children: ReactNode }) {
   const router = useRouter();
@@ -66,24 +65,30 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
   const heroRef = useRef<HTMLSpanElement | null>(null);
   const heroAnim = useRef<Animation | null>(null);
   const preloaded = useRef(false);
+  const preloadVideo = useRef<HTMLVideoElement | null>(null);
 
   const go = useCallback((next: Phase) => {
     phaseRef.current = next;
     setPhase(next);
   }, []);
 
-  /** 预加载第 0 幕要用的图：这一台设备用的那张底图 + 两条楼群带 */
+  /** 预加载第 0 幕要用的素材：视频第一帧（下降要叠化到它）、最后一帧，加视频本身（preload=auto 的隐藏 video，留着引用不被回收，第 0 幕里同一个地址就从缓存出） */
   const preload = useCallback(() => {
     if (preloaded.current) return;
     preloaded.current = true;
-    const tall = window.matchMedia(TALL_QUERY).matches && scene.flight.tall.exists;
-    const srcs = [tall ? scene.flight.tall.src : scene.flight.wide.src, scene.flightBands.bund.src, scene.flightBands.lujiazui.src];
-    for (const src of srcs) {
-      const img = new Image();
-      img.decoding = "async";
-      img.src = src;
+    const { first, last, src } = scene.flightVideo;
+    for (const img of [first.src, last.src]) {
+      const el = new Image();
+      el.decoding = "async";
+      el.src = img;
     }
-  }, [scene.flight, scene.flightBands]);
+    const v = document.createElement("video");
+    v.muted = true;
+    v.preload = "auto";
+    v.src = src;
+    v.load();
+    preloadVideo.current = v;
+  }, [scene.flightVideo]);
 
   /** 落地：画面停在江面起点，然后才跳页 */
   const land = useCallback(() => {
@@ -222,7 +227,7 @@ export function DiveProvider({ scene, children }: { scene: SceneManifest; childr
               </div>
             )}
             <div className="dive__flight">
-              <FlightScene scene={scene} live />
+              <FlightScene scene={scene} />
             </div>
             <div className="dive__reticle" aria-hidden>
               <span />

@@ -32,14 +32,6 @@ const FOCUS = {
   roomWide: { x: 0.51, y: 0.27 },
   /** 房间 9:16：窗户玻璃的中心 */
   roomTall: { x: 0.6, y: 0.22 },
-  /**
-   * 沿江飞行 21:9：江面的消失点（两岸堤线延长后交在一起的地方）。2026-10-03 看图量的：
-   * 外滩堤线过 (0.40, 0.60)、(0.54, 0.545)，陆家嘴堤线过 (0.70, 0.575)、(0.585, 0.545)，交点约 (0.56, 0.55)。
-   * 第 0 幕的推镜、两侧楼群带的透视、江面流光都以它为中心。
-   */
-  flightWide: { x: 0.56, y: 0.55 },
-  /** 沿江飞行 9:16：江面从外白渡桥下穿过去的地方（桥的中墩，水面上沿） */
-  flightTall: { x: 0.63, y: 0.55 },
 } satisfies Record<string, Point>;
 
 /**
@@ -66,26 +58,26 @@ const SCREEN = {
 } satisfies Record<string, Quad>;
 
 /**
- * 外墙图（facade）上的关键点，2026-10-03 对着 facade-16x9 / 9x16 看图量的（BRIEF R10 / R11）：
- *   横版：左扇推开在外面，缝在左：窗台台面 x 0.30–0.59、y 0.74–0.80，推开的窗扇在 x 0.32–0.40，
- *         窗扇和中梃之间的缝在 x ≈ 0.42；窗洞（亮灯的玻璃）x 0.335–0.535、y 0.16–0.74。
- *   竖版：右扇推开在外面，缝在右：窗台台面 x 0.30–0.58、y 0.62–0.67，窗扇铰链在 x ≈ 0.46；
- *         窗洞 x 0.30–0.62、y 0.26–0.61。
+ * 视频最后一帧（flight-video-last.webp，1280×720）上的关键点，2026-10-04 对着这一帧量的（BRIEF R14）：
+ *   一扇白框窗，左扇向外推开（窗扇 x 0.21–0.33，挂着红窗帘的是推开后露出的左格，x 0.335–0.52），右边是固定的一格（看得见外滩）；
+ *   窗洞（框内侧）x 0.335–0.69、y 0.07–0.82；窗台（浅色木面）台面 x 0.29–0.74、y 0.85–0.96。
+ *   小宇航员落在窗台右半（sill），踮着脚沿窗台走到左格下沿的窗缝（gap），再钻进去；穿窗时镜头朝窗洞中心（origin）推近。
+ * 竖屏手机是同一张图居中 cover 裁切（只看得到中间 x 0.34–0.66），所以竖版的点往中间收；手机端只要能用。
  */
 const FACADE = {
   wide: {
-    sill: { x: 0.52, y: 0.757 },
-    gap: { x: 0.425, y: 0.775 },
-    origin: { x: 0.435, y: 0.45 },
-    hole: { l: 0.335, r: 0.535, t: 0.16, b: 0.74 },
-    zk: 0.8,
+    sill: { x: 0.62, y: 0.885 },
+    gap: { x: 0.47, y: 0.865 },
+    origin: { x: 0.512, y: 0.445 },
+    hole: { l: 0.335, r: 0.69, t: 0.07, b: 0.82 },
+    zk: 0.66,
   },
   tall: {
-    sill: { x: 0.34, y: 0.655 },
-    gap: { x: 0.5, y: 0.64 },
-    origin: { x: 0.46, y: 0.435 },
-    hole: { l: 0.3, r: 0.62, t: 0.26, b: 0.61 },
-    zk: 0.72,
+    sill: { x: 0.58, y: 0.885 },
+    gap: { x: 0.47, y: 0.865 },
+    origin: { x: 0.512, y: 0.445 },
+    hole: { l: 0.335, r: 0.69, t: 0.07, b: 0.82 },
+    zk: 0.5,
   },
 } satisfies Record<string, FacadeSpots>;
 
@@ -146,17 +138,10 @@ export function getScene(): SceneManifest {
       tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }, FOCUS.roomTall),
     },
     screen: { wide: SCREEN.roomWide, tall: SCREEN.roomTall },
-    flight: {
-      wide: image("scene/flight-21x9.webp", { width: 3024, height: 1296 }, FOCUS.flightWide),
-      tall: image("scene/flight-9x16.webp", { width: 1440, height: 2560 }, FOCUS.flightTall),
-    },
-    flightBands: {
-      bund: image("flight/wall-bund.webp", { width: 1361, height: 1296 }),
-      lujiazui: image("flight/wall-lujiazui.webp", { width: 1209, height: 1296 }),
-    },
-    facade: {
-      wide: image("scene/facade-16x9.webp", { width: 2560, height: 1440 }),
-      tall: image("scene/facade-9x16.webp", { width: 1440, height: 2560 }),
+    flightVideo: {
+      src: "/scene/flight-video.mp4",
+      first: image("scene/flight-video-first.webp", { width: 1280, height: 720 }),
+      last: image("scene/flight-video-last.webp", { width: 1280, height: 720 }),
     },
     facadeSpots: FACADE,
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),

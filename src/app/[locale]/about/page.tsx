@@ -51,8 +51,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * 彩铅批注和爱好涂鸦随滚动一笔一笔画出来。
  *
  *   幕  地方     device                     span   情绪
- *   0   沿江飞行 覆盖层（按时间播，约 10 秒）  —     飞起来了（BRIEF R9 / R12）：访客第一次往下滑就开播，跟着小宇航员贴着
- *                                                  黄浦江飞，两岸的楼迎面掠过，转向外墙，它从窗缝溜进屋里；盖在第 1 幕上面
+ *   0   沿江飞行 覆盖层（真视频，约 5 秒）    —     飞起来了（BRIEF R12 / R14）：访客第一次往下滑就开播视频，跟着小宇航员贴着
+ *                                                  黄浦江飞，转向岸边一栋红砖楼，落到窗台上，它从窗缝溜进屋里；盖在第 1 幕上面
  *   1   书桌前   pin + parallax（四层）      2.6    到了：小宇航员落到书桌、摘下头盔、跳上屏幕变成桌宠
  *   1尾 书桌前   flow（纸盖上来）            自然   他的自述（content/about），速写本第一页
  *   2   屏幕     pan + count                 1.9    惊讶：原来是真在跑的
@@ -217,7 +217,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               </p>
             </div>
           
-            {/* 开场：沿江飞行（BRIEF R12）。盖在书桌这一幕上，访客第一次往下滑就开播，约 10 秒，穿窗进屋后淡出，
+            {/* 开场：沿江飞行（BRIEF R12）。盖在书桌这一幕上，访客第一次往下滑就开播，一段加速到约 3.5 秒的真视频加约 1.5 秒落窗台、钻缝、穿窗，穿窗进屋后淡出，
                 底下的书桌就是同一个画面；进屋后那段由 DeskLanding 接着演。页面照常可以往下滑，不锁、不抢 */}
             <div className="flight" data-flight>
               <div className="flight__stage">

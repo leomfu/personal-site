@@ -5,54 +5,17 @@ import { DESK_LANDING_SHIFT } from "@/lib/tour";
 import type { FacadeSpots, SceneManifest } from "@/lib/sceneTypes";
 
 /**
- * 第 0 幕「沿江飞行」的画面（BRIEF R9）。没有 hook：完整介绍页（服务端）和俯冲盖层（客户端）共用同一份，
- * 俯冲最后一帧和第 0 幕 p = 0 才能一模一样。
+ * 第 0 幕「沿江飞行」的画面（BRIEF R14）：站主用别的软件生成的一段真视频（夜里贴着黄浦江飞，转向岸边一栋红砖楼，停在一扇窗前），
+ * 不再用照片拼 2.5D。没有 hook：完整介绍页（服务端）和俯冲盖层（客户端）共用同一份，俯冲最后一帧和第 0 幕开场才能一模一样。
  *
- * 所有运动都在 styles/flight.css 里从 --sc-p（引擎写在 section 上，0..1）算出来，只动 transform / opacity / clip-path：
- *   世界层  底图朝江面消失点推近 + 轻微的左右摇移和侧倾；两岸楼群带是两面「透视墙」，
- *          朝镜头流过去（从两岸之间穿过）；楼群带出现时，底图两岸先压暗，楼群带替换它们而不是叠上去
- *   近景    江面光点闪烁、掠过的流光（浓淡跟滚动速度 --fv）、薄雾
- *   结尾    镜头转向一扇亮着暖灯的窗户，窗户越来越大，房间从窗洞里露出来（clip-path），
- *          最后一帧 = 第 1 幕书桌前 p = 0 的样子（房间、屏幕、左下角的名字）
- * 俯冲盖层里 --sc-p 不存在，取默认 0，就是第 0 幕的第一帧。
+ *   静帧   视频第一帧（flight-video-first.webp）：落到江面后画面停在这一帧，等访客下滑；俯冲盖层里只有这一层
+ *   视频   第一次下滑开播（FlightDriver 控制播放速度和进度），播完停在最后一帧，这一帧就是「墙」
+ *   窗洞   穿窗时整面墙以窗洞中心为圆心推近，窗洞里的房间 = 第 1 幕 p = 0，最后一帧 = 书桌前的样子
+ * 所有运动都在 styles/flight.css 里从 --vp（视频进度 0..1）和 --sp（落窗台到穿窗进度 0..1）算出来，只动 transform / opacity / clip-path。
+ * 俯冲盖层里没有这两个变量，取默认 0，就是开场第一帧。
  */
 
-/** 江面光点：在水面那一片随手撒的位置（百分比）和闪的节奏，写死，服务端客户端一致 */
-const GLINTS: Array<[number, number, number, number]> = [
-  [8, 66, 0.0, 2.6],
-  [17, 78, 1.1, 3.1],
-  [24, 63, 0.5, 2.2],
-  [31, 88, 1.8, 2.9],
-  [38, 71, 0.9, 2.4],
-  [44, 60, 2.2, 3.4],
-  [49, 82, 0.3, 2.7],
-  [55, 66, 1.5, 2.1],
-  [61, 93, 2.6, 3.2],
-  [66, 74, 0.7, 2.5],
-  [72, 62, 1.9, 2.8],
-  [78, 85, 0.2, 2.3],
-  [84, 69, 1.3, 3.0],
-  [90, 77, 2.4, 2.6],
-  [95, 64, 0.8, 3.3],
-  [35, 95, 1.6, 2.4],
-];
-
-/** 掠过的流光：从消失点往外的方向（度，0 = 正右，顺时针；都在水面那一半）、时长、起步延迟 */
-const STREAKS: Array<[number, number, number]> = [
-  [5, 1.5, 0.0],
-  [13, 1.2, 0.6],
-  [24, 1.7, 0.2],
-  [41, 1.3, 1.0],
-  [63, 1.6, 0.4],
-  [88, 1.25, 0.8],
-  [112, 1.55, 0.1],
-  [136, 1.35, 0.7],
-  [152, 1.7, 0.3],
-  [166, 1.2, 0.9],
-  [175, 1.45, 0.5],
-];
-
-/** 外墙图的关键点 → CSS 变量（w = 横版，t = 竖版） */
+/** 窗户关键点 → CSS 变量（w = 横版，t = 竖版） */
 function spotVars(k: "w" | "t", v: FacadeSpots) {
   return {
     [`--sill-x-${k}`]: v.sill.x,
@@ -69,15 +32,14 @@ function spotVars(k: "w" | "t", v: FacadeSpots) {
   };
 }
 
-/** 外墙图的比例和关键点，写成 CSS 变量（第 0 幕、俯冲盖层里起飞的那只都要用，位置公式在 flight.css 里） */
+/** 视频最后一帧（窗户）的比例和关键点，写成 CSS 变量（第 0 幕、俯冲盖层里起飞的那只都要用，位置公式在 flight.css 里） */
 export function facadeVars(scene: SceneManifest): CSSProperties {
-  const { facade, facadeSpots: spots } = scene;
-  const facadeT = facade.tall.exists ? facade.tall : facade.wide;
+  const { last } = scene.flightVideo;
+  const { wide, tall } = scene.facadeSpots;
   return {
-    "--far-w": (facade.wide.width / facade.wide.height).toFixed(5),
-    "--far-t": (facadeT.width / facadeT.height).toFixed(5),
-    ...spotVars("w", spots.wide),
-    ...spotVars("t", spots.tall),
+    "--far": (last.width / last.height).toFixed(5),
+    ...spotVars("w", wide),
+    ...spotVars("t", tall),
   } as CSSProperties;
 }
 
@@ -85,78 +47,37 @@ export function FlightScene({
   scene,
   crab,
   room,
-  live = false,
   className,
   children,
 }: {
   scene: SceneManifest;
   /** 飞在前面的那只小螃蟹（第 0 幕里是能点的 Crab；俯冲盖层里不放，起飞的那只单独飞过来） */
   crab?: ReactNode;
-  /** 穿过窗户后的房间：第 1 幕 p = 0 时左下角那两行字。不给就不画房间（俯冲盖层用不到） */
+  /** 给了就画视频、最后一帧和窗洞里的房间（第 0 幕）；不给就只画第一帧静帧（俯冲盖层）。房间 = 第 1 幕 p = 0 时左下角那两行字 */
   room?: { coords: string; name: string } | null;
-  /** 近景的闪烁、流光直接开着（俯冲盖层；第 0 幕由 FlightDriver 按在不在视口切换 .is-live） */
-  live?: boolean;
   className?: string;
   /** 文字（地点标签），叠在最上面 */
   children?: ReactNode;
 }) {
-  const { flight, flightBands } = scene;
-  const wide = flight.wide;
-  const tall = flight.tall.exists ? flight.tall : flight.wide;
-  const style = {
-    "--ar-w": (wide.width / wide.height).toFixed(5),
-    "--ar-t": (tall.width / tall.height).toFixed(5),
-    "--fx-w": wide.focus?.x ?? 0.5,
-    "--fy-w": wide.focus?.y ?? 0.5,
-    "--fx-t": tall.focus?.x ?? 0.5,
-    "--fy-t": tall.focus?.y ?? 0.5,
-    ...facadeVars(scene),
-    "--bund": flightBands.bund.exists ? `url(${flightBands.bund.src})` : "none",
-    "--lujiazui": flightBands.lujiazui.exists ? `url(${flightBands.lujiazui.src})` : "none",
-  } as CSSProperties;
+  const { src, first, last } = scene.flightVideo;
 
   return (
-    <div className={["flight-scene", live ? "is-live" : "", className ?? ""].filter(Boolean).join(" ")} style={style}>
+    <div className={["flight-scene", className ?? ""].filter(Boolean).join(" ")} style={facadeVars(scene)}>
       <div className="flight__frame" aria-hidden>
-        <div className="flight__river">
-        {/* 世界层：底图 + 两岸压暗 + 两面楼群墙，一起摇移、侧倾 */}
-        <div className="flight__world">
-          <div className="flight__base">
-            <ScenePlate pair={flight} position={{ x: 0.5, y: 0.5 }} positionTall={{ x: 0.8, y: 0.5 }} eager className="tone-flight" />
-          </div>
-          <div className="flight__shade" />
-          <div className="flight__bank">
-            <div className="flight__wall flight__wall--bund" />
-            <div className="flight__wall flight__wall--lujiazui" />
-          </div>
+        {/* 墙：第一帧静帧 → 视频 →（视频播不了时）最后一帧静帧。穿窗时整面以窗洞中心推近 */}
+        {/* 静帧是 CSS 里自己做的 cover（和视频同一套算法），不用 next/image；alt 为空 = 装饰图 */}
+        {/* eslint-disable @next/next/no-img-element */}
+        <div className="flight__wallbox">
+          {first.exists && <img className="flight__still flight__still--first" src={first.src} alt="" decoding="async" fetchPriority="high" />}
+          {room && (
+            <>
+              {last.exists && <img className="flight__still flight__still--last" src={last.src} alt="" decoding="async" loading="lazy" />}
+              {/* 视频不带 src 出厂：FlightDriver 确认要播（没看过、没减少动态效果）才设 src，看过的访客不会白下载 */}
+              <video className="flight__video" data-src={src} muted playsInline preload="none" disablePictureInPicture tabIndex={-1} />
+            </>
+          )}
         </div>
-
-        {/* 近景：薄雾、江面光点、掠过的流光 */}
-        <div className="flight__mist" />
-        <div className="flight__glints">
-          {GLINTS.map(([x, y, delay, dur], i) => (
-            <i
-              key={i}
-              style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${delay}s`, animationDuration: `${dur}s` } as CSSProperties}
-            />
-          ))}
-        </div>
-        <div className="flight__streaks">
-          {STREAKS.map(([angle, dur, delay], i) => (
-            <span key={i} style={{ rotate: `${angle}deg` } as CSSProperties}>
-              <i style={{ animationDuration: `${dur}s`, animationDelay: `${delay}s` } as CSSProperties} />
-            </span>
-          ))}
-        </div>
-
-        </div>
-
-        {/* 外墙：江面转向岸边，叠化成这面墙，窗户长在楼上（BRIEF R10） */}
-        {room && (
-          <div className="flight__facade">
-            <ScenePlate pair={scene.facade} className="tone-facade" />
-          </div>
-        )}
+        {/* eslint-enable @next/next/no-img-element */}
 
         {/* 结尾：窗洞里的房间 = 第 1 幕 p = 0（远景同样放大 1.05、同样的落地位移；屏幕上还没有桌宠） */}
         {room && (
@@ -177,7 +98,6 @@ export function FlightScene({
             </div>
           </div>
         )}
-
       </div>
 
       {crab && (
