@@ -5,11 +5,9 @@ import { Caveat, Geist, Geist_Mono, Ma_Shan_Zheng, Noto_Sans_SC } from "next/fon
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@/components/analytics/Analytics";
-import { DiveProvider } from "@/components/dive/DiveProvider";
 import { PlayerProvider } from "@/components/player/PlayerProvider";
 import { PencilDefs } from "@/components/sketch/PencilDefs";
 import { getMusic } from "@/lib/content";
-import { getScene } from "@/lib/scene";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -70,13 +68,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <noscript dangerouslySetInnerHTML={{ __html: `<style>${NO_SCRIPT_CSS}</style>` }} />
         <PencilDefs />
         <NextIntlClientProvider>
-          {/*
-           * 播放器和俯冲过渡都挂在这一层：它是所有页面的共同祖先，客户端跳页不会卸载。
-           * 播放器在这儿，离开唱片页音乐才不断；俯冲在这儿，盖层才能跨过路由切换一直留在屏幕上。
-           */}
-          <PlayerProvider library={getMusic()}>
-            <DiveProvider scene={getScene()}>{children}</DiveProvider>
-          </PlayerProvider>
+          {/* 播放器挂在这一层：它是所有页面的共同祖先，客户端跳页不会卸载，离开唱片页音乐才不断 */}
+          <PlayerProvider library={getMusic()}>{children}</PlayerProvider>
         </NextIntlClientProvider>
         <div className="sc-grain" aria-hidden />
         <Analytics />

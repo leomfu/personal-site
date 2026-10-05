@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { FacadeSpots, Point, Quad, SceneImage, SceneManifest, SceneVideo } from "./sceneTypes";
+import type { Point, Quad, SceneImage, SceneManifest } from "./sceneTypes";
 
 /**
  * 场景素材清单（2026-10 改版，scroll-craft）。只在构建时跑（有 node:fs）。
@@ -9,8 +9,8 @@ import type { FacadeSpots, Point, Quad, SceneImage, SceneManifest, SceneVideo } 
  * 然后重新构建。每个文件的用途、尺寸要求、当前是占位还是正式、替换步骤，
  * 见 scrollcraft/builds/weiliang/ASSETS.md。
  *
- * - 文件不在：exists=false，页面走后备（俯冲是「地球 → 航拍 → 江面起点」，航拍不在就跳过那一段；
- *   2026-10-03 起俯冲不再用视频，也不再落到书房，BRIEF R9）。
+ * - 文件不在：exists=false，页面走后备（不画图，只留文字）。
+ *   2026-10-05 开场（俯冲、沿江飞行、窗户）整套下线，航拍 / 飞行 / 外墙素材一并删掉。
  * - 宽高：构建时直接读 webp 文件头，换了尺寸不用改这里。
  * - focus（上海在地球图上的位置、窗户在房间图上的位置）**要人看图量出来**，
  *   换了图之后改下面 FOCUS 这几个数。量法见 ASSETS.md。
@@ -24,10 +24,6 @@ const FOCUS = {
   earthWide: { x: 0.46, y: 0.63 },
   /** 地球 9:16：上海（东方明珠那片） */
   earthTall: { x: 0.48, y: 0.63 },
-  /** 航拍 16:9：陆家嘴塔群 */
-  aerialWide: { x: 0.52, y: 0.55 },
-  /** 航拍 9:16：陆家嘴塔群 */
-  aerialTall: { x: 0.5, y: 0.5 },
   /** 房间 16:9：窗户玻璃的中心（在笔记本上方；笔记本比显示器矮，窗户露得更多，BRIEF R7） */
   roomWide: { x: 0.51, y: 0.27 },
   /** 房间 9:16：窗户玻璃的中心 */
@@ -56,30 +52,6 @@ const SCREEN = {
     { x: 0.35, y: 0.683 },
   ],
 } satisfies Record<string, Quad>;
-
-/**
- * 视频最后一帧（flight-video-last.webp，1280×720）上的关键点，2026-10-04 对着这一帧量的（BRIEF R14）：
- *   一扇白框窗，左扇向外推开（窗扇 x 0.21–0.33，挂着红窗帘的是推开后露出的左格，x 0.335–0.52），右边是固定的一格（看得见外滩）；
- *   窗洞（框内侧）x 0.335–0.69、y 0.07–0.82；窗台（浅色木面）台面 x 0.29–0.74、y 0.85–0.96。
- *   小宇航员落在窗台右半（sill），踮着脚沿窗台走到左格下沿的窗缝（gap），再钻进去；穿窗时镜头朝窗洞中心（origin）推近。
- * 竖屏手机是同一张图居中 cover 裁切（只看得到中间 x 0.34–0.66），所以竖版的点往中间收；手机端只要能用。
- */
-const FACADE = {
-  wide: {
-    sill: { x: 0.62, y: 0.885 },
-    gap: { x: 0.47, y: 0.865 },
-    origin: { x: 0.512, y: 0.445 },
-    hole: { l: 0.335, r: 0.69, t: 0.07, b: 0.82 },
-    zk: 0.66,
-  },
-  tall: {
-    sill: { x: 0.58, y: 0.885 },
-    gap: { x: 0.47, y: 0.865 },
-    origin: { x: 0.512, y: 0.445 },
-    hole: { l: 0.335, r: 0.69, t: 0.07, b: 0.82 },
-    zk: 0.5,
-  },
-} satisfies Record<string, FacadeSpots>;
 
 /** 读 webp 文件头拿宽高（VP8 / VP8L / VP8X 三种都认）。读不出来返回 null */
 function webpSize(file: string): { width: number; height: number } | null {
@@ -119,37 +91,18 @@ function image(rel: string, fallback: { width: number; height: number }, focus?:
   };
 }
 
-function video(rel: string): SceneVideo {
-  return { src: `/${rel}`, exists: fs.existsSync(path.join(PUBLIC, rel)) };
-}
-
 export function getScene(): SceneManifest {
   return {
     earth: {
       wide: image("scene/earth-16x9.webp", { width: 2560, height: 1440 }, FOCUS.earthWide),
       tall: image("scene/earth-9x16.webp", { width: 1440, height: 2560 }, FOCUS.earthTall),
     },
-    aerial: {
-      wide: image("scene/aerial-16x9.webp", { width: 2560, height: 1440 }, FOCUS.aerialWide),
-      tall: image("scene/aerial-9x16.webp", { width: 1440, height: 2560 }, FOCUS.aerialTall),
-    },
     room: {
       wide: image("scene/room-16x9.webp", { width: 2560, height: 1440 }, FOCUS.roomWide),
       tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }, FOCUS.roomTall),
     },
     screen: { wide: SCREEN.roomWide, tall: SCREEN.roomTall },
-    flightVideo: {
-      src: "/scene/flight-video.mp4",
-      first: image("scene/flight-video-first.webp", { width: 1280, height: 720 }),
-      last: image("scene/flight-video-last.webp", { width: 1280, height: 720 }),
-    },
-    facadeSpots: FACADE,
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),
-    dive: {
-      wide: video("scene/dive-16x9.mp4"),
-      tall: video("scene/dive-9x16.mp4"),
-      poster: image("scene/dive-poster.webp", { width: 1920, height: 1080 }),
-    },
   };
 }
 

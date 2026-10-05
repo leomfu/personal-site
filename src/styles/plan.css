@@ -424,8 +424,3 @@ html[data-ground="paper"] .plan__tip {
     background: color-mix(in oklab, #3b2a18 40%, transparent);
   }
 }
-
-/* 第 0 幕在房间外面：小点停在窗外（画出 viewBox 一点点也要看得见） */
-.plan__svg {
-  overflow: visible;
-}

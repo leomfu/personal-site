@@ -72,8 +72,8 @@ export const siteConfig = {
       key: "x",
       label: "X",
       labelEn: "X",
-      href: "https://x.com/WeiliangF27854",
-      handle: "@WeiliangF27854",
+      href: "https://x.com/weiliang_X",
+      handle: "@weiliang_X",
     },
     {
       key: "github",

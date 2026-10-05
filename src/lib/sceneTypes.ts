@@ -16,16 +16,10 @@ export type SceneImage = {
   /** 构建时这个文件在不在 public/ 里 */
   exists: boolean;
   /**
-   * 画面里的关键点。地球图是上海的位置（首页光点、俯冲的放大中心都对准它）；
-   * 航拍图是陆家嘴塔群（俯冲第二段推向这里）；
+   * 画面里的关键点。地球图是上海的位置（首页光点对准它）；
    * 房间图是窗户玻璃的中心（第 1 幕的推镜、第 7 幕「窗边」都朝这里）。
    */
   focus?: Point;
-};
-
-export type SceneVideo = {
-  src: string;
-  exists: boolean;
 };
 
 /** 一对横竖构图：桌面用 wide（16:9），竖屏手机用 tall（9:16） */
@@ -33,40 +27,12 @@ export type ScenePair = { wide: SceneImage; tall: SceneImage };
 
 export type SceneManifest = {
   earth: ScenePair;
-  /** 三千米高空的上海夜景航拍：俯冲后备方案的中间一段（不在时退回两段） */
-  aerial: ScenePair;
   room: ScenePair;
   /** 书房图上 MacBook 屏幕的四个角（横版、竖版各一组） */
   screen: { wide: Quad; tall: Quad };
-  /**
-   * 第 0 幕「沿江飞行」的真视频（BRIEF R14，1280×720、无音轨）：src 是网页用的 mp4，
-   * first / last 是视频的第一帧和最后一帧（下降接第一帧，视频播完停在最后一帧当墙）
-   */
-  flightVideo: { src: string; first: SceneImage; last: SceneImage };
-  /** 视频最后一帧（一扇推开的窗，窗台空着）上要用到的几个点（归一化坐标，看图量的，见 lib/scene.ts） */
-  facadeSpots: { wide: FacadeSpots; tall: FacadeSpots };
   /**
    * 彩铅画像（暖色素描纸，不透明）：只用在首页名片上，当作一张真实的画纸。
    * 站主的真人照片全站不出现；第 1 幕也不放人像（2026-10 站主要求）。
    */
   portraitCard: SceneImage;
-  dive: {
-    wide: SceneVideo;
-    tall: SceneVideo;
-    poster: SceneImage;
-  };
-};
-
-/** 视频最后一帧上的关键点（归一化坐标） */
-export type FacadeSpots = {
-  /** 小宇航员落在窗台上的脚底位置 */
-  sill: Point;
-  /** 窗缝：它踮着脚走到这里，再钻进去 */
-  gap: Point;
-  /** 镜头穿窗时推近的中心（窗洞中心） */
-  origin: Point;
-  /** 窗洞（亮着灯的那几块玻璃）的四边：左、右、上、下 */
-  hole: { l: number; r: number; t: number; b: number };
-  /** 穿窗时放大到多大时窗洞撑满屏幕（1 / (1 - zk × 进度)） */
-  zk: number;
 };

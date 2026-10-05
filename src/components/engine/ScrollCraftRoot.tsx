@@ -18,7 +18,7 @@ import { useEffect, useRef, type ReactNode } from "react";
  * 另外两件：
  * - 引擎只在 resize 和字体加载完时重新量尺寸。这一块的高度变了（图片、客户端组件），
  *   就用 ResizeObserver 补一次 layout()。
- * - 挂好之后在 window 上发一个 `wl:engine` 事件：俯冲过渡等它，确认落地页已经就位才淡出。
+ * - 挂好之后在 window 上发一个 `wl:engine` 事件：平面图、彩铅批注等它量好尺寸再算位置。
  */
 export function ScrollCraftRoot({
   id,
@@ -49,7 +49,7 @@ export function ScrollCraftRoot({
             el.setAttribute("data-sc-span", el.getAttribute("data-span-compact") ?? "");
           });
         }
-        // 同样的办法：data-span-reduce 是减少动态效果时的 span（第 0 幕那时只是一张静止的江景，不占三屏多的空滚动）
+        // 同样的办法：data-span-reduce 是减少动态效果时的 span（现在没有哪一幕用它，留着这条约定）
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           root.querySelectorAll<HTMLElement>("[data-span-reduce]").forEach((el) => {
             el.setAttribute("data-sc-span", el.getAttribute("data-span-reduce") ?? "");

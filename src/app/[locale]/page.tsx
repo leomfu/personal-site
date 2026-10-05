@@ -1,10 +1,10 @@
+import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CopyEmail } from "@/components/common/CopyEmail";
 import { LangSwitch } from "@/components/common/LangSwitch";
 import { SocialLinks } from "@/components/common/SocialLinks";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { Crab } from "@/components/crab/Crab";
-import { DiveLink } from "@/components/home/DiveLink";
 import { HomeStage } from "@/components/home/HomeStage";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import { Note } from "@/components/sketch/Note";
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  *   批注  一支彩铅手画的箭头 + 手写字，指着入口按钮，打开约 1 秒后一笔一笔画出来
  *
  * R6（站主修正）：介绍块放回左边，和第一版一样；上海光点在它右侧，引线从名片右缘连过去。
- * 入口有两个，做同一件事（俯冲进完整介绍页）：上海那颗脉冲光点，和全页唯一用强调色填满的主按钮。
+ * 入口有两个，做同一件事（普通链接，直接进完整介绍页；2026-10-05 俯冲开场下线）：上海那颗脉冲光点，和全页唯一用强调色填满的主按钮。
  * 手机上主按钮是底部的全宽大按钮。
  * 上海光点右上方漂着一只戴宇航员头盔的 Claude 小螃蟹（BRIEF R7）：点它会朝主按钮挥钳子，冒一句关于他的事。
  */
@@ -107,12 +107,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <SocialLinks locale={locale} />
             </div>
             <div className="home__go">
-              <DiveLink href={tour} className="cta home__cta" ariaLabel={t("ctaAria")}>
+              <Link href={tour} className="cta home__cta" aria-label={t("ctaAria")}>
                 <span>{t("cta")}</span>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
                   <path d="M4 4.5 13.5 14M13.5 6.5V14H6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </DiveLink>
+              </Link>
               {/* 同一句批注，桌面写在按钮右边（箭头往左），手机写在按钮上方（箭头往下）。和按钮的读屏文字重复，读屏跳过 */}
               <Note className="home__note home__note--wide" text={t("note")} arrow="left" timed rot={-3} hidden />
               <Note className="home__note home__note--narrow" text={t("note")} arrow="down-left" timed rot={-2} hidden />
@@ -164,13 +164,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <span className="crab-slot crab-slot--home" data-crab-slot="home">
                 <Crab variant="astronaut" label={crab.label.astronaut} lines={crab.lines.home} side="up" />
               </span>
-              <DiveLink href={tour} className="sh__dot" ariaLabel={t("dotAria")} dot>
+              <Link href={tour} className="sh__dot" aria-label={t("dotAria")} data-home-dot>
                 <span className="sh__ring" aria-hidden />
                 <span className="sh__core" aria-hidden />
                 <span className="sh__label mono" aria-hidden>
                   {t("dotLabel")}
                 </span>
-              </DiveLink>
+              </Link>
             </div>
           </ScenePlate>
         </div>

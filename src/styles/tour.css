@@ -83,11 +83,11 @@
 .desk__stage {
   background: var(--sc-canvas);
 }
-/* 夜景提亮加暖：只调图本身的显示，不重新生成素材。俯冲最后一帧用同一个类 */
+/* 夜景提亮加暖：只调图本身的显示，不重新生成素材 */
 .tone-room .plate__media img {
   filter: brightness(1.34) contrast(1.03) saturate(1.1) sepia(0.08);
 }
-/* 落地之后镜头再往书桌推一点（p = 0 时和俯冲最后一帧一样是 1.05，交接不受影响） */
+/* 往下滑，镜头再往书桌推一点（p = 0 时是 1.05，和 .room-far 一致） */
 .desk__far .plate {
   transform: scale(calc(1.05 + var(--sc-p, 0) * 0.09));
 }

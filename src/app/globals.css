@@ -2,7 +2,7 @@
    weiliang.dev · 2026-10 改版（scroll-craft）第二版
    ----------------------------------------------------------------------------
    夜里开场，翻开速写本（BRIEF「第二版修订」R1–R5）：
-     夜景段落（首页、俯冲、第 1 幕书桌前）：暖一些的近黑底，米白正文，琥珀是唯一的交互强调色，
+     夜景段落（首页、第 1 幕书桌前）：暖一些的近黑底，米白正文，琥珀是唯一的交互强调色，
        冷蓝只在光线里。比第一版整体提亮加暖（图用 CSS 调色，遮罩更轻）。
      纸面段落（第 1 幕尾巴到第 7 幕、所有子页）：暖白纸 + 深墨正文（对比度 ≥ 7:1），
        强调色还是同一个暖橙色相，只是换成深一档（纸面上要 ≥ 4.5:1），见 .paper。
@@ -22,9 +22,7 @@
 @import "../styles/scene.css";
 @import "../styles/paper.css";
 @import "../styles/home.css";
-@import "../styles/dive.css";
 @import "../styles/tour.css";
-@import "../styles/flight.css";
 @import "../styles/screen.css";
 @import "../styles/plan.css";
 @import "../styles/pages.css";

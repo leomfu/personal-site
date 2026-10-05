@@ -1,26 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Crab, CrabArt } from "@/components/crab/Crab";
+import { Crab } from "@/components/crab/Crab";
 import type { Point, Quad } from "@/lib/sceneTypes";
 
 /**
  * 第 1 幕书房图里那台 MacBook 的屏幕（BRIEF R6 第 2 条、R7）：一块真实的网页，贴在图上屏幕的位置。
  *
- * 它放在 ScenePlate 的 .plate__box 里，也就是和书房图同一个变换容器：视差、推镜、俯冲最后一帧的放大
- * 都会带着它一起动。.plate__box 就是整张图按 cover 缩放后的大小（被视口裁掉的部分也算在里面），
+ * 它放在 ScenePlate 的 .plate__box 里，也就是和书房图同一个变换容器：视差、推镜都会带着它一起动。.plate__box 就是整张图按 cover 缩放后的大小（被视口裁掉的部分也算在里面），
  * 所以屏幕四个角（lib/scene.ts 的 SCREEN，相对图片宽高的比例）直接乘 box 的宽高就是像素位置，裁切自动算进去了。
  * 这里按那四个角，把一块固定设计尺寸的界面用 matrix3d（单应变换）贴上去：横版屏幕正对镜头，竖版是透视四边形。
  * 四个角往外多放一点点（BLEED），边上不会漏出底图那块亮屏。
  *
  * 屏幕内容是一个简化的 Claude 应用窗口（自己画的示意，不是截图，没有官方 logo 矢量，也不冒充真实对话）：
  * 暖色浅底、标题栏、右边用户气泡「Hello Claude」、左边一句简短友好的回复（橙色星芒代表 Claude）、底部输入框。
- * 第 1 幕里小宇航员落到书桌、摘了头盔、跳上窗口顶边变成桌宠之后（DeskLanding 在书桌那一幕上打 data-landed、
- * 发 wl:landed），输入框里才逐字打出「Hello Claude」，发送，再出回复；消息发出去那一刻，桌宠跳起来挥手。
+ * 2026-10-05 开场下线后，页面一打开就是对话已经完成的样子（「Hello Claude」和回复都在），桌宠蹲在窗口顶边上。
  * 手机上屏幕只有一百多像素宽：不要标题栏的字，只留气泡、输入框和小螃蟹，字号按屏幕放大。
- * 减少动态效果时直接是对话完成的样子；`still` 时是还没打字的初始画面（第 0 幕穿过窗户后的那一帧用，和第 1 幕 p = 0 一致），
- * 那里 `pet={false}`：桌宠还没到。
  */
 
 /** 设计尺寸（px）：和屏幕在图上的长宽比一致（横版 553×353 ≈ 1.57，竖版透视过的约 1.25） */
@@ -70,19 +66,12 @@ function Spark() {
   );
 }
 
-type Stage = "idle" | "typing" | "sent" | "thinking" | "replied";
-
 export function DeskScreen({
   quads,
-  still = false,
-  pet = true,
   crabLabel,
   crabLines,
 }: {
   quads: { wide: Quad; tall: Quad };
-  still?: boolean;
-  /** 窗口顶边上有没有桌宠（第 0 幕穿窗那一帧里还没有） */
-  pet?: boolean;
   /** 桌宠按钮的读屏文字和气泡（服务端从 content/ 现取，见 lib/crabLines） */
   crabLabel?: string;
   crabLines?: string[];
@@ -90,10 +79,6 @@ export function DeskScreen({
   const t = useTranslations("desk");
   const ref = useRef<HTMLDivElement | null>(null);
   const [tall, setTall] = useState(false);
-  const [stage, setStage] = useState<Stage>("idle");
-  const [typed, setTyped] = useState(0);
-  const [hop, setHop] = useState(0);
-  const hello = t("hello");
 
   /** 贴合：量 .plate__box 的尺寸，算 matrix3d。尺寸、横竖变了就重算 */
   useEffect(() => {
@@ -123,107 +108,12 @@ export function DeskScreen({
     };
   }, [quads]);
 
-  /**
-   * 对话：小螃蟹从屏幕下沿钻进来、走到输入框前以后才开始，只演一遍（DeskLanding 发 wl:landed；演完发 wl:replied，它再跳上顶边）。
-   * 被跳过 / 直接打开 / 看过一次了 / 减少动态效果（书桌那一幕上有 data-final，或收到 wl:finish）：直接是对话完成的样子。
-   * 没有 DeskLanding 的地方（以后别处复用）退回老规矩：屏幕第一次出现在视口里约 1.4 秒后开始。
-   */
-  useEffect(() => {
-    if (still) return;
-    const el = ref.current;
-    if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timers: number[] = [];
-    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
-    const desk = el.closest<HTMLElement>("[data-desk-landing]");
-    let started = false;
-    const finish = () => {
-      started = true;
-      timers.splice(0).forEach((id) => window.clearTimeout(id));
-      setTyped(hello.length);
-      setStage("replied");
-    };
-    const run = (lead: number) => {
-      if (started) return;
-      started = true;
-      if (reduce) {
-        later(0, finish);
-        return;
-      }
-      let at = lead;
-      later(at, () => setStage("typing"));
-      for (let i = 1; i <= hello.length; i++) {
-        at += 75 + (hello[i - 1] === " " ? 110 : 0);
-        later(at, () => setTyped(i));
-      }
-      at += 460;
-      later(at, () => {
-        setStage("sent");
-        // 消息发出去：桌宠跳起来挥手
-        setHop((n) => n + 1);
-      });
-      at += 420;
-      later(at, () => setStage("thinking"));
-      at += 1150;
-      later(at, () => {
-        setStage("replied");
-        desk?.dispatchEvent(new Event("wl:replied"));
-      });
-    };
-
-    let io: IntersectionObserver | null = null;
-    const onLanded = () => run(350);
-    if (desk) {
-      if (desk.hasAttribute("data-final") || reduce) later(0, finish);
-      else desk.addEventListener("wl:landed", onLanded);
-      desk.addEventListener("wl:finish", finish);
-    } else {
-      io = new IntersectionObserver((entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          run(1400);
-          io?.disconnect();
-        }
-      });
-      io.observe(el);
-    }
-    return () => {
-      io?.disconnect();
-      desk?.removeEventListener("wl:landed", onLanded);
-      desk?.removeEventListener("wl:finish", finish);
-      timers.forEach((id) => window.clearTimeout(id));
-    };
-  }, [still, hello]);
-
-  const sent = stage === "sent" || stage === "thinking" || stage === "replied";
-  const draft = stage === "typing" ? hello.slice(0, typed) : "";
-  const ready = stage === "typing" && typed === hello.length;
-
   return (
-    <div ref={ref} className={`dscreen${tall ? " is-tall" : " is-wide"}`} style={{ "--typed": typed } as CSSProperties}>
+    <div ref={ref} className={`dscreen${tall ? " is-tall" : " is-wide"}`}>
       {/* 窗口顶边上面那一条：桌宠蹲在这儿，偶尔沿着窗口顶边走几步 */}
       <div className="dscreen__perch">
-        {pet && (
-        <Crab
-          variant="desk"
-          roam
-          greet={false}
-          actKey={hop}
-          still={still}
-          side="auto"
-          label={crabLabel}
-          lines={crabLines}
-          className="dscreen__crab"
-        />
-        )}
+        <Crab variant="desk" roam greet={false} side="auto" label={crabLabel} lines={crabLines} className="dscreen__crab" />
       </div>
-      {/* 进屏幕的那只（小尺寸）：从屏幕下沿钻进来，走到输入框前；演完跳上顶边，这只就藏起来 */}
-      {!still && (
-        <span className="dscreen__walker" aria-hidden>
-          <span className="crab crab--desk crab--still dscreen__wcrab" style={{ "--crab-w": 112, "--crab-h": 78 } as CSSProperties}>
-            <CrabArt variant="desk" />
-          </span>
-        </span>
-      )}
       <div className="dscreen__win" aria-hidden>
         <div className="dscreen__bar">
           <span className="dscreen__lights">
@@ -234,18 +124,15 @@ export function DeskScreen({
           <span className="dscreen__title">{t("chatTitle")}</span>
         </div>
         <div className="dscreen__log">
-          <p className={`dscreen__me${sent ? " is-on" : ""}`}>{hello}</p>
-          <div className={`dscreen__ai${stage === "thinking" ? " is-thinking" : ""}${stage === "replied" ? " is-on" : ""}`}>
+          <p className="dscreen__me">{t("hello")}</p>
+          <div className="dscreen__ai">
             <Spark />
             <p className="dscreen__reply">{t("reply")}</p>
           </div>
         </div>
         <div className="dscreen__input">
-          <span className={`dscreen__text${draft ? "" : " is-empty"}`}>
-            {draft || t("placeholder")}
-            {stage === "typing" && <span className="dscreen__caret" />}
-          </span>
-          <span className={`dscreen__send${ready ? " is-ready" : ""}`}>
+          <span className="dscreen__text is-empty">{t("placeholder")}</span>
+          <span className="dscreen__send">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden focusable="false">
               <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

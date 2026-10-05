@@ -8,7 +8,7 @@ import { useEffect } from "react";
  *
  *   value="paper"  整页都是纸（子页）
  *   不传 value      完整介绍页：盯着 [data-paper] 那张纸，它的上沿升过屏幕一半就算到了纸面
- * 离开页面时把属性删掉（首页、俯冲都是夜景，默认就是夜景）。
+ * 离开页面时把属性删掉（首页是夜景，默认就是夜景）。
  */
 export function Ground({ value }: { value?: "paper" | "night" }) {
   useEffect(() => {

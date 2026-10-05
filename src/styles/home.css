@@ -18,7 +18,7 @@
   background: var(--sc-canvas);
 }
 
-/* 夜景提亮加暖：只动图本身的显示（亮度、暖色），不重新生成素材。俯冲用同一个类，两边一致 */
+/* 夜景提亮加暖：只动图本身的显示（亮度、暖色），不重新生成素材 */
 .tone-earth .plate__media img {
   filter: brightness(1.3) contrast(1.06) saturate(1.12) sepia(0.1);
 }

@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { DeskLanding } from "@/components/about/DeskLanding";
 import { DeskScreen } from "@/components/about/DeskScreen";
 import { FloorPlan } from "@/components/about/FloorPlan";
 import { PhotoFlip } from "@/components/about/PhotoFlip";
@@ -12,8 +11,6 @@ import { LangSwitch } from "@/components/common/LangSwitch";
 import { SocialLinks } from "@/components/common/SocialLinks";
 import { ScrollCraftRoot } from "@/components/engine/ScrollCraftRoot";
 import { Crab } from "@/components/crab/Crab";
-import { FlightDriver } from "@/components/flight/FlightDriver";
-import { FlightScene } from "@/components/flight/FlightScene";
 import { MusicCrab } from "@/components/crab/MusicCrab";
 import { ToolIcon } from "@/components/icons/ToolIcon";
 import { RESIDENT } from "@/components/player/PlayerProvider";
@@ -51,9 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * 彩铅批注和爱好涂鸦随滚动一笔一笔画出来。
  *
  *   幕  地方     device                     span   情绪
- *   0   沿江飞行 覆盖层（真视频，约 5 秒）    —     飞起来了（BRIEF R12 / R14）：访客第一次往下滑就开播视频，跟着小宇航员贴着
- *                                                  黄浦江飞，转向岸边一栋红砖楼，落到窗台上，它从窗缝溜进屋里；盖在第 1 幕上面
- *   1   书桌前   pin + parallax（四层）      2.6    到了：小宇航员落到书桌、摘下头盔、跳上屏幕变成桌宠
+ *   1   书桌前   pin + parallax（四层）      1.8    到了：一打开就是书房，小螃蟹在 MacBook 屏幕上当桌宠
  *   1尾 书桌前   flow（纸盖上来）            自然   他的自述（content/about），速写本第一页
  *   2   屏幕     pan + count                 1.9    惊讶：原来是真在跑的
  *   3   书架     flow + in                   自然   安静（只有字，最静的一幕）
@@ -62,10 +57,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  *   6   唱片架   flow + tilt                 自然   轻松：唱片一碰就转
  *   7   写给你   pin（短停）                 1.25   笃定：速写本最后一页，停在这里，不淡出
  *
- * 第 0 幕在房间外面（覆盖层在时，平面图显示「窗外 · 黄浦江」），它最后一帧就是第 1 幕的第一帧：
- * 它是第 1 幕舞台里的一个覆盖层，播到头淡出，底下的书桌接手，进屋后那段（DeskLanding）接着自动演。
- * 页面不锁、不抢滚动；同一次访问只播一次，直接打开 / 恢复滚动位置 / 看过 / 减少动态效果都是最终状态（lib/intro.ts）。
- * 从首页点进来的俯冲最后落在第 0 幕的第一帧上（components/dive）。
+ * 2026-10-05 起「从首页撞下来」的整套开场（俯冲、沿江飞行、落窗台钻窗、进屋演出）全部下线：首页的入口是普通链接，
+ * 点了直接到这里，页面开头就是书桌前。
  * 导航是房间平面图（components/about/FloorPlan），没有顶栏。
  * 每个地方住着一只 Claude 小螃蟹（BRIEF R7，components/crab）：1 屏幕上的桌宠、2 安全帽、3 圆眼镜、4 导演帽、
  * 5 贝雷帽、6 大耳机、7 邮差帽。气泡第三人称介绍他，句子从 content/ 现取（lib/crabLines）。
@@ -79,7 +72,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const tPlan = await getTranslations("plan");
   const tProfile = await getTranslations("profile");
   const tTypes = await getTranslations("blog.types");
-  const tFlight = await getTranslations("flight");
   const tRecords = await getTranslations("records.player");
   const crab = await getCrabCopy(locale);
 
@@ -161,7 +153,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         closeLabel={tPlan("close")}
         hereLabel={tPlan("now")}
         gotoLabel={gotoLabel}
-        outsideLabel={{ name: tPlan("outside.name"), title: tPlan("outside.title") }}
       />
       <RailFocus />
       <DrawDriver />
@@ -172,7 +163,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <section
           id="desk"
           data-place="desk"
-          data-desk-landing
           data-sc-act="pin"
           data-sc-span={SPAN.desk}
           className="act desk"
@@ -183,8 +173,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             {/* 远景：深夜的房间（位移最小）。MacBook 那块屏幕长在图上，跟着视差和推镜一起动 */}
             <div className="desk__far room-far" data-sc-parallax={DESK_FAR_RATE}>
               <ScenePlate pair={scene.room} eager className="tone-room">
-                {/* 桌上走路的那只在屏幕图片的下面一层，所以 DeskLanding 在 DeskScreen 前面（走到屏幕下沿就被盖住） */}
-                <DeskLanding />
                 <DeskScreen quads={scene.screen} crabLabel={crab.label.desk} crabLines={crab.lines.desk} />
               </ScenePlate>
             </div>
@@ -215,27 +203,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <p className="desk__tagline" data-sc-cue="0.12 1 0.3 0">
                 {en ? siteConfig.taglineEn : siteConfig.tagline}
               </p>
-            </div>
-          
-            {/* 开场：沿江飞行（BRIEF R12）。盖在书桌这一幕上，访客第一次往下滑就开播，一段加速到约 3.5 秒的真视频加约 1.5 秒落窗台、钻缝、穿窗，穿窗进屋后淡出，
-                底下的书桌就是同一个画面；进屋后那段由 DeskLanding 接着演。页面照常可以往下滑，不锁、不抢 */}
-            <div className="flight" data-flight>
-              <div className="flight__stage">
-                <FlightScene
-                  scene={scene}
-                  room={{ coords: `${coords.text} · ${t("landed")}`, name }}
-                  crab={<Crab variant="flyer" label={crab.label.flyer} lines={crab.lines.flight} side="up" />}
-                >
-                  <div className="sc-scrim sc-scrim--lead flight__scrim" aria-hidden />
-                  <div className="sc-copy sc-copy--lead flight__copy">
-                    <p id="river-title" className="flight__place">
-                      {tFlight("place")}
-                    </p>
-                    <p className="flight__coords mono">{coords.text}</p>
-                  </div>
-                </FlightScene>
-                <FlightDriver />
-              </div>
             </div>
           </div>
         </section>

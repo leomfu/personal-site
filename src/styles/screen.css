@@ -169,15 +169,6 @@
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
-  opacity: 0;
-  transform: translateY(0.6em);
-  transition:
-    opacity 260ms var(--sc-ease-out),
-    transform 340ms var(--sc-ease-out);
-}
-.dscreen__me.is-on {
-  opacity: 1;
-  transform: none;
 }
 .dscreen__ai {
   display: flex;
@@ -194,21 +185,6 @@
   stroke: var(--claude);
   stroke-width: 2.8;
   stroke-linecap: round;
-  opacity: 0;
-  transition: opacity 200ms var(--sc-ease-out);
-}
-.dscreen__ai.is-thinking .dscreen__spark,
-.dscreen__ai.is-on .dscreen__spark {
-  opacity: 1;
-}
-/* 想的时候星芒慢慢转 */
-.dscreen__ai.is-thinking .dscreen__spark {
-  animation: spark-spin 1.6s linear infinite;
-}
-@keyframes spark-spin {
-  to {
-    transform: rotate(1turn);
-  }
 }
 .dscreen__reply {
   margin: 0;
@@ -216,15 +192,6 @@
   line-height: 1.32;
   /* 中文只在标点后换行：「你好！/ 今天想做点什么？」，不会把「么？」甩到下一行 */
   word-break: keep-all;
-  opacity: 0;
-  transform: translateY(0.4em);
-  transition:
-    opacity 320ms var(--sc-ease-out),
-    transform 380ms var(--sc-ease-out);
-}
-.dscreen__ai.is-on .dscreen__reply {
-  opacity: 1;
-  transform: none;
 }
 
 .dscreen__input {
@@ -248,20 +215,6 @@
 .dscreen__text.is-empty {
   color: #a19584;
 }
-.dscreen__caret {
-  display: inline-block;
-  width: 0.09em;
-  height: 1.05em;
-  margin-left: 0.06em;
-  vertical-align: -0.15em;
-  background: var(--ink);
-  animation: caret 900ms steps(1) infinite;
-}
-@keyframes caret {
-  50% {
-    opacity: 0;
-  }
-}
 .dscreen__send {
   flex: none;
   display: grid;
@@ -271,43 +224,8 @@
   border-radius: 0.45em;
   background: #e8dfd0;
   color: #9a8e7c;
-  transition:
-    background-color 200ms var(--sc-ease-out),
-    color 200ms var(--sc-ease-out);
 }
 .dscreen__send svg {
   width: 0.75em;
   height: 0.75em;
-}
-.dscreen__send.is-ready {
-  background: var(--claude);
-  color: #fffaf2;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dscreen__me,
-  .dscreen__reply {
-    transition: none;
-  }
-  .dscreen__caret,
-  .dscreen__ai.is-thinking .dscreen__spark {
-    animation: none;
-  }
-}
-
-/* 进屏幕的那只（DeskLanding 摆位置、做动画）：在屏幕的最上面一层之下、窗口之上；超出屏幕下沿的部分被 .dscreen 裁掉 */
-.dscreen__walker {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 4;
-  opacity: 0;
-  pointer-events: none;
-  transform-origin: 50% 100%;
-}
-.dscreen__wcrab.crab {
-  position: absolute;
-  left: 0;
-  top: 0;
-  --crab-focus: #b4501f;
 }

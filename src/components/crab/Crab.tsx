@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { CLAWD, HELMET_BOX, HELMET_PARTS, LOOKS, type Part, type Rect, type Variant } from "./art";
+import { CLAWD, LOOKS, type Part, type Rect, type Variant } from "./art";
 import { useCrabMind } from "./useCrabMind";
 import "./crab.css";
 
@@ -9,7 +9,7 @@ import "./crab.css";
  * Claude 小螃蟹一家（BRIEF R6 / R7）：身体照 clawd.svg（Claude Code 里那只像素小螃蟹），
  * 每个区域一只，穿不同的衣服、做不同的招牌动作。像素图在 ./art.ts，动作在 ./crab.css。
  *
- *   进入视口      做一次招牌动作（desk 那只例外：等屏幕里的「Hello Claude」发出去，由 actKey 触发）
+ *   进入视口      做一次招牌动作（greet=false 的不做：屏幕上的桌宠）
  *   之后          自主意识（useCrabMind.ts）：在自己的轨道里走动、东张西望、做专属小动作、
  *                鼠标靠近会走过来看、整页 30 秒没动静会坐下打瞌睡
  *   点 / 回车 / 轻点   招牌动作 + 冒一个气泡（lines 轮换，第三人称介绍站主，只写事实）
@@ -44,7 +44,7 @@ function PartG({ part }: { part: Part }) {
   );
 }
 
-/** 只画图：给俯冲最后一帧那种「不能点、不会动」的地方用，也是 Crab 自己的画面 */
+/** 只画图：给「不能点、不会动」的地方用，也是 Crab 自己的画面 */
 export function CrabArt({ variant }: { variant: Variant }) {
   const look = LOOKS[variant];
   const [x, y, w, h] = look.box;
@@ -85,28 +85,6 @@ export function CrabArt({ variant }: { variant: Variant }) {
   );
 }
 
-/** 摘下来的头盔（落到书桌时用）：和 flyer 同一套坐标，画框是宇航员那一套 */
-export function HelmetArt() {
-  const [x, y, w, h] = HELMET_BOX;
-  return (
-    <svg className="crab__svg" viewBox={`${x} ${y} ${w} ${h}`} shapeRendering="crispEdges" aria-hidden focusable="false">
-      {HELMET_PARTS.map((p) => (
-        <PartG key={p.name} part={p} />
-      ))}
-    </svg>
-  );
-}
-
-/** 脱下来的小红斗篷（落到书桌上用）：就是 flyer 身后那块斗篷的第一帧，坐标一样，画框正好框住它 */
-export function CapeArt() {
-  const cape = LOOKS.flyer.parts.find((p) => p.name === "capeA");
-  return (
-    <svg className="crab__svg" viewBox="-59.5 38.5 59.5 31.5" shapeRendering="crispEdges" aria-hidden focusable="false">
-      {cape && <PartG part={cape} />}
-    </svg>
-  );
-}
-
 export function Crab({
   variant,
   label,
@@ -115,7 +93,6 @@ export function Crab({
   size,
   roam = false,
   greet = true,
-  actKey,
   playing = false,
   still = false,
   className,
@@ -134,11 +111,9 @@ export function Crab({
   roam?: boolean;
   /** 第一次进入视口时自己做一次招牌动作 */
   greet?: boolean;
-  /** 外面要它做招牌动作时就把这个数加一（屏幕里的「Hello Claude」发出去那一刻） */
-  actKey?: number;
   /** 迷你播放器正在放歌（只有戴耳机那只看它）：跟着点头 */
   playing?: boolean;
-  /** 只画一只不动、不能点的（俯冲最后一帧用） */
+  /** 只画一只不动、不能点的 */
   still?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -165,12 +140,6 @@ export function Crab({
     .join(" ");
 
   const { actRef, reduceRef } = useCrabMind(rootRef, { variant, roam, still, greet, playingRef });
-
-  // 外部触发（屏幕里的消息发出去了）：做一次招牌动作
-  useEffect(() => {
-    if (!actKey || still || reduceRef.current) return;
-    actRef.current();
-  }, [actKey, still, actRef, reduceRef]);
 
   // 正在放歌：戴耳机那只跟着点头（减少动态效果时不点）
   useEffect(() => {
