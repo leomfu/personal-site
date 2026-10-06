@@ -254,7 +254,7 @@
 .crab--astronaut.is-on .crab__light {
   animation: crab-light 1.8s step-end infinite;
 }
-/* 招牌动作：身子朝左下（「降落，进来看看」按钮那边）一歪，左钳子挥三下，眼睛也看过去 */
+/* 招牌动作：身子朝左下（「看看我在忙什么」按钮那边）一歪，左钳子挥三下，眼睛也看过去 */
 .crab--astronaut.is-act .crab__all {
   animation: crab-lean-l 1500ms var(--crab-ease);
 }

@@ -1,7 +1,7 @@
 /* ============================================================================
    第 1 幕 MacBook 屏幕里的 Claude 应用窗口（components/about/DeskScreen）。
    屏幕是一块固定设计尺寸的界面，JS 用 matrix3d 贴到书房图的屏幕四角上，
-   所以这里的尺寸都是「设计像素」：横版 640×408，竖版 560×450（竖版在手机上缩得只剩一百多像素宽，字给得更大）。
+   所以这里的尺寸都是「设计像素」：横版 640×406，竖版 640×340（2026-10-06 新书房图；竖版在手机上缩得只剩两百像素上下宽，字给得更大）。
    横竖用和 <picture> 同一个条件（max-aspect-ratio: 4/5）切换，第一帧就是对的尺寸。
    小螃蟹本身的样式在 components/crab/crab.css。
    ========================================================================== */
@@ -25,7 +25,7 @@
   top: 0;
   z-index: 2;
   width: 640px;
-  height: 408px;
+  height: 406px;
   overflow: hidden;
   transform-origin: 0 0;
   /* 桌面壁纸：暖色的浅沙色，窗口浮在上面 */
@@ -43,17 +43,17 @@
 }
 @media (max-aspect-ratio: 4/5) {
   .dscreen {
-    --m: 18px;
-    --perch: 100px;
+    --m: 16px;
+    --perch: 88px;
     --bar: 0px;
-    --pad: 22px;
-    --fs-me: 44px;
-    --fs-ai: 39px;
-    --fs-in: 36px;
-    --spark: 46px;
-    --in-h: 70px;
-    width: 560px;
-    height: 450px;
+    --pad: 20px;
+    --fs-me: 38px;
+    --fs-ai: 33px;
+    --fs-in: 30px;
+    --spark: 40px;
+    --in-h: 58px;
+    width: 640px;
+    height: 340px;
   }
 }
 /* 屏幕玻璃：一道很淡的斜向反光和暗角，让它像是在那个夜里的房间里亮着，而不是贴上去的 */
@@ -88,8 +88,8 @@
 }
 @media (max-aspect-ratio: 4/5) {
   .dscreen__perch .crab {
-    --crab-size: 100px;
-    --crab-say-size: 40px;
+    --crab-size: 88px;
+    --crab-say-size: 36px;
     --crab-say-max: 9em;
   }
   .dscreen__perch .crab__say {

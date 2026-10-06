@@ -12,8 +12,8 @@ import type { Point, Quad, SceneImage, SceneManifest } from "./sceneTypes";
  * - 文件不在：exists=false，页面走后备（不画图，只留文字）。
  *   2026-10-05 开场（俯冲、沿江飞行、窗户）整套下线，航拍 / 飞行 / 外墙素材一并删掉。
  * - 宽高：构建时直接读 webp 文件头，换了尺寸不用改这里。
- * - focus（上海在地球图上的位置、窗户在房间图上的位置）**要人看图量出来**，
- *   换了图之后改下面 FOCUS 这几个数。量法见 ASSETS.md。
+ * - focus（上海在地球图上的位置）和书房图上的屏幕四角 **要人看图量出来**，
+ *   换了图之后改下面 FOCUS / SCREEN 这几个数。量法见 ASSETS.md。
  */
 
 const PUBLIC = path.join(process.cwd(), "public");
@@ -24,32 +24,32 @@ const FOCUS = {
   earthWide: { x: 0.46, y: 0.63 },
   /** 地球 9:16：上海（东方明珠那片） */
   earthTall: { x: 0.48, y: 0.63 },
-  /** 房间 16:9：窗户玻璃的中心（在笔记本上方；笔记本比显示器矮，窗户露得更多，BRIEF R7） */
-  roomWide: { x: 0.51, y: 0.27 },
-  /** 房间 9:16：窗户玻璃的中心 */
-  roomTall: { x: 0.6, y: 0.22 },
+  // 房间图不再需要关键点：2026-10-05 开场下线后没有东西要对准窗户了（2026-10-06 换新书房图时删掉）
 } satisfies Record<string, Point>;
 
 /**
- * 书房图上 MacBook 屏幕的四个角（归一化坐标，顺序：左上、右上、右下、左下）。2026-10-02 MacBook 版书房图上主会话量的（BRIEF R7）。
- * 第 1 幕把一块真实的网页（Claude 应用窗口 + 桌宠小螃蟹）贴在这里，换图之后也要重新量。
- * 横版正对镜头，是个矩形；竖版是透视四边形，页面上用 matrix3d 贴合（components/about/DeskScreen）。
+ * 书房图上 MacBook 屏幕的四个角（归一化坐标，顺序：左上、右上、右下、左下）。
+ * 第 1 幕把一块真实的网页（Claude 应用窗口 + 桌宠小螃蟹）贴在这里，页面上用 matrix3d 贴合（components/about/DeskScreen），换图之后要重新量。
+ *
+ * 2026-10-06 换新书房图（台灯在左、MacBook 在正中、窗外东方明珠在右）后量的，横竖两张都是：
+ * 黑色显示区（含黑边框，不含银色外框）的四角。量法：亮度阈值 70，从屏幕中心往上下左右走到亮度上去为止，
+ * 每条边取几十个点拟合直线再求交点。两张都是下沿比上沿略宽的轻微梯形。
+ * 横版下沿是一条深灰的铰链条，右半边的银框落在阴影里（亮度只有 40–80），下沿按「黑→铰链/银框」那一跳取，不按阈值硬切。
  */
 const SCREEN = {
+  // 像素（2560×1440）：TL 1361,700  TR 1877,700  BR 1891,1027  BL 1346,1027
   roomWide: [
-    { x: 0.401, y: 0.454 },
-    { x: 0.617, y: 0.454 },
-    { x: 0.617, y: 0.699 },
-    { x: 0.401, y: 0.699 },
+    { x: 0.5316, y: 0.4861 },
+    { x: 0.7332, y: 0.4861 },
+    { x: 0.7387, y: 0.7132 },
+    { x: 0.5258, y: 0.7132 },
   ],
-  // 竖版在主会话量的 (0.319, 0.542) (0.608, 0.539) (0.639, 0.658) (0.351, 0.682) 基础上按亮屏边缘重新拟合过：
-  // 原值左上角高出亮屏约 18px（盖掉了上边框）、左边和右下各往里缩了约 2px（会露出亮边）。
-  // 现在四条边各沿亮屏边缘往外留 2px（图片像素），量法：从屏幕中间往外走到亮度掉下去为止，每条边取几十个点拟合直线。
+  // 像素（1440×2560）：TL 452,1154  TR 1042,1154  BR 1051,1470  BL 443,1465
   roomTall: [
-    { x: 0.3164, y: 0.5482 },
-    { x: 0.6066, y: 0.5389 },
-    { x: 0.6416, y: 0.6573 },
-    { x: 0.35, y: 0.683 },
+    { x: 0.3139, y: 0.4508 },
+    { x: 0.7236, y: 0.4508 },
+    { x: 0.7299, y: 0.5742 },
+    { x: 0.3076, y: 0.5723 },
   ],
 } satisfies Record<string, Quad>;
 
@@ -98,8 +98,8 @@ export function getScene(): SceneManifest {
       tall: image("scene/earth-9x16.webp", { width: 1440, height: 2560 }, FOCUS.earthTall),
     },
     room: {
-      wide: image("scene/room-16x9.webp", { width: 2560, height: 1440 }, FOCUS.roomWide),
-      tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }, FOCUS.roomTall),
+      wide: image("scene/room-16x9.webp", { width: 2560, height: 1440 }),
+      tall: image("scene/room-9x16.webp", { width: 1440, height: 2560 }),
     },
     screen: { wide: SCREEN.roomWide, tall: SCREEN.roomTall },
     portraitCard: image("scene/portrait-card.webp", { width: 600, height: 800 }),

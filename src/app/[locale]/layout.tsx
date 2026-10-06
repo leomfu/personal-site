@@ -7,6 +7,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@/components/analytics/Analytics";
 import { PlayerProvider } from "@/components/player/PlayerProvider";
 import { PencilDefs } from "@/components/sketch/PencilDefs";
+import { WarpProvider } from "@/components/warp/WarpProvider";
+import { getScene } from "@/lib/scene";
 import { getMusic } from "@/lib/content";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -61,6 +63,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const { room } = getScene();
 
   return (
     <html lang={locale} className={`${geist.variable} ${geistMono.variable} ${notoSansSC.variable} ${caveat.variable} ${maShanZheng.variable}`}>
@@ -69,7 +72,10 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <PencilDefs />
         <NextIntlClientProvider>
           {/* 播放器挂在这一层：它是所有页面的共同祖先，客户端跳页不会卸载，离开唱片页音乐才不断 */}
-          <PlayerProvider library={getMusic()}>{children}</PlayerProvider>
+          <PlayerProvider library={getMusic()}>
+            {/* 首页 → /about/ 的冲击转场：盖层挂在这一层，跳页不卸载，才能跨过路由切换 */}
+            <WarpProvider room={{ wide: room.wide.src, tall: room.tall.src }}>{children}</WarpProvider>
+          </PlayerProvider>
         </NextIntlClientProvider>
         <div className="sc-grain" aria-hidden />
         <Analytics />

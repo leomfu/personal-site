@@ -66,7 +66,7 @@ export async function getCrabCopy(locale: string): Promise<CrabCopy> {
       home: keep([
         t("lines.home.here"),
         t("lines.home.who", { name, age: profile.age, major: en ? profile.majorEn : profile.major }),
-        t("lines.home.go", { cta }),
+        t("lines.home.go"),
       ]),
       desk: keep([t("lines.desk.hi"), t("lines.desk.kb"), t("lines.desk.learn")]),
       screen: keep([

@@ -191,7 +191,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <div className="sc-copy sc-copy--lead desk__copy">
               <div className="desk__hello" data-sc-cue="0 1 0 0">
                 <p className="desk__coords mono">
-                  {coords.text} · {t("landed")}
+                  {coords.text} · {t("arrived")}
                 </p>
                 <h1 id="desk-title" tabIndex={-1} className="desk__name">
                   {name}

@@ -68,11 +68,11 @@
   },
   "home": {
     "dotLabel": "Shanghai",
-    "dotAria": "The light over Shanghai: land and open the full tour",
-    "cta": "Land and look around",
-    "ctaAria": "Land and look around: open the full tour",
+    "dotAria": "The light over Shanghai: see what I'm up to in the full tour",
+    "cta": "See what I'm up to",
+    "ctaAria": "See what I'm up to: open the full tour",
     "portraitAlt": "Colored-pencil portrait of {name}",
-    "note": "Click here to land at my desk"
+    "note": "Click here to see what I'm up to"
   },
   "desk": {
     "chatTitle": "New chat",
@@ -96,7 +96,7 @@
       "home": {
         "here": "This is Shanghai. He's right here.",
         "who": "His name is {name}. He's {age} and studied {major}.",
-        "go": "Tap “{cta}” to land at his desk."
+        "go": "Tap that button to see what he's working on."
       },
       "desk": {
         "hi": "Hi! This is his desk.",
@@ -186,7 +186,7 @@
   },
   "tour": {
     "backOrbit": "Back home",
-    "landed": "Landed",
+    "arrived": "You're here",
     "selfIntro": "In his own words",
     "screenLead": "{count} things, each labelled with where it stands now.",
     "shotAlt": "Screenshot of {name}",

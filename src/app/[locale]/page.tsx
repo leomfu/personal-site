@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CopyEmail } from "@/components/common/CopyEmail";
 import { LangSwitch } from "@/components/common/LangSwitch";
@@ -8,6 +7,7 @@ import { Crab } from "@/components/crab/Crab";
 import { HomeStage } from "@/components/home/HomeStage";
 import { ScenePlate } from "@/components/scene/ScenePlate";
 import { Note } from "@/components/sketch/Note";
+import { WarpLink } from "@/components/warp/WarpLink";
 import { getCrabCopy } from "@/lib/crabLines";
 import { pageMetadata } from "@/lib/metadata";
 import { localePath } from "@/lib/nav";
@@ -107,12 +107,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <SocialLinks locale={locale} />
             </div>
             <div className="home__go">
-              <Link href={tour} className="cta home__cta" aria-label={t("ctaAria")}>
+              <WarpLink href={tour} className="cta home__cta" aria-label={t("ctaAria")}>
                 <span>{t("cta")}</span>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
                   <path d="M4 4.5 13.5 14M13.5 6.5V14H6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </Link>
+              </WarpLink>
               {/* 同一句批注，桌面写在按钮右边（箭头往左），手机写在按钮上方（箭头往下）。和按钮的读屏文字重复，读屏跳过 */}
               <Note className="home__note home__note--wide" text={t("note")} arrow="left" timed rot={-3} hidden />
               <Note className="home__note home__note--narrow" text={t("note")} arrow="down-left" timed rot={-2} hidden />
@@ -160,17 +160,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <span className="sh__lng mono" aria-hidden>
                 {coords.lng.toFixed(2)}°E
               </span>
-              {/* 戴宇航员头盔的小螃蟹：漂在光点右上方，点它朝「降落，进来看看」挥钳子（位置见 home.css .crab-slot--home） */}
+              {/* 戴宇航员头盔的小螃蟹：漂在光点右上方，点它朝「看看我在忙什么」按钮挥钳子（位置见 home.css .crab-slot--home） */}
               <span className="crab-slot crab-slot--home" data-crab-slot="home">
                 <Crab variant="astronaut" label={crab.label.astronaut} lines={crab.lines.home} side="up" />
               </span>
-              <Link href={tour} className="sh__dot" aria-label={t("dotAria")} data-home-dot>
+              <WarpLink href={tour} className="sh__dot" aria-label={t("dotAria")} data-home-dot>
                 <span className="sh__ring" aria-hidden />
                 <span className="sh__core" aria-hidden />
                 <span className="sh__label mono" aria-hidden>
                   {t("dotLabel")}
                 </span>
-              </Link>
+              </WarpLink>
             </div>
           </ScenePlate>
         </div>
