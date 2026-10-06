@@ -14,8 +14,9 @@ import type { Point, Quad } from "@/lib/sceneTypes";
  * 屏幕是下沿略宽的轻微梯形。四个角往外多放一点点（BLEED），边上不会漏出底图那块黑屏。
  *
  * 屏幕内容是一个简化的 Claude 应用窗口（自己画的示意，不是截图，没有官方 logo 矢量，也不冒充真实对话）：
- * 暖色浅底、标题栏、右边用户气泡「Hello Claude」、左边一句简短友好的回复（橙色星芒代表 Claude）、底部输入框。
- * 2026-10-05 开场下线后，页面一打开就是对话已经完成的样子（「Hello Claude」和回复都在），桌宠蹲在窗口顶边上。
+ * 暖色偏暗的底（夜里亮着的屏幕）、标题栏、右边用户气泡「Hello Claude」、左边一句简短友好的回复（橙色星芒代表 Claude）、底部输入框。
+ * 2026-10-06 改：应用窗口铺满整块屏幕（不是浮在桌面上的一张卡片，没有外底、圆角和投影），上面再盖一层很淡的玻璃反光和暗角。
+ * 页面一打开就是对话已经完成的样子（「Hello Claude」和回复都在），桌宠蹲在输入框上沿，气泡也冒在屏幕里面（屏幕 overflow: hidden，伸不出去）。
  * 手机上屏幕只有两百像素上下宽：不要标题栏的字，只留气泡、输入框和小螃蟹，字号按屏幕放大。
  */
 
@@ -110,10 +111,6 @@ export function DeskScreen({
 
   return (
     <div ref={ref} className={`dscreen${tall ? " is-tall" : " is-wide"}`}>
-      {/* 窗口顶边上面那一条：桌宠蹲在这儿，偶尔沿着窗口顶边走几步 */}
-      <div className="dscreen__perch">
-        <Crab variant="desk" roam greet={false} side="auto" label={crabLabel} lines={crabLines} className="dscreen__crab" />
-      </div>
       <div className="dscreen__win" aria-hidden>
         <div className="dscreen__bar">
           <span className="dscreen__lights">
@@ -138,6 +135,10 @@ export function DeskScreen({
             </svg>
           </span>
         </div>
+      </div>
+      {/* 输入框上沿那一条：桌宠蹲在这儿，偶尔沿着它走几步，气泡冒在窗口内容上方 */}
+      <div className="dscreen__perch">
+        <Crab variant="desk" roam greet={false} side="auto" label={crabLabel} lines={crabLines} className="dscreen__crab" />
       </div>
     </div>
   );

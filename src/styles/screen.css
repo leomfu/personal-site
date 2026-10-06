@@ -3,12 +3,11 @@
    屏幕是一块固定设计尺寸的界面，JS 用 matrix3d 贴到书房图的屏幕四角上，
    所以这里的尺寸都是「设计像素」：横版 640×406，竖版 640×340（2026-10-06 新书房图；竖版在手机上缩得只剩两百像素上下宽，字给得更大）。
    横竖用和 <picture> 同一个条件（max-aspect-ratio: 4/5）切换，第一帧就是对的尺寸。
+   2026-10-06 改：应用窗口就是整块屏幕（不再有米色外底、浮起的圆角卡片和投影），桌宠蹲在输入框上沿，气泡也在屏幕里。
    小螃蟹本身的样式在 components/crab/crab.css。
    ========================================================================== */
 
 .dscreen {
-  --m: 14px;
-  --perch: 74px;
   --bar: 34px;
   --pad: 22px;
   --fs-title: 15px;
@@ -18,7 +17,7 @@
   --spark: 30px;
   --in-h: 52px;
   --ink: #2b2420;
-  --ink-soft: #8a7f70;
+  --ink-soft: #85796a;
   --claude: #d97757;
   position: absolute;
   left: 0;
@@ -28,9 +27,10 @@
   height: 406px;
   overflow: hidden;
   transform-origin: 0 0;
-  /* 桌面壁纸：暖色的浅沙色，窗口浮在上面 */
-  background:
-    radial-gradient(120% 90% at 30% 0%, #efe4d2 0%, #e3d3bb 55%, #d5c0a2 100%);
+  /* 屏幕角的极小圆角，和真实屏幕一致 */
+  border-radius: 3px;
+  /* 夜里亮着的屏幕：整体比白天压暗一点，偏暖，不刺眼 */
+  background: #ebe3d3;
   color: var(--ink);
   font-family: var(--sc-font-text);
   letter-spacing: 0;
@@ -43,8 +43,6 @@
 }
 @media (max-aspect-ratio: 4/5) {
   .dscreen {
-    --m: 16px;
-    --perch: 88px;
     --bar: 0px;
     --pad: 20px;
     --fs-me: 38px;
@@ -64,52 +62,52 @@
   z-index: 5;
   pointer-events: none;
   background:
-    linear-gradient(118deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 28%, transparent 44%),
-    radial-gradient(130% 110% at 50% 40%, transparent 62%, rgba(30, 20, 10, 0.22) 100%);
+    linear-gradient(118deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 28%, transparent 44%),
+    radial-gradient(130% 110% at 50% 40%, transparent 58%, rgba(30, 20, 10, 0.26) 100%);
 }
 
-/* 窗口顶边上面那一条：桌宠的地盘 */
+/* 桌宠的地盘：输入框上沿那一条，整块屏幕的宽度（桌宠在里面左右走几步） */
 .dscreen__perch {
   position: absolute;
-  left: calc(var(--m) + 6px);
-  right: calc(var(--m) + 6px);
-  top: 0;
-  height: var(--perch);
+  left: var(--pad);
+  right: var(--pad);
+  bottom: calc(var(--in-h) + var(--pad) * 0.7 - 1px);
+  height: 70px;
   z-index: 3;
+  pointer-events: none;
 }
 .dscreen__perch .crab {
   --crab-size: 70px;
   --crab-say-size: 22px;
   --crab-say-max: 13em;
+  --crab-say-bg: #f4ecdc;
   --crab-focus: #b4501f;
   position: absolute;
   left: 0;
-  bottom: -1px;
+  bottom: 0;
+  pointer-events: auto;
 }
 @media (max-aspect-ratio: 4/5) {
+  .dscreen__perch {
+    height: 88px;
+  }
   .dscreen__perch .crab {
     --crab-size: 88px;
-    --crab-say-size: 36px;
-    --crab-say-max: 9em;
+    --crab-say-size: 34px;
+    --crab-say-max: 8em;
   }
   .dscreen__perch .crab__say {
     border-width: 4px;
   }
 }
 
-/* 窗口：暖色浅底、细边、圆角，像一个桌面应用 */
+/* 窗口：铺满整块屏幕，没有边、圆角、投影 */
 .dscreen__win {
   position: absolute;
-  left: var(--m);
-  right: var(--m);
-  top: var(--perch);
-  bottom: var(--m);
+  inset: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #d9cdb8;
-  border-radius: 10px;
-  background: #faf7f1;
-  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
+  background: #efe8da;
   overflow: hidden;
 }
 .dscreen__bar {
@@ -119,14 +117,14 @@
   align-items: center;
   justify-content: center;
   height: var(--bar);
-  border-bottom: 1px solid #e6dccb;
-  background: #f1ebe1;
+  border-bottom: 1px solid #ddd2bd;
+  background: #e6dcc9;
   font-size: var(--fs-title);
   color: var(--ink-soft);
 }
 .dscreen__lights {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   display: flex;
   gap: 7px;
@@ -136,13 +134,13 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #e0a090;
+  background: #d99a8a;
 }
 .dscreen__lights i:nth-child(2) {
-  background: #e8c98a;
+  background: #dfc182;
 }
 .dscreen__lights i:nth-child(3) {
-  background: #a9c79a;
+  background: #a3bf94;
 }
 @media (max-aspect-ratio: 4/5) {
   .dscreen__bar {
@@ -164,7 +162,7 @@
   margin: 0;
   padding: 0.32em 0.7em 0.36em;
   border-radius: 0.6em;
-  background: #ece4d6;
+  background: #e0d6c3;
   font-size: var(--fs-me);
   font-weight: 500;
   line-height: 1.2;
@@ -203,9 +201,9 @@
   height: var(--in-h);
   margin: 0 calc(var(--pad) * 0.7) calc(var(--pad) * 0.7);
   padding: 0 0.35em 0 0.75em;
-  border: 1.5px solid #ddd2c0;
+  border: 1.5px solid #d6cab4;
   border-radius: 0.7em;
-  background: #fff;
+  background: #f5f0e5;
   font-size: var(--fs-in);
 }
 .dscreen__text {
@@ -222,7 +220,7 @@
   width: 1.6em;
   height: 1.6em;
   border-radius: 0.45em;
-  background: #e8dfd0;
+  background: #ddd2be;
   color: #9a8e7c;
 }
 .dscreen__send svg {
